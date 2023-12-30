@@ -1,23 +1,23 @@
 /* --- START GLOBAL STYLE --- */
-*{
-    font-family: 'Roboto', sans-serif;
+* {
+  font-family: "Roboto", sans-serif;
 }
 
 ul {
-    list-style-type: none;
+  list-style-type: none;
 }
 
-a{
-    text-decoration: none;
-    display: block;
-    color: #202020;
+a {
+  text-decoration: none;
+  display: block;
+  color: #202020;
 }
 
-a :hover{
+a :hover {
   color: #408cb0;
 }
 
-body{
+body {
   margin: 0px;
   border: 0px;
   padding: 0px;
@@ -26,17 +26,17 @@ body{
   flex-direction: column;
 }
 
-h1{
+h1 {
   font-size: 128px;
   margin: 200px 0 0 0;
 }
 
-h2{
-  font-size:70px;
+h2 {
+  font-size: 70px;
   margin: 0px;
 }
 
-h3{
+h3 {
   font-size: 48px;
   margin: 0px;
 }
@@ -62,19 +62,19 @@ h3{
 /* --- END GLOBAL STYLE --- */
 
 /* --- START HEADER STYLE --- */
-header{
-  background-color: #FFFFFF;
+header {
+  background-color: #ffffff;
   height: 50px;
   box-shadow: 0px 0px 30px 1px #202020;
   z-index: 1;
 }
 
-.wrapperHeader{
+.wrapperHeader {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
 }
 
-.headerImage{
+.headerImage {
   grid-column-start: 2;
   max-width: 100%;
   max-height: 100%;
@@ -83,23 +83,23 @@ header{
   text-align: center;
 }
 
-.headerLink{
+.headerLink {
   grid-column-start: 3;
   text-align: right;
 }
 
-header img{
+header img {
   height: 35px;
 }
 
-header p{
+header p {
   padding-right: 25px;
   font-weight: bold;
 }
 /* --- END HEADER STYLE --- */
 
 /* --- START HOMEPAGE STYLE --- */
-#homepage{
+#homepage {
   display: grid;
   padding: 72px 48px 128px 48px;
   grid-template-columns: 0.5fr 1fr 1fr 1fr;
@@ -107,22 +107,22 @@ header p{
   justify-content: center;
   align-items: center;
 
-  background-image: url('../images/IsometricBackground.png');
+  background-image: url("../images/IsometricBackground.png");
   background-size: cover; /* Cover the entire container */
 }
 
-#homepageTitle{
+#homepageTitle {
   grid-column-start: 2;
   grid-row-start: 1;
 }
 
-#homepageSubheading{
+#homepageSubheading {
   grid-column-start: 2;
   grid-row-start: 2;
   grid-row-end: 4;
 }
 
-#portfolioButton{
+#portfolioButton {
   grid-column-start: 2;
   grid-row-start: 4;
   margin-bottom: 200px;
@@ -152,7 +152,7 @@ header p{
   opacity: 0;
 }
 
-#imageContainer:hover{
+#imageContainer:hover {
   box-shadow: 10px 10px 30px 1px #202020; /* Shadow on hover */
   animation: bounceShadow 0.5s ease-in-out;
 }
@@ -207,34 +207,34 @@ article:hover img {
 /* --- END PORTFOLIO STYLE --- */
 
 /* --- START FOOTER STYLE --- */
-footer{
+footer {
   margin-top: auto;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-shadow: 0px 0px 30px 1px #202020;
 }
 
-.wrapperFooter{
+.wrapperFooter {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   align-items: center;
   height: 75px;
 }
 
-.linkIconsFooter{
-    display: grid;
-    grid-column-start: 2;
-    grid-template-columns: repeat(5, 1fr);
-    justify-content: center;
-    align-items: center;
+.linkIconsFooter {
+  display: grid;
+  grid-column-start: 2;
+  grid-template-columns: repeat(5, 1fr);
+  justify-content: center;
+  align-items: center;
 }
 
-footer a{
+footer a {
   width: 100%;
   text-align: center;
   display: block;
 }
 
-footer img{
+footer img {
   height: 35px;
   text-align: center;
 }
@@ -254,11 +254,11 @@ footer img{
 }
 
 /* --- START COLLECTION STYLE --- */
-#collectionTitle{
+#collectionTitle {
   padding: 128px 48px 0px 48px;
 }
 
-#collectionGrid{
+#collectionGrid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   justify-content: center;
@@ -267,18 +267,18 @@ footer img{
   padding: 48px;
 }
 
-#collectionGrid img{
+#collectionGrid img {
   height: 20vw;
 }
 
-#collectionGrid img:hover{
+#collectionGrid img:hover {
   box-shadow: 10px 10px 30px 1px #202020; /* Shadow on hover */
   animation: bounceShadow 0.5s ease-in-out;
 }
 /* --- END COLLECTION STYLE --- */
 
 /* --- START ABOUT STYLE --- */
-#aboutGrid{
+#aboutGrid {
   height: 80vh;
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -289,12 +289,12 @@ footer img{
   padding: 48px;
 }
 
-#aboutText{
+#aboutText {
   font-size: 24px;
   place-self: center;
 }
 
-#aboutImage{
+#aboutImage {
   border-top-left-radius: 50% 40%;
   border-top-right-radius: 50% 40%;
   overflow: hidden;
@@ -306,15 +306,15 @@ footer img{
   place-self: center;
 }
 
-#aboutButton{
-    grid-column-start: 1;
-    grid-row-start: 2;
+#aboutButton {
+  grid-column-start: 1;
+  grid-row-start: 2;
 }
 
-#contactGrid{
+#contactGrid {
   margin: 24px 0px 72px 0px;
   height: 150px;
-  background-color: #F9F9F9;
+  background-color: #f9f9f9;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: 1fr;
@@ -325,17 +325,17 @@ footer img{
   font-size: 24px;
 }
 
-#contactGrid img{
+#contactGrid img {
   width: 35px;
   margin-right: 16px;
 }
 
-#contactText{
+#contactText {
   grid-column-start: 1;
   justify-self: center;
 }
 
-#contactMail{
+#contactMail {
   grid-column-start: 2;
   justify-self: center;
 
@@ -343,7 +343,7 @@ footer img{
   align-items: center;
 }
 
-#contactPhone{
+#contactPhone {
   grid-column-start: 3;
   justify-self: center;
 
@@ -351,13 +351,13 @@ footer img{
   align-items: center;
 }
 
-#contactGrid a:hover{
-    color: #408cb0;
+#contactGrid a:hover {
+  color: #408cb0;
 }
 /* --- END ABOUT STYLE --- */
 
 /* --- START ARTICLE STYLE --- */
-.articleGrid{
+.articleGrid {
   display: grid;
   grid-template-columns: 1fr 3fr;
   grid-template-rows: 0.3fr 1fr;
@@ -366,7 +366,7 @@ footer img{
   padding: 48px;
 }
 
-.articleMainImage{
+.articleMainImage {
   grid-column-start: 1;
   grid-row-start: 1;
   grid-row-end: 3;
@@ -374,18 +374,18 @@ footer img{
   width: 100%;
 }
 
-.articleTitle{
+.articleTitle {
   grid-column-start: 2;
   align-self: center;
 }
 
-.articleText{
+.articleText {
   grid-column-start: 2;
   grid-row-start: 2;
   font-size: 24px;
 }
 
-.moreImagesGrid{
+.moreImagesGrid {
   display: grid;
   grid-template-columns: repeat(3, 31.5%);
   grid-template-rows: 1fr;
@@ -394,24 +394,24 @@ footer img{
   margin-bottom: 48px;
 
   height: 300px;
-  background-color: #F9F9F9;
+  background-color: #f9f9f9;
 }
 
-.articleImage1{
+.articleImage1 {
   height: 100%;
   grid-column-start: 1;
   align-self: center;
   justify-self: center;
 }
 
-.articleImage2{
+.articleImage2 {
   height: 100%;
   grid-column-start: 2;
   align-self: center;
   justify-self: center;
 }
 
-.articleImage3{
+.articleImage3 {
   height: 100%;
   grid-column-start: 3;
   align-self: center;
