@@ -22,10 +22,11 @@ async function enrichProjectsWithMetaTags() {
 			console.log(`Fetching project: ${slug}`);
 			
 			// Build absolute URL that works with both file:// and http:// protocols
-			let fetchUrl = `./projects/${slug}/${slug}.html`;
+			// English version fetches the -en variant
+			let fetchUrl = `./projects/${slug}/${slug}-en.html`;
 			if (window.location.protocol === 'file:') {
 				// If opened as file://, try to use the absolute file path
-				fetchUrl = `/projects/${slug}/${slug}.html`;
+				fetchUrl = `/projects/${slug}/${slug}-en.html`;
 			}
 			
 			const response = await fetch(fetchUrl);
@@ -41,42 +42,36 @@ async function enrichProjectsWithMetaTags() {
 			
 			// Extract meta tags using regex instead of DOMParser
 			const titleMatch = html.match(/name="project-title"\s+content="([^"]*)"/);
-			const titleEnMatch = html.match(/name="project-title-en"\s+content="([^"]*)"/);
 			const yearMatch = html.match(/name="project-year"\s+content="([^"]*)"/);
 			const tagsMatch = html.match(/name="project-tags"\s+content="([^"]*)"/);
-			const tagsEnMatch = html.match(/name="project-tags-en"\s+content="([^"]*)"/);
 			const imageMatch = html.match(/name="project-image"\s+content="([^"]*)"/);
 			
-			const titleFr = titleMatch ? titleMatch[1] : '';
-			const titleEn = titleEnMatch ? titleEnMatch[1] : titleFr;
+			const title = titleMatch ? titleMatch[1] : '';
 			const year = yearMatch ? yearMatch[1] : '';
 			const tagsStr = tagsMatch ? tagsMatch[1] : '';
-			const tagsEnStr = tagsEnMatch ? tagsEnMatch[1] : tagsStr;
 			const image = imageMatch ? imageMatch[1] : '';
 			
-			console.log(`Parsed ${slug}:`, { titleFr, titleEn, year, tagsStr, tagsEnStr, image });
+			console.log(`Parsed ${slug}:`, { title, year, tagsStr, image });
 			
-			if (!titleFr) {
+			if (!title) {
 				console.warn(`No title found for ${slug}`);
 				continue;
 			}
 			
-			const tagsFr = tagsStr.split(',').map(t => t.trim()).filter(t => t);
-			const tagsEn = tagsEnStr.split(',').map(t => t.trim()).filter(t => t);
-			const primaryTagFr = tagsFr[0] || 'Portfolio';
-			const primaryTagEn = tagsEn[0] || primaryTagFr || 'Portfolio';
+			const tags = tagsStr.split(',').map(t => t.trim()).filter(t => t);
+			const primaryTag = tags[0] || 'Portfolio';
 			
-			console.log(`${slug} - Primary tags:`, { primaryTagFr, primaryTagEn, tagsFr, tagsEn });
+			console.log(`${slug} - Primary tag: ${primaryTag}, All tags:`, tags);
+			
+			// Add tags to filter categories
+			tags.forEach(tag => filterCategories.add(tag));
 			
 			enrichedProjects.push({
 				id: enrichedProjects.length + 1,
 				year: year,
-				titleFr: titleFr,
-				titleEn: titleEn,
-				categoryFr: primaryTagFr,
-				categoryEn: primaryTagEn,
-				tagsFr: tagsFr,
-				tagsEn: tagsEn,
+				title: title,
+				category: primaryTag,
+				tags: tags,
 				image: image || 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=400&h=400&fit=crop'
 			});
 			console.log(`✓ Successfully added ${slug}:`, enrichedProjects[enrichedProjects.length - 1]);
@@ -215,7 +210,7 @@ function updateCarousel(index) {
 			// Make hero image clickable to navigate to project
 			heroContainer.onclick = () => {
 				if (slug) {
-					window.location.href = `./projects/${slug}/${slug}.html`;
+					window.location.href = `./projects/${slug}/${slug}-en.html`;
 				}
 			};
 			heroContainer.style.cursor = slug ? 'pointer' : 'default';
@@ -284,7 +279,7 @@ function renderProjects() {
 	grid.innerHTML = filtered.map(project => {
 		const slug = slugify(project.title);
 		return `
-				<a href="./projects/${slug}/${slug}.html" class="project-card" data-project-id="${project.id}" data-project-slug="${slug}">
+				<a href="./projects/${slug}/${slug}-en.html" class="project-card" data-project-id="${project.id}" data-project-slug="${slug}">
 					<div class="project-card-image" style="background-image: url('${project.image}')"></div>
 					<div class="project-card-content">
 						<div class="project-year">${project.year}</div>
@@ -444,8 +439,8 @@ function setupMobileCenterBehavior() {
 			const inCenter = card.classList.contains('in-center');
 			const slug = card.dataset.projectSlug;
 			if (inCenter && slug) {
-				// navigate to project page in folder: /projects/{slug}/{slug}.html
-				window.location.href = `/projects/${slug}/${slug}.html`;
+				// navigate to project page in folder: /projects/{slug}/{slug}-en.html
+				window.location.href = `/projects/${slug}/${slug}-en.html`;
 			} else if (!inCenter) {
 				// if not centered, scroll the card into center on first tap
 				e.preventDefault();
@@ -459,7 +454,7 @@ function setupMobileCenterBehavior() {
 			const inCenter = heroContainer.classList.contains('in-center');
 			const slug = heroContainer.dataset.projectSlug || '';
 			if (inCenter && slug) {
-				window.location.href = `/projects/${slug}/${slug}.html`;
+				window.location.href = `/projects/${slug}/${slug}-en.html`;
 			} else if (!inCenter) {
 				e.preventDefault();
 				heroContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });

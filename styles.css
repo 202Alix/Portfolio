@@ -137,7 +137,7 @@ header {
 	padding: 4px 16px;
 	background: transparent;
 	color: var(--off-white);
-	border: 2px solid var(--off-white);
+	border: 1px solid var(--off-white);
 	cursor: pointer;
 	transition: all 0.3s;
 	position: relative;
