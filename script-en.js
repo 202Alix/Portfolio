@@ -1,9 +1,9 @@
 // Project slugs that exist - update this when adding new projects
 const projectSlugs = [
-	'lyricloom-en',
+	'lyricloom',
 	// Add more project slugs here as you create them
-	// 'zenith-identity-en',
-	// 'motion-showreel-en',
+	// 'zenith-identity',
+	// 'motion-showreel',
 	// etc.
 ];
 
@@ -514,4 +514,20 @@ if (typeof setupMobileCenterBehavior === 'function') setupMobileCenterBehavior()
 		// Initialize position
 		render();
 	})();
+
+// Language navigation with slider animation
+function navigateLang(lang) {
+	const enBtn = document.getElementById('lang-en');
+	const frBtn = document.getElementById('lang-fr');
+	
+	if (lang === 'en') {
+		enBtn.classList.add('active');
+		frBtn.classList.remove('active');
+		window.location.href = './index-en.html';
+	} else {
+		frBtn.classList.add('active');
+		enBtn.classList.remove('active');
+		window.location.href = './index.html';
+	}
+}
 

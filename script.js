@@ -497,3 +497,19 @@ if (typeof setupMobileCenterBehavior === 'function') setupMobileCenterBehavior()
 		render();
 	})();
 
+// Language navigation with slider animation
+function navigateLang(lang) {
+	const enBtn = document.getElementById('lang-en');
+	const frBtn = document.getElementById('lang-fr');
+	
+	if (lang === 'en') {
+		enBtn.classList.add('active');
+		frBtn.classList.remove('active');
+		window.location.href = './index-en.html';
+	} else {
+		frBtn.classList.add('active');
+		enBtn.classList.remove('active');
+		window.location.href = './index.html';
+	}
+}
+

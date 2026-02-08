@@ -31,8 +31,9 @@
                     <button class="nav-btn" onclick="scrollToSection('contact')">Contact</button>
                 </div>
                 <div class="lang-toggle">
-                    <button class="lang-btn active" id="lang-en">EN</button>
-                    <a class="lang-btn" id="lang-fr" href="./index.html" style="text-decoration: none; border: 2px solid var(--off-white); padding: 16px; height: 32px; background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 500; font-size: 14px; color: var(--off-white); cursor: pointer; white-space: nowrap; display: flex; align-items: center; transition: all 0.3s;">FR</a>
+                    <button class="lang-btn active" id="lang-en" onclick="navigateLang('en')">EN</button>
+                    <button class="lang-btn" id="lang-fr" onclick="navigateLang('fr')">FR</button>
+                    <div class="lang-slider"></div>
                 </div>
             </div>
         </div>
