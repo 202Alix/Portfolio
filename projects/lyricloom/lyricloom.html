@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="project-title" content="LyricLoom">
+    <meta name="project-year" content="2023">
+    <meta name="project-tags" content="Identité visuelle,Motion design,Guidelines">
+    <meta name="project-image" content="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1200&h=1200&fit=crop">
+    <title>LyricLoom — Projet — Alix Labonne</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <!-- Crosshair overlay: stays above background but behind main UI -->
+    <div id="crosshair" aria-hidden="true">
+        <div class="crosshair-line horizontal"></div>
+        <div class="crosshair-line vertical"></div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <a href="../../index.html" class="logo-section">
+                <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080">
+                    <polygon style="fill: currentColor;" points="378.62 460.84 138.83 945 460.79 559.65 378.62 460.84"/>
+                    <polygon style="fill: currentColor;" points="941.17 945 701.38 460.84 619.21 559.65 941.17 945"/>
+                    <polygon style="fill: currentColor;" points="540 135 437.01 342.94 472.78 385.65 510.42 430.44 540 465.64 569.58 430.44 607.08 385.82 642.99 342.94 540 135"/>
+                </svg>
+                <div class="logo-text">Alix Labonne</div>
+            </a>
+            <div class="nav-section">
+                <div class="nav-buttons">
+                    <a class="nav-btn project-nav-btn" href="../../index.html#portfolio">Portfolio</a>
+                    <a class="nav-btn project-nav-btn" href="../../index.html#contact">Contact</a>
+                </div>
+                <div class="lang-toggle">
+                    <a class="lang-btn" href="./lyricloom-en.html">EN</a>
+                    <button class="lang-btn active" id="lang-fr">FR</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="project-detail project-detail-main">
+        <!-- HERO SECTION -->
+        <section class="hero project-hero" id="hero">
+            <div class="hero-pattern"></div>
+            <div class="hero-inner">
+                <div class="hero-media">
+                    <div class="hero-image-container">
+                        <img class="hero-image" src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1200&h=1200&fit=crop" alt="LyricLoom">
+                    </div>
+                </div>
+                <div>
+                    <div class="hero-title" id="project-title">LyricLoom</div>
+                    <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 32px;">
+                        <div class="project-badge">Identité visuelle</div>
+                        <div class="project-badge">Motion design</div>
+                        <div class="project-badge">Guidelines</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-banner"></div>
+        </section>
+
+        <!-- CONTEXT & OBJECTIVES -->
+        <section class="section-pad" id="context">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Contexte & objectifs</h2>
+                <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); max-width: 900px;">
+                    LyricLoom est une plateforme innovante dédiée à la co-création de textes musicaux. Pensée pour les équipes créatives, elle facilite la collaboration en temps réel, la conservation des idées et la structuration éditoriale des paroles.
+                </p>
+                <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); max-width: 900px; margin-top: 24px;">
+                    Le projet visait à définir une identité visuelle claire, des guidelines pour usages web et print, ainsi qu'une direction motion permettant d'animer la voix de la marque dans les contenus promotionnels et produit.
+                </p>
+            </div>
+        </section>
+
+        <!-- APPROACH & PROCESS -->
+        <section class="section-pad" id="approach">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Approche & process</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;">
+                    <div>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8);">
+                            La démarche typographique s'est concentrée sur une lecture nette et modulable : combiner une fonte display pour les titres et une sans-serif contemporaine pour les interfaces garantit une forte lisibilité, tout en préservant du caractère visuel.
+                        </p>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); margin-top: 24px;">
+                            Les choix de graisse et d'interlettrage ont été documentés dans le brand book pour assurer une cohérence maximale.
+                        </p>
+                    </div>
+                    <div>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8);">
+                            Pour le motion design, des principes clairs ont été définis — tempo, easing et micro-interactions — permettant d'animer les modules de contenu sans nuire à la lisibilité des paroles.
+                        </p>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); margin-top: 24px;">
+                            Les assets animés ont été exportés en Lottie et en séquences optimisées pour le web et les réseaux sociaux.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTS & GALLERY -->
+        <section class="section-pad" id="results">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Résultats & livrables</h2>
+                <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); max-width: 900px; margin-bottom: 64px;">
+                    Le projet a livré une identité complète : logo principal et variations, un brand book détaillant usages, couleurs et typographies, un kit d'icônes, templates éditoriaux et une série d'animations dédiées au produit.
+                </p>
+
+                <div class="project-gallery">
+                    <button class="gallery-item" type="button" data-type="image" data-src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=1600&h=900&fit=crop" aria-label="Agrandir l'image 1">
+                        <img src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&fit=crop" alt="Gallery 1">
+                    </button>
+                    <button class="gallery-item" type="button" data-type="image" data-src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&fit=crop" aria-label="Agrandir l'image 2">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=700&fit=crop" alt="Gallery 2">
+                    </button>
+                    <button class="gallery-item" type="button" data-type="image" data-src="https://images.unsplash.com/photo-1634942537034-2531766767d1?w=1200&fit=crop" aria-label="Agrandir l'image 3">
+                        <img src="https://images.unsplash.com/photo-1634942537034-2531766767d1?w=700&fit=crop" alt="Gallery 3">
+                    </button>
+                    <button class="gallery-item" type="button" data-type="image" data-src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1200&fit=crop" aria-label="Agrandir l'image 4">
+                        <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=700&fit=crop" alt="Gallery 4">
+                    </button>
+                    <button class="gallery-item" type="button" data-type="image" data-src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=1200&fit=crop" aria-label="Agrandir l'image 5">
+                        <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?w=700&fit=crop" alt="Gallery 5">
+                    </button>
+                    <button class="gallery-item" type="button" data-type="image" data-src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=1600&h=900&fit=crop" aria-label="Agrandir l'image 6">
+                        <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&fit=crop" alt="Gallery 6">
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION BUTTONS -->
+        <!-- Side arrows (fixed positioning handled by CSS) -->
+        <a href="../../projects/dashboard-ui/dashboard-ui.html" class="arrow-btn arrow-left" aria-label="Projet précédent">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+
+        <a href="../../projects/zenith-identity/zenith-identity.html" class="arrow-btn arrow-right" aria-label="Projet suivant">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+
+        <!-- Back to portfolio button -->
+        <section class="portfolio">
+            <div class="section-content" style="text-align: center;">
+                <a href="../../index.html" class="filter-btn">↑ Retour au portfolio</a>
+            </div>
+        </section>
+    </main>
+
+    <div class="lightbox" id="project-lightbox" aria-hidden="true">
+        <div class="lightbox-content" role="dialog" aria-modal="true"></div>
+    </div>
+
+
+    <script>
+        // Crosshair functionality for project page
+        (function() {
+            const crosshair = document.getElementById('crosshair');
+            if (!crosshair) return;
+            const hLine = crosshair.querySelector('.crosshair-line.horizontal');
+            const vLine = crosshair.querySelector('.crosshair-line.vertical');
+
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let raf = null;
+
+            function render() {
+                if (hLine) hLine.style.top = mouseY + 'px';
+                if (vLine) vLine.style.left = mouseX + 'px';
+                raf = null;
+            }
+
+            function scheduleRender() {
+                if (raf === null) raf = requestAnimationFrame(render);
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                scheduleRender();
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) {
+                    mouseX = e.touches[0].clientX;
+                    mouseY = e.touches[0].clientY;
+                    scheduleRender();
+                }
+            }, { passive: true });
+
+            render();
+        })();
+
+        // Lightbox for gallery items (supports images and videos)
+        (function() {
+            const lightbox = document.getElementById('project-lightbox');
+            const lightboxContent = lightbox ? lightbox.querySelector('.lightbox-content') : null;
+            const items = document.querySelectorAll('.gallery-item');
+
+            if (!lightbox || !lightboxContent || items.length === 0) return;
+
+            function openLightbox(type, src) {
+                lightboxContent.innerHTML = '';
+                if (type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = src;
+                    video.controls = true;
+                    video.autoplay = true;
+                    video.playsInline = true;
+                    lightboxContent.appendChild(video);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = '';
+                    lightboxContent.appendChild(img);
+                }
+                lightbox.classList.add('open');
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+                lightbox.setAttribute('aria-hidden', 'true');
+                lightboxContent.innerHTML = '';
+                document.body.style.overflow = '';
+            }
+
+            items.forEach((item) => {
+                item.addEventListener('click', () => {
+                    const type = item.getAttribute('data-type') || 'image';
+                    const src = item.getAttribute('data-src');
+                    if (!src) return;
+                    openLightbox(type, src);
+                });
+            });
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeLightbox();
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "Alix's design portfolio",
+  "scripts": {
+    "dev": "python3 -m http.server 8000"
+  }
+}

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="project-title" content="PROJECT_TITLE">
+    <meta name="project-year" content="2024">
+    <meta name="project-tags" content="TAG_1,TAG_2,TAG_3">
+    <meta name="project-image" content="HERO_IMAGE_URL">
+    <title>PROJECT_TITLE — Projet — Alix Labonne</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../styles.css">
+</head>
+<body>
+    <!-- Crosshair overlay: stays above background but behind main UI -->
+    <div id="crosshair" aria-hidden="true">
+        <div class="crosshair-line horizontal"></div>
+        <div class="crosshair-line vertical"></div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <a href="../../index.html" class="logo-section">
+                <img src="../../logo.svg" alt="Logo Alix Labonne" class="logo">
+                <div class="logo-text">Alix Labonne</div>
+            </a>
+            <div class="nav-section">
+                <div class="nav-buttons">
+                    <a class="nav-btn project-nav-btn" href="../../index.html#portfolio">Portfolio</a>
+                    <a class="nav-btn project-nav-btn" href="../../index.html#contact">Contact</a>
+                </div>
+                <div class="lang-toggle">
+                    <a class="lang-btn" href="./PROJECT_SLUG-en.html">EN</a>
+                    <button class="lang-btn active">FR</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="project-detail project-detail-main">
+        <!-- HERO SECTION -->
+        <section class="hero project-hero" id="hero">
+            <div class="hero-pattern"></div>
+            <div class="hero-inner">
+                <div class="hero-media">
+                    <div class="hero-image-container">
+                        <img class="hero-image" src="HERO_IMAGE_URL" alt="PROJECT_TITLE">
+                    </div>
+                </div>
+                <div>
+                    <div class="hero-title" id="project-title">PROJECT_TITLE</div>
+                    <div style="display: flex; gap: 24px; flex-wrap: wrap; margin-top: 32px;">
+                        <div class="project-badge">TAG_1</div>
+                        <div class="project-badge">TAG_2</div>
+                        <div class="project-badge">TAG_3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEXT SECTION: IMAGE LEFT + TEXT RIGHT -->
+        <section class="section-pad" id="section-1">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Section Title</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;">
+                    <div>
+                        <img src="SECTION_IMAGE_URL" alt="Section illustration" style="width: 100%; height: auto; display: block; border: 2px solid var(--off-white);">
+                    </div>
+                    <div>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8);">
+                            Your text content goes here.
+                        </p>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); margin-top: 24px;">
+                            Additional paragraphs can be added with margin-top: 24px between them.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEXT SECTION: TEXT LEFT + IMAGE RIGHT -->
+        <section class="section-pad" id="section-2">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Section Title</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start;">
+                    <div>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8);">
+                            Your text content goes here.
+                        </p>
+                        <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); margin-top: 24px;">
+                            Additional paragraphs can be added with margin-top: 24px between them.
+                        </p>
+                    </div>
+                    <div>
+                        <img src="SECTION_IMAGE_URL" alt="Section illustration" style="width: 100%; height: auto; display: block; border: 2px solid var(--off-white);">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEXT SECTION: TEXT ONLY (NO IMAGE) -->
+        <section class="section-pad" id="section-3">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Section Title</h2>
+                <div>
+                    <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); max-width: 900px;">
+                        Your full-width text content goes here. This section spans without an image.
+                    </p>
+                    <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); max-width: 900px; margin-top: 24px;">
+                        Additional paragraphs can be added with margin-top: 24px between them.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY SECTION (Optional) -->
+        <section class="section-pad" id="results">
+            <div class="section-content">
+                <h2 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 48px; font-weight: 700; margin-bottom: 32px; color: var(--off-white);">Résultats & livrables</h2>
+                <p style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: rgba(253, 254, 254, 0.8); max-width: 900px; margin-bottom: 64px;">
+                    Gallery description text here.
+                </p>
+
+                <div class="project-gallery">
+                    <button class="gallery-item" type="button" data-type="image" data-src="IMAGE_URL_FULL" aria-label="Agrandir l'image">
+                        <img src="IMAGE_URL_THUMB" alt="Gallery item">
+                    </button>
+                    <!-- Duplicate the above button block for additional gallery items -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION BUTTONS -->
+        <!-- Side arrows -->
+        <a href="PREVIOUS_PROJECT_URL" class="arrow-btn arrow-left" aria-label="Projet précédent">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+
+        <a href="NEXT_PROJECT_URL" class="arrow-btn arrow-right" aria-label="Projet suivant">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+
+        <!-- Back to portfolio button -->
+        <section class="portfolio">
+            <div class="section-content" style="text-align: center;">
+                <a href="../../index.html" class="filter-btn">↑ Retour au portfolio</a>
+            </div>
+        </section>
+    </main>
+
+    <div class="lightbox" id="project-lightbox" aria-hidden="true">
+        <div class="lightbox-content" role="dialog" aria-modal="true"></div>
+    </div>
+
+    <script>
+        // Crosshair cursor tracking
+        (function() {
+            const crosshair = document.getElementById('crosshair');
+            if (!crosshair) return;
+            const hLine = crosshair.querySelector('.crosshair-line.horizontal');
+            const vLine = crosshair.querySelector('.crosshair-line.vertical');
+
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let raf = null;
+
+            function render() {
+                if (hLine) hLine.style.top = mouseY + 'px';
+                if (vLine) vLine.style.left = mouseX + 'px';
+                raf = null;
+            }
+
+            function scheduleRender() {
+                if (raf === null) raf = requestAnimationFrame(render);
+            }
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                scheduleRender();
+            });
+
+            window.addEventListener('touchmove', (e) => {
+                if (e.touches && e.touches[0]) {
+                    mouseX = e.touches[0].clientX;
+                    mouseY = e.touches[0].clientY;
+                    scheduleRender();
+                }
+            }, { passive: true });
+
+            render();
+        })();
+
+        // Lightbox for gallery items (supports images and videos)
+        (function() {
+            const lightbox = document.getElementById('project-lightbox');
+            const lightboxContent = lightbox ? lightbox.querySelector('.lightbox-content') : null;
+            const items = document.querySelectorAll('.gallery-item');
+
+            if (!lightbox || !lightboxContent || items.length === 0) return;
+
+            function openLightbox(type, src) {
+                lightboxContent.innerHTML = '';
+                if (type === 'video') {
+                    const video = document.createElement('video');
+                    video.src = src;
+                    video.controls = true;
+                    video.autoplay = true;
+                    video.playsInline = true;
+                    lightboxContent.appendChild(video);
+                } else {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = '';
+                    lightboxContent.appendChild(img);
+                }
+                lightbox.classList.add('open');
+                lightbox.setAttribute('aria-hidden', 'false');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeLightbox() {
+                lightbox.classList.remove('open');
+                lightbox.setAttribute('aria-hidden', 'true');
+                lightboxContent.innerHTML = '';
+                document.body.style.overflow = '';
+            }
+
+            items.forEach((item) => {
+                item.addEventListener('click', () => {
+                    const type = item.getAttribute('data-type') || 'image';
+                    const src = item.getAttribute('data-src');
+                    if (!src) return;
+                    openLightbox(type, src);
+                });
+            });
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) closeLightbox();
+            });
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeLightbox();
+            });
+        })();
+    </script>
+</body>
+</html>
