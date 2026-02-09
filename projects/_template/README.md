@@ -10,64 +10,36 @@ This template provides a modular structure for creating new project pages. You c
    ```
 
 2. **Replace the placeholders** with your content:
-   - `PROJECT_TITLE` - Your project name (French)
-   - `PROJECT_TITLE_EN` - Your project name (English)
-   - `HERO_IMAGE_URL` - Square hero image (400x400px suggested)
-   - `TAG_1`, `TAG_2`, `TAG_3` - Project category tags (French)
-   - `TAG_1_EN`, `TAG_2_EN`, `TAG_3_EN` - Project category tags (English)
-   - `SECTION_IMAGE_URL` - Images for content sections
-   - `PREVIOUS_PROJECT_URL` & `NEXT_PROJECT_URL` - Navigation links
-   - `IMAGE_URL_FULL` & `IMAGE_URL_THUMB` - Gallery images
+    - `PROJECT_TITLE` - Your project name
+    - `HERO_IMAGE_URL` - Square hero image (400x400px suggested)
+    - `TAG_1`, `TAG_2`, `TAG_3` - Project category tags
+    - `SECTION_IMAGE_URL` - Images for content sections
+    - `PREVIOUS_PROJECT_URL` & `NEXT_PROJECT_URL` - Navigation links
+    - `IMAGE_URL_FULL` & `IMAGE_URL_THUMB` - Gallery images
 
-## Internationalization (Bilingual Support)
+## Language Versions (URL-Based)
 
-The portfolio supports French (FR) and English (EN). All project pages automatically respond to the language toggle.
+The portfolio uses a simple URL-based language system: a French page and a separate English page.
 
-### Required Meta Tags (in `<head>`)
+### Create the English Version
 
-Always include bilingual meta tags:
-```html
-<meta name="project-title" content="Your Title in French">
-<meta name="project-title-en" content="Your Title in English">
-<meta name="project-tags" content="Tag 1,Tag 2,Tag 3">
-<meta name="project-tags-en" content="Tag 1 EN,Tag 2 EN,Tag 3 EN">
-```
+1. Copy the French file and add `-en` to the filename:
+    ```
+    /projects/your-project-slug/your-project-slug.html
+    /projects/your-project-slug/your-project-slug-en.html
+    ```
+2. Translate all visible text in the `-en` file.
+3. Keep meta tags single-language per file:
+    ```html
+    <meta name="project-title" content="Your Title">
+    <meta name="project-tags" content="Tag 1,Tag 2,Tag 3">
+    ```
+4. Update `script-en.js` to include the project slug:
+    ```js
+    const projectSlugs = ['your-project-slug'];
+    ```
 
-### Bilingual Text Attributes
-
-Any visible text that should change languages needs `data-i18n-*` attributes:
-
-**For regular text (headings, paragraphs):**
-```html
-<h2 data-i18n-fr="Mon titre" data-i18n-en="My title">Mon titre</h2>
-<p data-i18n-fr="Mon texte" data-i18n-en="My text">Mon texte</p>
-```
-
-**For text with HTML (line breaks, etc.):**
-```html
-<div data-i18n-html-fr="Ligne 1<br>Ligne 2" data-i18n-html-en="Line 1<br>Line 2">
-    Ligne 1<br>Ligne 2
-</div>
-```
-
-**For aria-label and other attributes:**
-```html
-<button aria-label="Agrandir" 
-        data-i18n-attr="aria-label"
-        data-i18n-fr-attr="Agrandir"
-        data-i18n-en-attr="Enlarge">
-    Expand
-</button>
-```
-
-### Adding Bilingual Content to New Projects
-
-1. Add bilingual meta tags to `<head>`
-2. Add `data-i18n-fr` and `data-i18n-en` (or `data-i18n-html-*`) to all section headings and paragraphs
-3. Add `data-i18n-attr` attributes to badges, gallery buttons, and navigation
-4. The language toggle will automatically apply the correct language site-wide
-
-See `LyricLoom` project for a complete example.
+The language toggle uses `navigateLang()` to swap between `your-project-slug.html` and `your-project-slug-en.html`.
 
 ## Section Types
 

@@ -245,6 +245,15 @@
                 if (e.key === 'Escape') closeLightbox();
             });
         })();
+
+        // Language navigation (URL-based)
+        function navigateLang(lang) {
+            if (lang === 'en') {
+                window.location.href = './PROJECT_SLUG-en.html';
+            } else {
+                window.location.href = './PROJECT_SLUG.html';
+            }
+        }
     </script>
 </body>
 </html>
