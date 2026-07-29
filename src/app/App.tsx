@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react"
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu } from "lucide-react";
 import Logo from "../imports/Logo";
+import { useIsMobile } from "./components/ui/use-mobile";
 import { projects as loadedProjects } from "../data/index";
 import landingData from "../data/landing.json";
 
@@ -167,6 +168,12 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
     window.addEventListener("keydown", fn);
     return () => window.removeEventListener("keydown", fn);
   }, [onClose]);
+
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, []);
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}
       className="fixed inset-0 z-100 flex items-center justify-center bg-foreground/90 backdrop-blur-sm p-4 md:p-12"
@@ -215,7 +222,7 @@ function VideoBlock({ item, lang, aspectRatio = "16 / 9" }: { item: VideoItem; l
 
 function TextCol({ primary, secondary, align, lang }: { primary: LS; secondary?: LS; align?: "left" | "right"; lang: Lang }) {
   return (
-    <div className="flex flex-col justify-center h-full" style={{ textAlign: align }}>
+    <div className={`flex flex-col justify-center h-full ${align === "right" ? "md:text-right" : ""}`}>
       <p className="text-lg leading-relaxed font-light whitespace-pre-line">{t(primary, lang)}</p>
       {secondary && <p className="mt-4 text-base leading-relaxed font-light text-muted-foreground whitespace-pre-line">{t(secondary, lang)}</p>}
     </div>
@@ -529,12 +536,18 @@ function TagPill({ tag, onNavigate }: { tag: string; onNavigate: (filter: string
 
 // ─── PROJECT CARD ──────────────────────────────────────────────────────────
 
-function ProjectCard({ project, navigate, onTagClick, idx, lang }: { project: Project; navigate: (id: string) => void; onTagClick: (filter: string) => void; idx: number; lang: Lang }) {
+function ProjectCard({ project, navigate, onTagClick, idx, lang, centered, registerRef }: {
+  project: Project; navigate: (id: string) => void; onTagClick: (filter: string) => void; idx: number; lang: Lang;
+  centered: boolean; registerRef: (id: string, el: HTMLElement | null) => void;
+}) {
   const [hovered, setHovered] = useState(false);
   const projectTitle = t(project.title, lang);
+  const isActive = hovered || centered;
+
   return (
     <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE, delay: idx * 0.06 }} className="border-t border-border">
       <div
+        ref={(el) => registerRef(project.id, el)}
         role="button"
         tabIndex={0}
         onClick={() => navigate(project.id)}
@@ -544,7 +557,7 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang }: { project: Pr
         className="w-full text-left pt-6 md:pt-8 pb-8 md:pb-12 cursor-pointer"
       >
         <ParallaxImg
-          src={project.coverImage} alt={projectTitle} px={30} hovered={hovered}
+          src={project.coverImage} alt={projectTitle} px={30} hovered={isActive}
           aspectRatio="16 / 7"
           objectPosition={`50% ${project.coverImagePosition ?? 50}%`}
           className="w-full bg-muted mb-5"
@@ -553,10 +566,10 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang }: { project: Pr
           <div className="flex flex-col gap-2 min-w-0">
             <div className="flex items-center gap-3">
               <span className="font-mono text-[10px] text-muted-foreground shrink-0">{project.index}</span>
-              <motion.div animate={{ width: hovered ? 14 : 0, opacity: hovered ? 1 : 0 }} transition={{ duration: 0.2, ease: EASE }} style={{ background: GRADIENT }} className="h-px shrink-0" />
+              <motion.div animate={{ width: isActive ? 14 : 0, opacity: isActive ? 1 : 0 }} transition={{ duration: 0.2, ease: EASE }} style={{ background: GRADIENT }} className="h-px shrink-0" />
               <span className="font-mono text-[10px] tracking-widest text-muted-foreground">{t(project.category, lang)}&ensp;·&ensp;{project.year}</span>
             </div>
-            <div className="font-display font-black leading-[0.9] transition-colors duration-200" style={{ fontSize: "clamp(26px, 3.5vw, 48px)", letterSpacing: "-0.01em", color: hovered ? "#0246F3" : "var(--foreground)" }}>
+            <div className="font-display font-black leading-[0.9] transition-colors duration-200" style={{ fontSize: "clamp(26px, 3.5vw, 48px)", letterSpacing: "-0.01em", color: isActive ? "#0246F3" : "var(--foreground)" }}>
               {projectTitle}
             </div>
             <div className="flex flex-wrap gap-2 mt-1" onClick={(e) => e.stopPropagation()}>
@@ -568,7 +581,10 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang }: { project: Pr
           </div>
           <div className="hidden md:flex flex-col items-end gap-4 shrink-0 max-w-xs text-right">
             <p className="text-sm font-light text-muted-foreground leading-relaxed whitespace-pre-line">{t(project.excerpt, lang)}</p>
-            <AnimatedArrow hovered={hovered} size={16} color={hovered ? "#0246F3" : "var(--muted-foreground)"} />
+            <AnimatedArrow hovered={isActive} size={16} color={isActive ? "#0246F3" : "var(--muted-foreground)"} />
+          </div>
+          <div className="flex md:hidden shrink-0 pt-1">
+            <AnimatedArrow hovered={isActive} size={16} color={isActive ? "#0246F3" : "var(--muted-foreground)"} />
           </div>
         </div>
       </div>
@@ -583,6 +599,43 @@ function ProjectsSection({ navigate, activeFilter, setActiveFilter, lang }: {
 }) {
   const ui = UI[lang];
   const ALL = lang === "fr" ? "Tous" : "All";
+  const isMobile = useIsMobile();
+  const [centeredId, setCenteredId] = useState<string | null>(null);
+  const cardRefs = useRef<Map<string, HTMLElement>>(new Map());
+
+  const registerCard = useCallback((id: string, el: HTMLElement | null) => {
+    if (el) cardRefs.current.set(id, el);
+    else cardRefs.current.delete(id);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobile) { setCenteredId(null); return; }
+    let raf = 0;
+    const update = () => {
+      const viewportCenter = window.innerHeight / 2;
+      let closestId: string | null = null;
+      let closestDist = Infinity;
+      cardRefs.current.forEach((el, id) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+        const dist = Math.abs(rect.top + rect.height / 2 - viewportCenter);
+        if (dist < closestDist) { closestDist = dist; closestId = id; }
+      });
+      setCenteredId(closestId);
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [isMobile, activeFilter]);
 
   const availableTags = (() => {
     const seen = new Set<string>();
@@ -624,7 +677,7 @@ function ProjectsSection({ navigate, activeFilter, setActiveFilter, lang }: {
       <AnimatePresence mode="wait">
         <motion.div key={activeFilter} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>
           {filtered.length > 0 ? (
-            <>{filtered.map((p, i) => <ProjectCard key={p.id} project={p} navigate={navigate} onTagClick={setActiveFilter} idx={i} lang={lang} />)}<div className="border-t border-border" /></>
+            <>{filtered.map((p, i) => <ProjectCard key={p.id} project={p} navigate={navigate} onTagClick={setActiveFilter} idx={i} lang={lang} centered={centeredId === p.id} registerRef={registerCard} />)}<div className="border-t border-border" /></>
           ) : (
             <div className="py-20 text-center"><span className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">{ui.noProjects}</span></div>
           )}
@@ -712,7 +765,7 @@ function ContactSection({ lang }: { lang: Lang }) {
 function Footer({ lang, navigate }: { lang: Lang; navigate: (id: string) => void }) {
   return (
     <footer className="border-t border-border px-6 md:px-12 py-5">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+      <div className="flex flex-col items-center md:flex-row md:justify-between gap-2">
         <span className="font-mono text-[10px] text-muted-foreground tracking-[0.22em] uppercase">© {CURRENT_YEAR} {landingData.name}</span>
         <button onClick={() => navigate("mentions-legales")} className="font-mono text-[10px] text-muted-foreground tracking-[0.22em] uppercase hover:text-primary transition-colors duration-200">
           {lang === "fr" ? "Mentions légales" : "Legal notice"}
@@ -866,10 +919,10 @@ function HoverGrid({ cellSize = 40 }: { cellSize?: number }) {
 function Hero({ lang }: { lang: Lang }) {
   const ui = UI[lang];
   return (
-    <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden">
+    <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "100dvh" }}>
       <HoverGrid />
       <div className="flex justify-between items-start pt-10 md:pt-14">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed">
           <div>{ui.title}</div>
           <div>{ui.location}</div>
         </motion.div>
@@ -884,13 +937,13 @@ function Hero({ lang }: { lang: Lang }) {
           <GradientBar />
           <div className="overflow-hidden">
             <motion.div initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
-              className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(68px, 13vw, 196px)" }}>
+              className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
               ALIX
             </motion.div>
           </div>
           <div className="overflow-hidden">
             <motion.div initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.7, ease: EASE, delay: 0.13 }}
-              className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(68px, 13vw, 196px)" }}>
+              className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
               LABONNE
             </motion.div>
           </div>
@@ -934,9 +987,11 @@ function ParallaxImg({ src, alt, px = 40, hovered = false, aspectRatio, classNam
   src: string; alt: string; px?: number; hovered?: boolean;
   aspectRatio?: string; className?: string; objectPosition?: string; onClick?: () => void; children?: React.ReactNode;
 }) {
+  const isMobile = useIsMobile();
+  const effectivePx = isMobile ? Math.min(px, 10) : px;
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [px, -px]);
+  const y = useTransform(scrollYProgress, [0, 1], [effectivePx, -effectivePx]);
 
   return (
     <div
@@ -951,7 +1006,7 @@ function ParallaxImg({ src, alt, px = 40, hovered = false, aspectRatio, classNam
         className="absolute left-0 w-full object-cover"
         animate={{ scale: hovered ? 1.03 : 1 }}
         transition={{ duration: 0.65, ease: EASE }}
-        style={{ y, top: -px, height: `calc(100% + ${px * 2}px)`, objectPosition: objectPosition ?? "50% 50%" }}
+        style={{ y, top: -effectivePx, height: `calc(100% + ${effectivePx * 2}px)`, objectPosition: objectPosition ?? "50% 50%" }}
       />
       {children}
     </div>
