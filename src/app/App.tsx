@@ -919,7 +919,7 @@ function HoverGrid({ cellSize = 40 }: { cellSize?: number }) {
 function Hero({ lang }: { lang: Lang }) {
   const ui = UI[lang];
   return (
-    <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "100dvh" }}>
+    <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "calc(var(--vh, 1vh) * 100)" }}>
       <HoverGrid />
       <div className="flex justify-between items-start pt-10 md:pt-14">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed">
@@ -1156,6 +1156,21 @@ function PortfolioApp() {
   const [lang, setLang] = useState<Lang>(() => getInitialLang());
   const [dark, setDark] = useState(() => getInitialDark());
   const pendingScrollRef = useRef(false);
+
+  useEffect(() => {
+    const setVh = () => {
+      document.documentElement.style.setProperty("--vh", `${window.innerHeight * 0.01}px`);
+    };
+    setVh();
+    window.addEventListener("resize", setVh);
+    window.addEventListener("orientationchange", setVh);
+    window.visualViewport?.addEventListener("resize", setVh);
+    return () => {
+      window.removeEventListener("resize", setVh);
+      window.removeEventListener("orientationchange", setVh);
+      window.visualViewport?.removeEventListener("resize", setVh);
+    };
+  }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
