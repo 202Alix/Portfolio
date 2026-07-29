@@ -1,0 +1,33 @@
+{
+  "id": "take-a-seat",
+  "index": "05",
+  "title": {
+    "fr": "Prends ta place",
+    "en": "Take a seat"
+  },
+  "year": "2026",
+  "category": {
+    "fr": "Identité visuelle",
+    "en": "Visual Identity"
+  },
+  "tags": [
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "UI Design",
+      "en": "UI Design"
+    },
+    {
+      "fr": "Storytelling",
+      "en": "Storytelling"
+    }
+  ],
+  "excerpt": {
+    "fr": "Site en scrollytelling sur le harcèlement sexuel subit par les femmes dans les transports en communs, à Paris.",
+    "en": "A scrollytelling website about sexual harassment experienced by women on public transports in Paris."
+  },
+  "coverImage": "/projects/projet-1785265529844/TakeASeat_Thumbnail.webp",
+  "content": []
+}

@@ -1,4 +1,16 @@
-.DS_Store
-.vscode/
 node_modules/
-*.log
+dist/
+dist-ssr/
+*.local
+
+# Editor/OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# Env
+.env
+.env.*
+
+# Claude Code local config
+.claude/

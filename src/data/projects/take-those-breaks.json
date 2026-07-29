@@ -1,0 +1,42 @@
+{
+  "id": "take-those-breaks",
+  "index": "06",
+  "title": {
+    "fr": "Take Those Breaks",
+    "en": "Take Those Breaks"
+  },
+  "year": "2026",
+  "category": {
+    "fr": "Montage vidéo",
+    "en": "Motion Design"
+  },
+  "tags": [
+    {
+      "fr": "Montage vidéo",
+      "en": "Video editing"
+    },
+    {
+      "fr": "Storytelling",
+      "en": "Storytelling"
+    }
+  ],
+  "excerpt": {
+    "fr": "Vidéo sur la thématique du corps et de l'image utilisant l'histoire d'Alysa Liu comme exemple de reprise de contrôle.",
+    "en": "V"
+  },
+  "coverImage": "/projects/projet-1785265621245/TakeThoseBreaks_Thumbnail.webp",
+  "content": [
+    {
+      "type": "youtube",
+      "url": {
+        "fr": "https://www.youtube.com/watch?v=P1y4sW9MpYs",
+        "en": "https://www.youtube.com/watch?v=P1y4sW9MpYs"
+      },
+      "position": "full",
+      "caption": {
+        "fr": "\"Take Those Breaks\" - Alysa Liu",
+        "en": "\"Take Those Breaks\" - Alysa Liu"
+      }
+    }
+  ]
+}

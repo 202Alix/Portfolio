@@ -1,0 +1,45 @@
+{
+  "id": "soolking-flowers",
+  "index": "11",
+  "title": {
+    "fr": "Soolking Flowers",
+    "en": "Soolking Flowers"
+  },
+  "year": "2024-2025",
+  "category": {
+    "fr": "Identité visuelle",
+    "en": "Visual identity"
+  },
+  "tags": [
+    {
+      "fr": "Gestion de projet",
+      "en": "Project management"
+    },
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Branding",
+      "en": "Branding"
+    },
+    {
+      "fr": "Campagne publicitaire",
+      "en": "Ad campaign"
+    },
+    {
+      "fr": "UI Design",
+      "en": "UI Design"
+    },
+    {
+      "fr": "Montage vidéo",
+      "en": "Video editing"
+    }
+  ],
+  "excerpt": {
+    "fr": "Identité visuelle pour un groupe de rock psychédélique, leur album et un service de streaming musical à son nom.",
+    "en": "Visual identity for a psychedelic rock band, their album, and a music streaming service named after them."
+  },
+  "coverImage": "/projects/soolking-flowers/SoolkingFlowers_Thumbnail.webp",
+  "content": []
+}

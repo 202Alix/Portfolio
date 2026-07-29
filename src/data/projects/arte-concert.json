@@ -1,0 +1,29 @@
+{
+  "id": "arte-concert",
+  "index": "12",
+  "title": {
+    "fr": "ARTE Concert",
+    "en": "ARTE Concert"
+  },
+  "year": "2025",
+  "category": {
+    "fr": "Design graphique",
+    "en": "Graphic design"
+  },
+  "tags": [
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Campagne publicitaire",
+      "en": "Ad campaign"
+    }
+  ],
+  "excerpt": {
+    "fr": "Affiches publicitaire destinées à mettre en avant une des performances retrouvable sur le site ARTE Concert.",
+    "en": "Advertising posters designed to highlight one of the performances available on the ARTE Concert website."
+  },
+  "coverImage": "/projects/projet-1785266447518/Poster_Frame_Mockup_1.png",
+  "content": []
+}

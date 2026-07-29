@@ -1,0 +1,99 @@
+{
+  "fr": {
+    "title": "Directeur Artistique Digital",
+    "location": "Paris, France",
+    "portfolio": "Portfolio",
+    "tagline": "Brand design · Motion · Interfaces",
+    "viewProjects": "Voir les projets",
+    "selectedWorksPattern": "Projets — {count}",
+    "all": "Tous",
+    "about": "À propos",
+    "contact": "Contact",
+    "projects": "Projets",
+    "back": "Retour",
+    "nextProject": "Projet suivant",
+    "gallery": "Galerie",
+    "year": "Année",
+    "tags": "Tags",
+    "category": "Catégorie",
+    "overview": "Aperçu",
+    "skills": "Compétences",
+    "tools": "Outils",
+    "together": "Restez en contact",
+    "footer": "Direction Artistique Digitale",
+    "bio": "Je suis un designer français spécialisé dans le numérique et l'identité de marque. Je termine actuellement un master (Bac+5) en direction artistique et design graphique dans le cadre d'un apprentissage chez Air Liquide. Je conçois des supports de communication visuelle et des ressources numériques au sein d'un système de marque structuré et global, en mettant l'accent sur la précision de l'exécution, la cohérence visuelle et l'adaptation des identités existantes à différents formats.",
+    "bio2": "Je m'intéresse particulièrement aux identités de marque, au motion design et au design d'interfaces. Ouvert à des opportunités en entreprise ou en agence.",
+    "skillsList": [
+      "Branding & Identité",
+      "Direction artistique",
+      "Outils d'IA",
+      "Motion design",
+      "UI design",
+      "Gestion de projet"
+    ],
+    "toolsList": [
+      "Figma",
+      "Illustrator",
+      "Photoshop",
+      "InDesign",
+      "After Effects",
+      "Premiere Pro",
+      "Blender"
+    ],
+    "noProjects": "Aucun projet dans cette catégorie",
+    "close": "Fermer"
+  },
+  "en": {
+    "title": "Digital Art Director",
+    "location": "Paris, France",
+    "portfolio": "Portfolio",
+    "tagline": "Brand design · Motion · Interfaces",
+    "viewProjects": "View projects",
+    "selectedWorksPattern": "Selected works — {count}",
+    "all": "All",
+    "about": "About",
+    "contact": "Contact",
+    "projects": "Projects",
+    "back": "Back",
+    "nextProject": "Next project",
+    "gallery": "Gallery",
+    "year": "Year",
+    "tags": "Tags",
+    "category": "Category",
+    "overview": "Overview",
+    "skills": "Skills",
+    "tools": "Tools",
+    "together": "Let's work\ntogether",
+    "footer": "Digital Art Direction",
+    "bio": "I’m a French digital and brand designer currently completing a Master’s degree (Bac+5) in art direction and graphic design through an apprenticeship at Air Liquide. I design visual communication and digital assets within a structured, global brand system, with a focus on clean execution, visual coherence and adapting existing identities across formats.",
+    "bio2": "I am particularly interested in brand identity, motion design and interface design. I am open to any opportunities in the private sector or within agencies.",
+    "skillsList": [
+      "Branding & Identity",
+      "Art Direction",
+      "AI Proficiency",
+      "Motion design",
+      "UI design",
+      "Project management"
+    ],
+    "toolsList": [
+      "Figma",
+      "Illustrator",
+      "Photoshop",
+      "InDesign",
+      "After Effects",
+      "Premiere Pro",
+      "Blender"
+    ],
+    "noProjects": "No projects in this category",
+    "close": "Close"
+  },
+  "name": "Alix Labonne",
+  "email": "alix.labonne@pm.me",
+  "phone": "+33 7 82 76 22 38",
+  "links": [
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/alix-labonne-937246194/"
+    }
+  ]
+}

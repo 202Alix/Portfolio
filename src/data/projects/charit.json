@@ -1,0 +1,34 @@
+{
+  "id": "charit",
+  "index": "07",
+  "title": {
+    "fr": "Charit",
+    "en": "C"
+  },
+  "year": "2025",
+  "category": {
+    "fr": "Identité visuelle",
+    "en": "Visual Identity"
+  },
+  "tags": [
+    {
+      "fr": "Branding",
+      "en": "Branding"
+    },
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Gestion de projet",
+      "en": "Project management"
+    }
+  ],
+  "excerpt": {
+    "fr": "Réalisation de la charte graphique, du site web et visuels de promotion pour la marque Charit.",
+    "en": "Development of the brand identity, website, and promotional visuals for the Charit brand."
+  },
+  "coverImage": "/projects/projet-1785227055547/Charit_Thumbnail.webp",
+  "coverImagePosition": 29,
+  "content": []
+}

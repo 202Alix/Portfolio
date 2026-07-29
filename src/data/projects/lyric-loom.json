@@ -1,0 +1,45 @@
+{
+  "id": "lyric-loom",
+  "index": "03",
+  "title": {
+    "fr": "LyricLoom",
+    "en": "LyricLoom"
+  },
+  "year": "2024-2026",
+  "category": {
+    "fr": "Identité visuelle",
+    "en": "Visual Identity"
+  },
+  "tags": [
+    {
+      "fr": "Branding",
+      "en": "Branding"
+    },
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Gestion de projet",
+      "en": "Project management"
+    },
+    {
+      "fr": "Montage vidéo",
+      "en": "Video editing"
+    },
+    {
+      "fr": "Motion design",
+      "en": "Motion design"
+    },
+    {
+      "fr": "UI Design",
+      "en": "UI Design"
+    }
+  ],
+  "excerpt": {
+    "fr": "LyricLoom est la seule application web qui couvre tout le processus d’écriture d’une chanson, de l’idée brute à la version finale.",
+    "en": "LyricLoom is the only web app that covers the entire songwriting process, from the initial idea to the final version."
+  },
+  "coverImage": "/projects/lyricloom/LyricLoom_Thumbnail.webp",
+  "content": []
+}

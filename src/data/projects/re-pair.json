@@ -1,0 +1,37 @@
+{
+  "id": "re-pair",
+  "index": "09",
+  "title": {
+    "fr": "Re_pair",
+    "en": "R"
+  },
+  "year": "2025",
+  "category": {
+    "fr": "Design graphique",
+    "en": "Graphic design"
+  },
+  "tags": [
+    {
+      "fr": "Branding",
+      "en": "Branding"
+    },
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Gestion de projet",
+      "en": "Project management"
+    },
+    {
+      "fr": "UI Design",
+      "en": "UI Design"
+    }
+  ],
+  "excerpt": {
+    "fr": "Application d'aide à la réparation de vêtements usés pour la marque ReFashion.",
+    "en": "A"
+  },
+  "coverImage": "/projects/projet-1785265680161/Repair_Thumbnail.webp",
+  "content": []
+}

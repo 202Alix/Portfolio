@@ -1,0 +1,47 @@
+{
+  "id": "air-liquide-foundation",
+  "index": "04",
+  "title": {
+    "fr": "Fondation Air Liquide en images",
+    "en": "Air Liquide Foundation in images"
+  },
+  "year": "2026",
+  "category": {
+    "fr": "Montage vidéo",
+    "en": "Motion Design"
+  },
+  "tags": [
+    {
+      "fr": "Montage vidéo",
+      "en": "Video editing"
+    },
+    {
+      "fr": "Motion design",
+      "en": "Motion design"
+    },
+    {
+      "fr": "Gestion de projet",
+      "en": "Project management"
+    }
+  ],
+  "excerpt": {
+    "fr": "Vidéo sur l'impact de la Fondation Air Liquide dans les divers secteurs qu'elle soutient.",
+    "en": "Video about the impact of the Air Liquid Foundation in the multiple sectors it supports"
+  },
+  "coverImage": "/projects/air-liquide-foundation/ALFoundation_Thumbnail.webp",
+  "coverImagePosition": 51,
+  "content": [
+    {
+      "type": "youtube",
+      "url": {
+        "fr": "https://www.youtube.com/watch?v=MiO4SVVwVcs&pp=ygUfQWlyIExpcXVpZGUgRk9uZGF0aW9uIGVuIGltYWdlcw%3D%3D",
+        "en": "https://www.youtube.com/watch?v=cfwl35I9KXU&pp=ygUhQWlyIExpcXVpZGUgRk9uZGF0aW9uIGluIHBpY3R1cmVz0gcJCaMLAYcqIYzv"
+      },
+      "position": "full",
+      "caption": {
+        "fr": "L’impact de la Fondation Air Liquide en images",
+        "en": "The Air Liquide Foundation’s impact in images"
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "yummy",
+  "index": "10",
+  "title": {
+    "fr": "Yummy",
+    "en": "Yummy"
+  },
+  "year": "2025",
+  "category": {
+    "fr": "Interface Utilisateur",
+    "en": "UI Design"
+  },
+  "tags": [
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Branding",
+      "en": "Branding"
+    },
+    {
+      "fr": "UI Design",
+      "en": "UI Design"
+    }
+  ],
+  "excerpt": {
+    "fr": "Interface en light mode et dark mode pour une application de commande de poke bowls avec écran de personnalisation.",
+    "en": "Light mode and dark mode interfaces for a poke bowl ordering app with a customization screen."
+  },
+  "coverImage": "/projects/projet-1785255180656/Yummy_Thumbnail.webp",
+  "content": []
+}
