@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu } from "lucide-react";
+import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu, Globe, Maximize2 } from "lucide-react";
 import Logo from "../imports/Logo";
 import { useIsMobile } from "./components/ui/use-mobile";
 import { projects as loadedProjects } from "../data/index";
@@ -69,13 +69,15 @@ type ColumnContent =
   | { kind: "text"; primary: LS; align?: "left" | "right" }
   | { kind: "image"; item: MediaItem }
   | { kind: "video"; item: VideoItem }
-  | { kind: "youtube"; url: LS; caption?: LS };
+  | { kind: "youtube"; url: LS; caption?: LS }
+  | { kind: "website"; url: string; item: MediaItem };
 
 type ContentBlock =
   | { type: "text"; primary: LS; secondary?: LS; align?: "left" | "right" }
   | { type: "image"; item: MediaItem; position: "left" | "right" | "full" }
   | { type: "video"; item: VideoItem; position: "left" | "right" | "full" }
   | { type: "youtube"; url: LS; caption?: LS; position: "left" | "right" | "full" }
+  | { type: "website"; url: string; item: MediaItem; position: "left" | "right" | "full" }
   | { type: "columns"; left: ColumnContent; right: ColumnContent; ratio?: "1:1" | "1:2" | "2:1" }
   | { type: "masonry"; items: MediaItem[] };
 
@@ -91,10 +93,11 @@ interface Project {
   excerpt: LS;
   coverImage: string;
   coverImagePosition?: number;
+  hidden?: boolean;
   content: ContentBlock[];
 }
 
-const projects = loadedProjects as Project[];
+const projects = (loadedProjects as Project[]).filter((p) => !p.hidden);
 
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
 
@@ -132,7 +135,7 @@ function AnimatedArrow({ hovered, size = 14, color }: { hovered: boolean; size?:
 function ConveyorArrow({ direction = "down", size = 16, hovered }: { direction?: "down" | "left"; size?: number; hovered?: boolean }) {
   const boxH = size + 6;
   const d = boxH;
-  const hold = 1.5;
+  const hold = hovered === undefined ? 1.5 : 0.15;
   const exitDur = 0.28;
   const enterDur = 0.42;
   const total = hold + exitDur + enterDur;
@@ -181,10 +184,10 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
       <motion.div initial={{ scale: 0.96, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.96, opacity: 0 }}
         transition={{ duration: 0.28, ease: EASE }} className="relative max-w-6xl w-full" onClick={(e) => e.stopPropagation()}>
         <img src={src.replace(/w=\d+/, "w=1800").replace(/h=\d+/, "h=1200")} alt={alt} className="w-full h-auto object-contain" style={{ maxHeight: "88vh" }} />
-        <button onClick={onClose} className="absolute top-3 right-3 w-9 h-9 flex items-center justify-center bg-background text-foreground hover:bg-foreground hover:text-background transition-colors duration-150">
-          <X size={15} />
-        </button>
       </motion.div>
+      <button onClick={onClose} className="fixed top-4 right-4 w-9 h-9 flex items-center justify-center bg-background text-foreground hover:bg-foreground hover:text-background transition-colors duration-150">
+        <X size={15} />
+      </button>
     </motion.div>
   );
 }
@@ -200,7 +203,7 @@ function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: Media
         <img src={src} alt={item.alt} className={`w-full h-full transition-transform duration-500 group-hover:scale-[1.025] ${isFluid ? "object-contain" : "object-cover"}`} />
         <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300 flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 bg-background flex items-center justify-center">
-            <ArrowUpRight size={13} />
+            <Maximize2 size={13} className="text-foreground" />
           </div>
         </div>
       </button>
@@ -211,10 +214,40 @@ function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: Media
 
 function VideoBlock({ item, lang, aspectRatio = "16 / 9" }: { item: VideoItem; lang: Lang; aspectRatio?: string }) {
   return (
-    <figure className="m-0">
+    <figure className="m-0 max-w-xl mx-auto">
       <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio }}>
         <video key={t(item.src, lang)} src={t(item.src, lang)} poster={item.poster} controls className="w-full h-full object-cover" />
       </div>
+      {item.caption && <figcaption className="mt-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground">{t(item.caption, lang)}</figcaption>}
+    </figure>
+  );
+}
+
+function WebsiteBlock({ url, item, lang, aspectRatio = "16 / 10" }: { url: string; item: MediaItem; lang: Lang; aspectRatio?: string }) {
+  const src = t(item.src, lang);
+  const [hovered, setHovered] = useState(false);
+  return (
+    <figure className="m-0 max-w-xl mx-auto">
+      <a
+        href={url} target="_blank" rel="noopener noreferrer"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="block border border-border hover:border-primary transition-colors duration-200"
+      >
+        <div className="flex items-center gap-2 px-3 py-2 border-b border-border text-muted-foreground transition-colors duration-200" style={{ color: hovered ? "#0246F3" : undefined }}>
+          <Globe size={12} className="shrink-0" />
+          <span className="font-mono text-[10px] tracking-wider truncate flex-1">{url}</span>
+          <AnimatedArrow hovered={hovered} size={12} />
+        </div>
+        <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio }}>
+          <motion.img
+            src={src} alt={item.alt}
+            className="w-full h-full object-cover object-top"
+            animate={{ scale: hovered ? 1.03 : 1 }}
+            transition={{ duration: 0.65, ease: EASE }}
+          />
+        </div>
+      </a>
       {item.caption && <figcaption className="mt-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground">{t(item.caption, lang)}</figcaption>}
     </figure>
   );
@@ -232,7 +265,7 @@ function TextCol({ primary, secondary, align, lang }: { primary: LS; secondary?:
 function YoutubeEmbed({ url, caption, lang }: { url: LS; caption?: LS; lang: Lang }) {
   const embedUrl = getYoutubeEmbedUrl(t(url, lang));
   return (
-    <div>
+    <div className="max-w-xl mx-auto">
       <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
         <iframe src={embedUrl} title="YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="absolute inset-0 w-full h-full border-0" />
       </div>
@@ -246,6 +279,7 @@ function renderColumn(col: ColumnContent, onOpen: (s: string, a: string) => void
   if (col.kind === "image") return <ImageBlock item={col.item} onOpen={onOpen} lang={lang} aspectRatio="unset" />;
   if (col.kind === "video") return <VideoBlock item={col.item} lang={lang} />;
   if (col.kind === "youtube") return <YoutubeEmbed url={col.url} caption={col.caption} lang={lang} />;
+  if (col.kind === "website") return <WebsiteBlock url={col.url} item={col.item} lang={lang} />;
   return null;
 }
 
@@ -292,6 +326,15 @@ function ContentRenderer({ blocks, onOpen, lang }: { blocks: ContentBlock[]; onO
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE }} className={gap}>
               {block.position === "full" && frame}
               {isHalf && <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{block.position === "right" && <div />}{frame}{block.position === "left" && <div />}</div>}
+            </motion.div>
+          );
+        }
+        if (block.type === "website") {
+          const isHalf = block.position === "left" || block.position === "right";
+          return (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE }} className={gap}>
+              {block.position === "full" && <WebsiteBlock url={block.url} item={block.item} lang={lang} aspectRatio="16 / 8" />}
+              {isHalf && <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{block.position === "right" && <div />}<WebsiteBlock url={block.url} item={block.item} lang={lang} />{block.position === "left" && <div />}</div>}
             </motion.div>
           );
         }
@@ -916,19 +959,188 @@ function HoverGrid({ cellSize = 40 }: { cellSize?: number }) {
   );
 }
 
+type Cell = { x: number; y: number };
+const KONAMI_SEQUENCE = ["arrowup", "arrowup", "arrowdown", "arrowdown", "arrowleft", "arrowright", "arrowleft", "arrowright", "b", "a", "enter"];
+const SNAKE_TICK_MS = 150;
+
+function randomFoodCell(snake: Cell[], cols: number, rows: number): Cell {
+  const occupied = new Set(snake.map((s) => `${s.x}-${s.y}`));
+  let x = 0, y = 0;
+  do {
+    x = Math.floor(Math.random() * cols);
+    y = Math.floor(Math.random() * rows);
+  } while (occupied.has(`${x}-${y}`));
+  return { x, y };
+}
+
+function SnakeGame({ onEat, onGameOver, cellSize = 40 }: { onEat: () => void; onGameOver: () => void; cellSize?: number }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [dims, setDims] = useState({ cols: 0, rows: 0 });
+  const dimsRef = useRef(dims);
+  const [snake, setSnakeState] = useState<Cell[]>([]);
+  const [food, setFoodState] = useState<Cell | null>(null);
+  const snakeRef = useRef<Cell[]>([]);
+  const foodRef = useRef<Cell | null>(null);
+  const dirRef = useRef<Cell>({ x: 1, y: 0 });
+  const nextDirRef = useRef<Cell>({ x: 1, y: 0 });
+  const endedRef = useRef(false);
+
+  const setSnake = (next: Cell[]) => { snakeRef.current = next; setSnakeState(next); };
+  const setFood = (next: Cell | null) => { foodRef.current = next; setFoodState(next); };
+
+  useEffect(() => { dimsRef.current = dims; }, [dims]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const { width, height } = entry.contentRect;
+      setDims({ cols: Math.max(6, Math.floor(width / cellSize)), rows: Math.max(6, Math.floor(height / cellSize)) });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [cellSize]);
+
+  useEffect(() => {
+    if (dims.cols < 6 || dims.rows < 6) return;
+    const y = Math.floor(dims.rows / 2);
+    const startX = Math.floor(dims.cols / 2);
+    const initial = [{ x: startX, y }, { x: startX - 1, y }, { x: startX - 2, y }];
+    dirRef.current = { x: 1, y: 0 };
+    nextDirRef.current = { x: 1, y: 0 };
+    endedRef.current = false;
+    setSnake(initial);
+    setFood(randomFoodCell(initial, dims.cols, dims.rows));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dims.cols, dims.rows]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      const map: Record<string, Cell> = {
+        arrowup: { x: 0, y: -1 }, arrowdown: { x: 0, y: 1 }, arrowleft: { x: -1, y: 0 }, arrowright: { x: 1, y: 0 },
+      };
+      const next = map[e.key.toLowerCase()];
+      if (!next) return;
+      e.preventDefault();
+      if (next.x === -dirRef.current.x && next.y === -dirRef.current.y) return;
+      nextDirRef.current = next;
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  useEffect(() => {
+    if (dims.cols < 6 || dims.rows < 6) return;
+    const id = setInterval(() => {
+      if (endedRef.current) return;
+      dirRef.current = nextDirRef.current;
+      const prev = snakeRef.current;
+      if (prev.length === 0) return;
+      const head = prev[0];
+      const newHead = { x: head.x + dirRef.current.x, y: head.y + dirRef.current.y };
+      const { cols, rows } = dimsRef.current;
+      const hitWall = newHead.x < 0 || newHead.x >= cols || newHead.y < 0 || newHead.y >= rows;
+      const hitSelf = prev.some((s) => s.x === newHead.x && s.y === newHead.y);
+      if (hitWall || hitSelf) {
+        endedRef.current = true;
+        onGameOver();
+        return;
+      }
+      const ateFood = !!foodRef.current && newHead.x === foodRef.current.x && newHead.y === foodRef.current.y;
+      const nextSnake = [newHead, ...prev];
+      if (!ateFood) nextSnake.pop();
+      setSnake(nextSnake);
+      if (ateFood) {
+        onEat();
+        setFood(randomFoodCell(nextSnake, cols, rows));
+      }
+    }, SNAKE_TICK_MS);
+    return () => clearInterval(id);
+  }, [dims.cols, dims.rows, onEat, onGameOver]);
+
+  const snakeSet = new Set(snake.map((s) => `${s.x}-${s.y}`));
+
+  return (
+    <div ref={containerRef} aria-hidden="true" className="absolute inset-0"
+      style={{ zIndex: 1, display: "grid", gridTemplateColumns: `repeat(${dims.cols || 1}, 1fr)`, gridTemplateRows: `repeat(${dims.rows || 1}, 1fr)` }}>
+      {Array.from({ length: dims.cols * dims.rows }).map((_, i) => {
+        const x = i % dims.cols;
+        const y = Math.floor(i / dims.cols);
+        const isSnake = snakeSet.has(`${x}-${y}`);
+        const isFood = !!food && food.x === x && food.y === y;
+        return (
+          <div key={i} className="relative">
+            {isSnake && <div className="absolute inset-0" style={{ background: "#0246F3" }} />}
+            {isFood && (
+              <motion.div className="absolute inset-[15%]" style={{ background: "#0246F3" }}
+                animate={{ opacity: [0.4, 1, 0.4], scale: [0.8, 1, 0.8], rotate: 45 }}
+                transition={{
+                  opacity: { duration: 0.9, repeat: Infinity, ease: "easeInOut" },
+                  scale: { duration: 0.9, repeat: Infinity, ease: "easeInOut" },
+                  rotate: { duration: 0 },
+                }} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function Hero({ lang }: { lang: Lang }) {
   const ui = UI[lang];
+  const sectionRef = useRef<HTMLElement>(null);
+  const [heroInView, setHeroInView] = useState(false);
+  const [gameActive, setGameActive] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setHeroInView(entry.isIntersecting), { threshold: 0.5 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!heroInView || gameActive) return;
+    let buffer: string[] = [];
+    const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
+      buffer = [...buffer, key].slice(-KONAMI_SEQUENCE.length);
+      if (buffer.length === KONAMI_SEQUENCE.length && buffer.every((k, i) => k === KONAMI_SEQUENCE[i])) {
+        buffer = [];
+        setScore(0);
+        setGameOver(false);
+        setGameActive(true);
+        sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [heroInView, gameActive]);
+
+  const handleEat = useCallback(() => setScore((s) => s + 1), []);
+  const handleGameOver = useCallback(() => {
+    setGameOver(true);
+    setTimeout(() => {
+      setGameActive(false);
+      setGameOver(false);
+    }, 1500);
+  }, []);
+
   return (
-    <section className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "100svh" }}>
-      <HoverGrid />
+    <section ref={sectionRef} className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "100svh" }}>
+      {gameActive ? <SnakeGame onEat={handleEat} onGameOver={handleGameOver} /> : <HoverGrid />}
       <div className="flex justify-between items-start pt-10 md:pt-14">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed">
           <div>{ui.title}</div>
           <div>{ui.location}</div>
         </motion.div>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground text-right leading-relaxed">
-          <div>{ui.portfolio}</div>
-          <div>{CURRENT_YEAR}</div>
+          <div>{gameActive ? "SCORE" : ui.portfolio}</div>
+          <div>{gameActive ? score : CURRENT_YEAR}</div>
         </motion.div>
       </div>
 
@@ -938,13 +1150,13 @@ function Hero({ lang }: { lang: Lang }) {
           <div className="overflow-hidden">
             <motion.div initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
               className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
-              ALIX
+              {gameActive && gameOver ? "GAME" : "ALIX"}
             </motion.div>
           </div>
           <div className="overflow-hidden">
             <motion.div initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.7, ease: EASE, delay: 0.13 }}
               className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
-              LABONNE
+              {gameActive && gameOver ? "OVER" : "LABONNE"}
             </motion.div>
           </div>
         </div>
@@ -1021,12 +1233,12 @@ function ParallaxCover({ src, alt, position, onOpen }: { src: string; alt: strin
       src={src} alt={alt} px={PARALLAX_PX}
       aspectRatio="16 / 7"
       objectPosition={`50% ${position ?? 50}%`}
-      className="w-full bg-muted cursor-zoom-in group"
+      className="w-full bg-muted cursor-pointer group"
       onClick={onOpen}
     >
       <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300 flex items-center justify-center">
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 bg-background flex items-center justify-center">
-          <ArrowUpRight size={13} />
+          <Maximize2 size={13} className="text-foreground" />
         </div>
       </div>
     </ParallaxImg>

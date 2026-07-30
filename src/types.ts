@@ -9,13 +9,15 @@ export type ColumnContent =
   | { kind: "text"; primary: LS; align?: "left" | "right" }
   | { kind: "image"; item: MediaItem }
   | { kind: "video"; item: VideoItem }
-  | { kind: "youtube"; url: LocalizedText; caption?: LS };
+  | { kind: "youtube"; url: LocalizedText; caption?: LS }
+  | { kind: "website"; url: string; item: MediaItem };
 
 export type ContentBlock =
   | { type: "text"; primary: LS; secondary?: LS; align?: "left" | "right" }
   | { type: "image"; item: MediaItem; position: "left" | "right" | "full" }
   | { type: "video"; item: VideoItem; position: "left" | "right" | "full" }
   | { type: "youtube"; url: LocalizedText; caption?: LS; position: "left" | "right" | "full" }
+  | { type: "website"; url: string; item: MediaItem; position: "left" | "right" | "full" }
   | { type: "columns"; left: ColumnContent; right: ColumnContent; ratio?: "1:1" | "1:2" | "2:1" }
   | { type: "masonry"; items: MediaItem[] };
 
@@ -29,6 +31,7 @@ export interface Project {
   excerpt: LS;
   coverImage: string;
   coverImagePosition?: number;
+  hidden?: boolean;
   content: ContentBlock[];
 }
 

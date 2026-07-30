@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil } from "lucide-react";
+import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, EyeOff, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil, Globe } from "lucide-react";
 import type { Project, ContentBlock, ColumnContent, MediaItem, LS, LocalizedText, LandingContent } from "../types";
 
 // ─── TYPES ÉDITEUR ─────────────────────────────────────────────────────────
@@ -34,11 +34,11 @@ function newProject(): ProjectDraft {
     excerpt: emptyLS(),
     coverImage: "",
     content: [
-      { ...newBlock("text"), primary: { fr: "[Intro] Le brief : qui, quoi, contexte (3 phrases max).", en: "" } },
-      { ...newBlock("text"), primary: { fr: "[Défi] Quel problème as-tu résolu ? (1-2 phrases)", en: "" } },
+      { _uid: uid(), type: "text" as const, primary: { fr: "[Intro] Le brief : qui, quoi, contexte (3 phrases max).", en: "" } },
+      { _uid: uid(), type: "text" as const, primary: { fr: "[Défi] Quel problème as-tu résolu ? (1-2 phrases)", en: "" } },
       newBlock("image"),
-      { ...newBlock("text"), primary: { fr: "[Approche] Ton rôle et tes décisions créatives (2-3 phrases).", en: "" } },
-      { ...newBlock("text"), primary: { fr: "[Résultat] Impact mesurable, si possible (1-2 phrases).", en: "" } },
+      { _uid: uid(), type: "text" as const, primary: { fr: "[Approche] Ton rôle et tes décisions créatives (2-3 phrases).", en: "" } },
+      { _uid: uid(), type: "text" as const, primary: { fr: "[Résultat] Impact mesurable, si possible (1-2 phrases).", en: "" } },
     ],
   };
 }
@@ -579,34 +579,50 @@ function MediaItemEditor({ value, onChange, projectId, label = "Image", hintKind
   );
 }
 
+const COLUMN_KINDS = [
+  { k: "text", label: "Texte", icon: <Type size={12} /> },
+  { k: "image", label: "Image", icon: <ImageIcon size={12} /> },
+  { k: "video", label: "Vidéo", icon: <Video size={12} /> },
+  { k: "youtube", label: "YouTube", icon: <Youtube size={12} /> },
+  { k: "website", label: "Site web", icon: <Globe size={12} /> },
+] as const;
+
 function ColumnEditor({ value, onChange, projectId }: {
   value: ColumnContent; onChange: (v: ColumnContent) => void; projectId: string;
 }) {
-  const kinds = [
-    { k: "text", label: "Texte", icon: <Type size={12} /> },
-    { k: "image", label: "Image", icon: <ImageIcon size={12} /> },
-    { k: "video", label: "Vidéo", icon: <Video size={12} /> },
-    { k: "youtube", label: "YouTube", icon: <Youtube size={12} /> },
-  ];
+  const [kindOpen, setKindOpen] = useState(false);
+  const current = COLUMN_KINDS.find((o) => o.k === value.kind) ?? COLUMN_KINDS[0];
+
+  const setKind = (k: string) => {
+    if (k === "text") onChange({ kind: "text", primary: emptyLS() });
+    if (k === "image") onChange({ kind: "image", item: { src: "", alt: "", caption: emptyLS() } });
+    if (k === "video") onChange({ kind: "video", item: { src: "", caption: emptyLS() } });
+    if (k === "youtube") onChange({ kind: "youtube", url: "", caption: emptyLS() });
+    if (k === "website") onChange({ kind: "website", url: "", item: { src: "", alt: "", caption: emptyLS() } });
+    setKindOpen(false);
+  };
 
   return (
     <div className="space-y-3">
-      <div>
+      <div className="relative">
         <Label>Type</Label>
-        <div className="flex border border-border overflow-hidden">
-          {kinds.map(({ k, label, icon }) => (
-            <button key={k} onClick={() => {
-              if (k === "text") onChange({ kind: "text", primary: emptyLS() });
-              if (k === "image") onChange({ kind: "image", item: { src: "", alt: "", caption: emptyLS() } });
-              if (k === "video") onChange({ kind: "video", item: { src: "", caption: emptyLS() } });
-              if (k === "youtube") onChange({ kind: "youtube", url: "", caption: emptyLS() });
-            }}
-              className="flex-1 flex items-center justify-center gap-1.5 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-colors"
-              style={{ background: value.kind === k ? "#0246F3" : "transparent", color: value.kind === k ? "#fff" : "var(--muted-foreground)" }}>
-              {icon}{label}
-            </button>
-          ))}
-        </div>
+        <button onClick={() => setKindOpen((o) => !o)}
+          className="w-full flex items-center gap-2 border border-border px-3 py-1.5 font-mono text-[10px] tracking-wider uppercase text-left hover:border-primary transition-colors">
+          <span className="text-muted-foreground">{current.icon}</span>
+          {current.label}
+          <ChevronDown size={12} className="ml-auto text-muted-foreground" />
+        </button>
+        {kindOpen && (
+          <div className="absolute top-full left-0 right-0 mt-1 border border-border bg-background z-10">
+            {COLUMN_KINDS.map(({ k, label, icon }) => (
+              <button key={k} onClick={() => setKind(k)}
+                className="w-full flex items-center gap-2 px-3 py-2 font-mono text-[10px] tracking-wider uppercase hover:bg-secondary transition-colors text-left"
+                style={{ color: value.kind === k ? "#0246F3" : undefined }}>
+                {icon}{label}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {value.kind === "text" && (
@@ -630,6 +646,15 @@ function ColumnEditor({ value, onChange, projectId }: {
           <BilingualInput label="Légende (optionnel)" value={value.caption ?? emptyLS()} onChange={(caption) => onChange({ ...value, caption })} />
         </div>
       )}
+      {value.kind === "website" && (
+        <div className="space-y-3">
+          <div>
+            <Label>URL du site</Label>
+            <Input value={value.url} onChange={(url) => onChange({ ...value, url })} placeholder="https://…" />
+          </div>
+          <MediaItemEditor value={value.item} onChange={(item) => onChange({ ...value, item })} projectId={projectId} label="Capture d'écran" hintKind="column" />
+        </div>
+      )}
     </div>
   );
 }
@@ -649,6 +674,7 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
     image: { label: "Image", icon: <ImageIcon size={13} /> },
     video: { label: "Vidéo", icon: <Video size={13} /> },
     youtube: { label: "YouTube", icon: <Youtube size={13} /> },
+    website: { label: "Site web", icon: <Globe size={13} /> },
     columns: { label: "Colonnes", icon: <Columns2 size={13} /> },
     masonry: { label: "Masonry", icon: <LayoutGrid size={13} /> },
   };
@@ -712,6 +738,23 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
             <>
               <BilingualInput label="URL YouTube" value={toLS(block.url)} onChange={(url) => onChange({ ...block, url })} placeholder="https://youtube.com/watch?v=…" />
               <BilingualInput label="Légende (optionnel)" value={block.caption ?? emptyLS()} onChange={(caption) => onChange({ ...block, caption })} />
+              <PositionSelect value={block.position} onChange={(position) => onChange({ ...block, position })} />
+            </>
+          )}
+
+          {block.type === "website" && (
+            <>
+              <div>
+                <Label>URL du site</Label>
+                <Input value={block.url} onChange={(url) => onChange({ ...block, url })} placeholder="https://…" />
+              </div>
+              <MediaItemEditor
+                value={block.item}
+                onChange={(item) => onChange({ ...block, item })}
+                projectId={projectId}
+                label="Capture d'écran"
+                hintKind={block.position === "full" ? "full" : "half"}
+              />
               <PositionSelect value={block.position} onChange={(position) => onChange({ ...block, position })} />
             </>
           )}
@@ -822,6 +865,7 @@ const BLOCK_TYPES = [
   { type: "image", label: "Image", icon: <ImageIcon size={14} /> },
   { type: "video", label: "Vidéo", icon: <Video size={14} /> },
   { type: "youtube", label: "YouTube", icon: <Youtube size={14} /> },
+  { type: "website", label: "Site web", icon: <Globe size={14} /> },
   { type: "columns", label: "Colonnes", icon: <Columns2 size={14} /> },
   { type: "masonry", label: "Masonry", icon: <LayoutGrid size={14} /> },
 ] as const;
@@ -832,6 +876,7 @@ function newBlock(type: string): DraftBlock {
   if (type === "image") return { ...base, type: "image", item: { src: "", alt: "", caption: emptyLS() }, position: "full" };
   if (type === "video") return { ...base, type: "video", item: { src: "", caption: emptyLS() }, position: "full" };
   if (type === "youtube") return { ...base, type: "youtube", url: "", position: "full" };
+  if (type === "website") return { ...base, type: "website", url: "", item: { src: "", alt: "", caption: emptyLS() }, position: "full" };
   if (type === "columns") return { ...base, type: "columns", ratio: "1:1", left: { kind: "text", primary: emptyLS() }, right: { kind: "image", item: { src: "", alt: "", caption: emptyLS() } } };
   return { ...base, type: "masonry", items: [] };
 }
@@ -994,6 +1039,24 @@ function MetaPanel({
           <Label>Ordre</Label>
           <Input value={draft.index} onChange={() => {}} placeholder="Automatique" readOnly />
         </div>
+      </div>
+
+      <div>
+        <Label>Visibilité</Label>
+        <div className="flex border border-border overflow-hidden">
+          {[{ v: false, label: "Visible" }, { v: true, label: "Masqué" }].map(({ v, label }) => (
+            <button key={label} onClick={() => onChange({ ...draft, hidden: v })}
+              className="flex-1 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-colors"
+              style={{ background: (draft.hidden ?? false) === v ? "#0246F3" : "transparent", color: (draft.hidden ?? false) === v ? "#fff" : "var(--muted-foreground)" }}>
+              {label}
+            </button>
+          ))}
+        </div>
+        {(draft.hidden ?? false) && (
+          <p className="mt-1.5 font-mono text-[9px] tracking-wide text-muted-foreground">
+            Ce projet reste modifiable ici mais n'apparaît pas sur le site public.
+          </p>
+        )}
       </div>
 
       <div>
@@ -1725,7 +1788,7 @@ export default function Editor() {
           )}
           {mode === "project" && (
             <>
-          {projects.map((p, i) => (
+          {effectiveProjects.map((p, i) => (
             <div key={p.id} className="relative">
               {dragProjectIndex !== null && dropProjectIndex === i && (
                 <div className="absolute -top-[2px] left-0 right-0 h-[3px] bg-primary rounded-full z-10" />
@@ -1736,13 +1799,14 @@ export default function Editor() {
                 onDragOver={(e) => handleProjectDragOver(e, i)}
                 onDrop={handleProjectDrop}
                 onDragEnd={handleProjectDragEnd}
-                className={`group flex items-center justify-between px-4 py-3 border-b border-border cursor-pointer transition-colors ${dragProjectIndex === i ? "opacity-40" : ""} ${selectedId === p.id ? "bg-background border-l-2 border-l-primary" : "hover:bg-background/50"}`}
+                className={`group flex items-center justify-between px-4 py-3 border-b border-border cursor-pointer transition-colors ${dragProjectIndex === i ? "opacity-40" : p.hidden ? "opacity-50" : ""} ${selectedId === p.id ? "bg-background border-l-2 border-l-primary" : "hover:bg-background/50"}`}
                 onClick={() => {
                   if (isProjectDragging.current) return;
                   selectProject(p);
                 }}>
                 <div className="flex items-center gap-2 min-w-0">
                   <GripVertical size={12} className="text-muted-foreground/70 shrink-0" />
+                  {p.hidden && <EyeOff size={11} className="text-muted-foreground shrink-0" aria-label="Masqué" />}
                   <div className="min-w-0">
                   <div className="font-mono text-[10px] text-muted-foreground">{p.index}</div>
                   <div className="text-sm font-medium truncate">{displayLS(p.title)}</div>
