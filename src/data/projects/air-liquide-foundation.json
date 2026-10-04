@@ -32,6 +32,24 @@
   "coverImagePosition": 51,
   "content": [
     {
+      "type": "text",
+      "primary": {
+        "fr": "",
+        "en": ""
+      },
+      "secondary": {
+        "fr": "Projet réalisé pour Air Liquide. Visuels et vidéos utilisés avec autorisation, propriété d'Air Liquide.",
+        "en": "Project for Air Liquide. Images and videos used with permission, property of Air Liquide."
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "\"L'impact de la Fondation Air Liquide en images\" est une vidéo de deux minutes au format 16:9, commandée par la direction Développement durable du groupe. Elle présente l'action de la Fondation et les projets qu'elle soutient selon ses trois piliers : l'insertion professionnelle, la santé respiratoire et la solidarité. La vidéo n'a pas de voix off : le spectateur la suit en lisant, et chaque choix typographique en découle.",
+        "en": "\"The Impact of the Air Liquide Foundation in images\" is a two-minute 16:9 video commissioned by the Group's Sustainability department. It presents the Foundation's work and the projects it supports across its three pillars: professional integration, respiratory health and solidarity. The video has no voice-over, so viewers follow it by reading, and every typographic choice stems from that."
+      }
+    },
+    {
       "type": "youtube",
       "url": {
         "fr": "https://www.youtube.com/watch?v=MiO4SVVwVcs&pp=ygUfQWlyIExpcXVpZGUgRk9uZGF0aW9uIGVuIGltYWdlcw%3D%3D",
@@ -42,6 +60,111 @@
         "fr": "L’impact de la Fondation Air Liquide en images",
         "en": "The Air Liquide Foundation’s impact in images"
       }
+    },
+    {
+      "type": "columns",
+      "ratio": "2:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "Le projet s'est construit sur plusieurs semaines avec la Directrice de la communication Développement durable du Groupe et la Chargée de communication de la Fondation. Ensemble, nous avons défini la trame et le ton, puis choisi les projets à mettre en avant et les images à utiliser. J'ai ensuite assuré le montage sous Premiere Pro et l'animation sous After Effects.\n\nUne partie des séquences a été fournie gracieusement par les associations. Toutes ne tenaient pas une diffusion en 1080p, je les ai donc triées selon leur qualité. Certaines arrivaient déjà montées : il fallait y repérer les plans utiles, les extraire et les replacer dans notre propre découpage. J'ai ensuite recadré, zoomé et repris l'étalonnage de ces images pour qu'elles s'accordent avec le reste de la vidéo.",
+          "en": "The project took shape over several weeks alongside the Group Sustainability Communication Director and the Foundation's Communication Officer. Together, we defined the storyline and tone, then selected the projects to feature and the footage to use. I then handled the editing in Premiere Pro and the animation in After Effects.\n\nPart of the footage was kindly provided by the associations themselves. Not all of it could hold up in 1080p, so I sorted it by quality. Some clips arrived already edited: I had to identify the usable shots, extract them and fit them into our own cut. I then reframed, zoomed and regraded these images so they would match the rest of the video."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/air-liquide-foundation/FAL_Screenshot1.webp",
+            "en": "/projects/air-liquide-foundation/FAL_Screenshot1.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "L'identité visuelle suit la charte d'Air Liquide : Roboto et Roboto Slab pour le texte, le blanc et le bleu vibrant comme couleurs dominantes. La vidéo devait transmettre beaucoup d'informations en peu de temps, d'où un montage rapide, calé sur la musique. Pour que la lecture tienne à ce rythme, certains mots s'animent indépendamment du reste de la phrase : l'idée principale reste saisissable même quand le texte ne reste que quelques secondes à l'écran.",
+        "en": "The visual identity follows Air Liquide's brand guidelines: Roboto and Roboto Slab for text, with white and vibrant blue as the dominant colors. The video had to convey a lot of information in a short time, hence a fast-paced edit set to the music. To keep the text readable at that pace, some words are animated independently from the rest of the sentence, so the main idea comes across even when the text stays on screen for only a few seconds."
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:2",
+      "left": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/air-liquide-foundation/FAL_Transition.gif",
+            "en": "/projects/air-liquide-foundation/FAL_Transition.gif"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      },
+      "right": {
+        "kind": "text",
+        "primary": {
+          "fr": "Les transitions entre piliers servent à la fois de chapitrage et de relance de l'attention. Le titre du pilier apparaît sur un fond bleu et grossit en deux temps. Des copies tracées en filet blanc glissent ensuite vers le haut et vers le bas, puis reviennent se fondre derrière le texte plein. La coupure intervient une image avant leur disparition et ouvre directement sur la section consacrée au pilier. Cette rupture volontairement brusque marque le changement de partie au moment même où la vidéo change de sujet.\n\nChaque projet soutenu bénéficie d'un temps de focus. Un encadré blanc entre dans l'image et resserre le cadre vers le centre. Ce resserrement ralentit la lecture et concentre le regard sur les images qui montrent les effets directs du soutien de la Fondation. Le texte s'installe ensuite sur un rectangle bleu qui le souligne, pour isoler le message propre au projet.",
+          "en": "Transitions between pillars act both as chapter markers and as a way to recapture attention. The pillar's title appears on a blue background and scales up in two steps. Outlined white copies then slide upward and downward before sliding back behind the solid text. The cut happens one frame before they disappear, opening directly onto the section dedicated to that pillar. This deliberately abrupt break marks the change of chapter at the exact moment the video shifts topic.\n\nEach supported project gets its own focus moment. A white frame enters the image and narrows the view toward the center. This tightening slows the reading pace and draws the eye to the images showing the direct effects of the Foundation's support. The text then settles onto a blue rectangle that underlines it, isolating the message specific to each project."
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "2:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "La vidéo se termine sur une mosaïque d'images. Cette forme reprend celle de la Carte d'Identité du groupe, présentée ailleurs dans ce portfolio, et rattache la Fondation à l'univers visuel d'Air Liquide. Elle montre aussi que cette action repose sur de nombreuses personnes : collaborateurs d'Air Liquide, bénévoles engagés notamment par le programme Citizen at Work, représentants des associations et personnes accompagnées.",
+          "en": "The video ends with a mosaic of images. This format echoes the Group's Identity Card, featured elsewhere in this portfolio, and ties the Foundation to Air Liquide's visual universe. It also shows that this work relies on many people: Air Liquide employees, volunteers involved notably through the Citizen at Work program, association representatives and the people they support."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/air-liquide-foundation/FAL_Screenshot2.webp",
+            "en": "/projects/air-liquide-foundation/FAL_Screenshot2.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "La vidéo a d'abord été livrée en français et en anglais. Les équipes d'Air Liquide Espagne ont ensuite demandé une version espagnole, enrichie d'un focus sur un projet supplémentaire, pour communiquer sur l'impact de la Fondation dans leur pays, en interne comme en externe. Cette version a été traduite en anglais, puis en italien à la demande des équipes italiennes. Les textes traduits n'ont pas tous la même longueur, le français étant par exemple souvent plus long que l'anglais. Comme la durée ne devait pas changer, j'ai repris chaque animation pour que le texte tienne dans le même temps. Le projet compte au total cinq versions.\n\nLa vidéo a été diffusée sur YouTube et LinkedIn, où elle a suscité des réactions et des commentaires positifs, surtout sur LinkedIn. Elle a aussi été bien accueillie par les équipes avec qui je l'ai réalisée, ainsi que les équipes espagnoles et italiennes d'où les demandes de traductions.",
+        "en": "The video was first delivered in French and English. Air Liquide's teams in Spain then requested a Spanish version, with an additional project focus, to communicate on the Foundation's impact in their country, both internally and externally. This version was translated into English, then into Italian at the request of the Italian teams. Translated texts vary in length, French often running longer than English, for instance. Since the duration could not change, I reworked each animation so the text would fit within the same timing. The project includes five versions in total.\n\nThe video was shared on YouTube and LinkedIn, where it received positive reactions and comments, especially on LinkedIn. It was also well received by the teams I worked with, as well as by the Spanish and Italian teams, which led to the translation requests."
+      }
+    },
+    {
+      "type": "website",
+      "url": "https://www.linkedin.com/posts/airliquide_the-impact-of-the-foundation-air-liquide-activity-7429929992509321216-lrlH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAC2ZCbsBdco5M-7fShh-UDV6AwpEgqFQYPc",
+      "item": {
+        "src": {
+          "fr": "/projects/air-liquide-foundation/Capture d’écran 2026-10-04 à 17.22.34.png",
+          "en": "/projects/air-liquide-foundation/Capture d’écran 2026-10-04 à 17.22.34.png"
+        },
+        "alt": "",
+        "caption": {
+          "fr": "",
+          "en": ""
+        }
+      },
+      "position": "full"
     }
   ]
 }

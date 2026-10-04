@@ -1,6 +1,19 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useContext, createContext } from "react";
 import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, EyeOff, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil, Globe } from "lucide-react";
 import type { Project, ContentBlock, ColumnContent, MediaItem, LS, LocalizedText, LandingContent } from "../types";
+
+// ─── LANGUE GLOBALE DE L'ÉDITEUR ───────────────────────────────────────────
+// Un seul interrupteur FR/EN pilote tous les champs bilingues de la page,
+// pour éviter de devoir basculer chaque paragraphe/section individuellement.
+
+const EditLangContext = createContext<{ lang: "fr" | "en"; setLang: (l: "fr" | "en") => void }>({
+  lang: "fr",
+  setLang: () => {},
+});
+
+function useEditLang() {
+  return useContext(EditLangContext);
+}
 
 // ─── TYPES ÉDITEUR ─────────────────────────────────────────────────────────
 
@@ -222,7 +235,7 @@ function Textarea({ value, onChange, placeholder, rows = 3 }: {
 function BilingualTextarea({ label, value, onChange, rows = 3 }: {
   label: string; value: LS; onChange: (v: LS) => void; rows?: number;
 }) {
-  const [tab, setTab] = useState<"fr" | "en">("fr");
+  const { lang: tab } = useEditLang();
   const otherTab = tab === "fr" ? "en" : "fr";
   const editedRef = useRef({ fr: !!value.fr, en: !!value.en });
 
@@ -239,10 +252,7 @@ function BilingualTextarea({ label, value, onChange, rows = 3 }: {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
-        <Label>{label}</Label>
-        <LangTabs value={tab} onChange={setTab} />
-      </div>
+      <Label>{label}</Label>
       <Textarea
         value={value[tab]}
         onChange={handleChange}
@@ -256,7 +266,7 @@ function BilingualTextarea({ label, value, onChange, rows = 3 }: {
 function BilingualInput({ label, value, onChange, placeholder }: {
   label: string; value: LS; onChange: (v: LS) => void; placeholder?: string;
 }) {
-  const [tab, setTab] = useState<"fr" | "en">("fr");
+  const { lang: tab } = useEditLang();
   const otherTab = tab === "fr" ? "en" : "fr";
   const editedRef = useRef({ fr: !!value.fr, en: !!value.en });
 
@@ -273,10 +283,7 @@ function BilingualInput({ label, value, onChange, placeholder }: {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-1">
-        <Label>{label}</Label>
-        <LangTabs value={tab} onChange={setTab} />
-      </div>
+      <Label>{label}</Label>
       <Input
         value={value[tab]}
         onChange={handleChange}
@@ -467,7 +474,7 @@ function LocalizedImageUpload({ value, onChange, projectId, label = "Image", hin
   hintKind?: ImageHintKind;
   actions?: React.ReactNode;
 }) {
-  const [tab, setTab] = useState<"fr" | "en">("fr");
+  const { lang: tab } = useEditLang();
   const otherTab = tab === "fr" ? "en" : "fr";
   const editedRef = useRef({ fr: !!value.fr, en: !!value.en });
 
@@ -485,12 +492,112 @@ function LocalizedImageUpload({ value, onChange, projectId, label = "Image", hin
     <div>
       <div className="flex items-center justify-between mb-1">
         <Label>{label}</Label>
-        <div className="flex items-center gap-2">
-          <LangTabs value={tab} onChange={setTab} />
-          {actions}
-        </div>
+        {actions}
       </div>
       <ImageUpload key={tab} src={value[tab]} onChange={handleChange} projectId={projectId} label="" hintKind={hintKind} />
+    </div>
+  );
+}
+
+// ─── VIDEO UPLOAD ──────────────────────────────────────────────────────────
+
+function VideoUpload({ src, onChange, projectId, label = "Vidéo" }: {
+  src: string;
+  onChange: (path: string) => void;
+  projectId: string;
+  label?: string;
+}) {
+  const showLabel = label !== "";
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File) => {
+    if (!file.type.startsWith("video/")) {
+      setError("Le fichier doit être une vidéo");
+      return;
+    }
+    setUploading(true);
+    setError("");
+    try {
+      const path = await apiUpload(file, projectId);
+      onChange(path);
+    } catch (e) {
+      setError("Erreur upload");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      {showLabel && <Label>{label}</Label>}
+      <div
+        className="border border-dashed border-border bg-secondary flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-primary transition-colors"
+        style={{ minHeight: 80 }}
+        onClick={() => inputRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const file = e.dataTransfer.files[0];
+          if (file) handleFile(file);
+        }}
+      >
+        {src ? (
+          <div className="relative w-full">
+            <video key={src} src={src} controls className="w-full object-cover" style={{ maxHeight: 160 }} />
+            <div className="absolute inset-0 bg-foreground/0 hover:bg-foreground/20 transition-colors flex items-center justify-center pointer-events-none">
+              <span className="opacity-0 hover:opacity-100 font-mono text-[10px] text-white tracking-widest uppercase">Changer</span>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Video size={20} className="text-muted-foreground" />
+            <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+              {uploading ? "Upload…" : "Glisser ou cliquer"}
+            </span>
+          </>
+        )}
+      </div>
+      {error && <p className="font-mono text-[10px] text-red-500 mt-1">{error}</p>}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="video/*"
+        className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+      />
+      <div className="mt-1">
+        <Input value={src} onChange={onChange} placeholder="Ou coller une URL…" />
+      </div>
+    </div>
+  );
+}
+
+function LocalizedVideoUpload({ value, onChange, projectId, label = "Vidéo" }: {
+  value: LS;
+  onChange: (v: LS) => void;
+  projectId: string;
+  label?: string;
+}) {
+  const { lang: tab } = useEditLang();
+  const otherTab = tab === "fr" ? "en" : "fr";
+  const editedRef = useRef({ fr: !!value.fr, en: !!value.en });
+
+  const handleChange = (nextValue: string) => {
+    editedRef.current[tab] = true;
+    const shouldMirror = !editedRef.current[otherTab];
+    onChange({
+      ...value,
+      [tab]: nextValue,
+      ...(shouldMirror ? { [otherTab]: nextValue } : {}),
+    });
+  };
+
+  return (
+    <div>
+      <Label>{label}</Label>
+      <VideoUpload key={tab} src={value[tab]} onChange={handleChange} projectId={projectId} label="" />
     </div>
   );
 }
@@ -636,7 +743,7 @@ function ColumnEditor({ value, onChange, projectId }: {
       )}
       {value.kind === "video" && (
         <div className="space-y-2">
-          <BilingualInput label="URL vidéo" value={toLS(value.item.src)} onChange={(src) => onChange({ ...value, item: { ...value.item, src } })} placeholder="https://…" />
+          <LocalizedVideoUpload label="Vidéo" value={toLS(value.item.src)} onChange={(src) => onChange({ ...value, item: { ...value.item, src } })} projectId={projectId} />
           <BilingualInput label="Légende (optionnel)" value={value.item.caption ?? emptyLS()} onChange={(caption) => onChange({ ...value, item: { ...value.item, caption } })} />
         </div>
       )}
@@ -728,7 +835,7 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
 
           {block.type === "video" && (
             <>
-              <BilingualInput label="URL vidéo" value={toLS(block.item.src)} onChange={(src) => onChange({ ...block, item: { ...block.item, src } })} placeholder="https://…" />
+              <LocalizedVideoUpload label="Vidéo" value={toLS(block.item.src)} onChange={(src) => onChange({ ...block, item: { ...block.item, src } })} projectId={projectId} />
               <BilingualInput label="Légende (optionnel)" value={block.item.caption ?? emptyLS()} onChange={(caption) => onChange({ ...block, item: { ...block.item, caption } })} />
               <PositionSelect value={block.position} onChange={(position) => onChange({ ...block, position })} />
             </>
@@ -927,9 +1034,9 @@ function MetaPanel({
   onRenameTagEverywhere: (target: LS, next: LS) => void;
   onDeleteTagEverywhere: (target: LS) => void;
 }) {
-  const [titleLang, setTitleLang] = useState<"fr" | "en">("fr");
-  const [categoryLang, setCategoryLang] = useState<"fr" | "en">("fr");
-  const [tagsLang, setTagsLang] = useState<"fr" | "en">("fr");
+  const { lang: titleLang } = useEditLang();
+  const categoryLang = titleLang;
+  const tagsLang = titleLang;
   const [tagInput, setTagInput] = useState("");
 
   const otherTitleLang = titleLang === "fr" ? "en" : "fr";
@@ -1023,10 +1130,7 @@ function MetaPanel({
   return (
     <div className="space-y-5">
       <div>
-        <div className="flex items-center justify-between mb-1">
-          <Label>Titre</Label>
-          <LangTabs value={titleLang} onChange={setTitleLang} />
-        </div>
+        <Label>Titre</Label>
         <Input value={draft.title[titleLang]} onChange={updateTitle} placeholder={titleLang === "fr" ? "Titre du projet" : "Project title"} />
       </div>
 
@@ -1060,10 +1164,7 @@ function MetaPanel({
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-1">
-          <Label>Categorie</Label>
-          <LangTabs value={categoryLang} onChange={setCategoryLang} />
-        </div>
+        <Label>Categorie</Label>
         <Input value={draft.category[categoryLang]} onChange={updateCategory} placeholder={categoryLang === "fr" ? "Categorie francaise" : "English category"} />
         <div className="flex flex-wrap gap-1 mt-2">
           {visibleCategorySuggestions.map((c) => (
@@ -1089,10 +1190,7 @@ function MetaPanel({
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-1">
-          <Label>Tags</Label>
-          <LangTabs value={tagsLang} onChange={setTagsLang} />
-        </div>
+        <Label>Tags</Label>
         <div className="space-y-1.5 mb-2">
           {draft.tags.map((tag, i) => (
             <div key={`tag-row-${i}`} className="flex items-center gap-2">
@@ -1170,7 +1268,7 @@ function LandingPanel({ draft, onChange }: {
   draft: LandingContent;
   onChange: (d: LandingContent) => void;
 }) {
-  const [lang, setLang] = useState<"fr" | "en">("fr");
+  const { lang } = useEditLang();
   const locale = draft[lang];
   const otherLang = lang === "fr" ? "en" : "fr";
   const otherLocale = draft[otherLang];
@@ -1235,7 +1333,6 @@ function LandingPanel({ draft, onChange }: {
     <div className="max-w-4xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground">Contenu Landing</span>
-        <LangTabs value={lang} onChange={setLang} size="lg" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -1446,6 +1543,7 @@ function LandingPanel({ draft, onChange }: {
 // ─── ÉDITEUR PRINCIPAL ─────────────────────────────────────────────────────
 
 export default function Editor() {
+  const [editLang, setEditLang] = useState<"fr" | "en">("fr");
   const [mode, setMode] = useState<EditorMode>(() => {
     const saved = sessionStorage.getItem("editor-mode");
     return saved === "landing" || saved === "project" ? saved : "project";
@@ -1746,6 +1844,7 @@ export default function Editor() {
   const STATUS_LABELS = { idle: "", saving: "Sauvegarde…", saved: "✓ Sauvegardé", error: "Erreur" };
 
   return (
+    <EditLangContext.Provider value={{ lang: editLang, setLang: setEditLang }}>
     <div className="flex h-screen bg-background text-foreground overflow-hidden" style={{ fontFamily: "var(--font-body)" }}>
       <style>{`
         .font-mono { font-family: var(--font-mono); }
@@ -1845,6 +1944,7 @@ export default function Editor() {
               <span className="font-display font-black uppercase tracking-tight text-lg">Landing page</span>
             </div>
             <div className="flex items-center gap-3">
+              <LangTabs value={editLang} onChange={setEditLang} size="lg" />
               {status !== "idle" && (
                 <span className={`font-mono text-[10px] tracking-widest uppercase ${status === "saved" ? "text-green-500" : status === "error" ? "text-red-500" : "text-muted-foreground"}`}>
                   {STATUS_LABELS[status]}
@@ -1880,6 +1980,7 @@ export default function Editor() {
               <span className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">{draft.year}</span>
             </div>
             <div className="flex items-center gap-3">
+              <LangTabs value={editLang} onChange={setEditLang} size="lg" />
               {status !== "idle" && (
                 <span className={`font-mono text-[10px] tracking-widest uppercase ${status === "saved" ? "text-green-500" : status === "error" ? "text-red-500" : "text-muted-foreground"}`}>
                   {STATUS_LABELS[status]}
@@ -1974,5 +2075,6 @@ export default function Editor() {
         </div>
       )}
     </div>
+    </EditLangContext.Provider>
   );
 }

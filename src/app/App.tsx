@@ -199,7 +199,7 @@ function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: Media
   const isFluid = aspectRatio === "unset";
   return (
     <figure className="m-0">
-      <button onClick={() => onOpen(src, item.alt)} className="block w-full overflow-hidden bg-muted group relative" style={{ aspectRatio, maxHeight: isFluid ? "70vh" : undefined }} aria-label={item.alt}>
+      <button onClick={() => onOpen(src, item.alt)} className="block w-full overflow-hidden bg-background group relative" style={{ aspectRatio, maxHeight: isFluid ? "70vh" : undefined }} aria-label={item.alt}>
         <img src={src} alt={item.alt} className={`w-full h-full transition-transform duration-500 group-hover:scale-[1.025] ${isFluid ? "object-contain" : "object-cover"}`} />
         <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300 flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 bg-background flex items-center justify-center">
@@ -213,10 +213,18 @@ function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: Media
 }
 
 function VideoBlock({ item, lang, aspectRatio = "16 / 9" }: { item: VideoItem; lang: Lang; aspectRatio?: string }) {
+  const src = t(item.src, lang);
+  const [ratio, setRatio] = useState<number | null>(null);
+
+  const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const v = e.currentTarget;
+    if (v.videoWidth && v.videoHeight) setRatio(v.videoWidth / v.videoHeight);
+  };
+
   return (
     <figure className="m-0 max-w-xl mx-auto">
-      <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio }}>
-        <video key={t(item.src, lang)} src={t(item.src, lang)} poster={item.poster} controls className="w-full h-full object-cover" />
+      <div className="w-full overflow-hidden bg-background flex items-center justify-center" style={{ aspectRatio: ratio ?? aspectRatio, maxHeight: "80vh" }}>
+        <video key={src} src={src} poster={item.poster} controls onLoadedMetadata={handleLoadedMetadata} className="w-full h-full object-contain" />
       </div>
       {item.caption && <figcaption className="mt-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground">{t(item.caption, lang)}</figcaption>}
     </figure>
@@ -239,7 +247,7 @@ function WebsiteBlock({ url, item, lang, aspectRatio = "16 / 10" }: { url: strin
           <span className="font-mono text-[10px] tracking-wider truncate flex-1">{url}</span>
           <AnimatedArrow hovered={hovered} size={12} />
         </div>
-        <div className="w-full overflow-hidden bg-muted" style={{ aspectRatio }}>
+        <div className="w-full overflow-hidden bg-background" style={{ aspectRatio }}>
           <motion.img
             src={src} alt={item.alt}
             className="w-full h-full object-cover object-top"
@@ -603,7 +611,7 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang, centered, regis
           src={project.coverImage} alt={projectTitle} px={30} hovered={isActive}
           aspectRatio="16 / 7"
           objectPosition={`50% ${project.coverImagePosition ?? 50}%`}
-          className="w-full bg-muted mb-5"
+          className="w-full bg-background mb-5"
         />
         <div className="flex items-start justify-between gap-8">
           <div className="flex flex-col gap-2 min-w-0">
@@ -1233,7 +1241,7 @@ function ParallaxCover({ src, alt, position, onOpen }: { src: string; alt: strin
       src={src} alt={alt} px={PARALLAX_PX}
       aspectRatio="16 / 7"
       objectPosition={`50% ${position ?? 50}%`}
-      className="w-full bg-muted cursor-pointer group"
+      className="w-full bg-background cursor-pointer group"
       onClick={onOpen}
     >
       <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300 flex items-center justify-center">

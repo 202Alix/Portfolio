@@ -93,10 +93,27 @@
       }
     },
     {
-      "type": "text",
-      "primary": {
-        "fr": "La vidéo a reçu un accueil très positif. Elle a été présentée lors de l'Assemblée Générale d'Air Liquide, l'événement le plus important de l'année pour l'entreprise, accueillant plus de 3 000 actionnaires au Palais des Congrès. La vidéo s'est jouée juste avant les prises de parole du Directeur Général et du Président du Conseil d'Administration, soulignant son rôle central dans la communication du groupe.",
-        "en": "The video was very well received. It premiered at Air Liquide's General Assembly, the company's most significant annual event, with over 3,000 shareholders at the Palais des Congrès. The video played just before remarks from the CEO and Board President, underscoring its central role in the company's communications strategy."
+      "type": "columns",
+      "ratio": "2:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "La vidéo a reçu un accueil très positif. Elle a été présentée lors de l'Assemblée Générale d'Air Liquide, l'événement le plus important de l'année pour l'entreprise, accueillant plus de 3 000 actionnaires au Palais des Congrès. La vidéo s'est jouée juste avant les prises de parole du Directeur Général et du Président du Conseil d'Administration, soulignant son rôle central dans la communication du groupe.",
+          "en": "The video was very well received. It premiered at Air Liquide's General Assembly, the company's most significant annual event, with over 3,000 shareholders at the Palais des Congrès. The video played just before remarks from the CEO and Board President, underscoring its central role in the company's communications strategy."
+        }
+      },
+      "right": {
+        "kind": "video",
+        "item": {
+          "src": {
+            "fr": "/projects/id-card/20260505_145506_1.mp4",
+            "en": "/projects/id-card/20260505_145506_1.mp4"
+          },
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
       }
     }
   ]

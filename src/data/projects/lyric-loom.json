@@ -41,5 +41,244 @@
     "en": "LyricLoom is the only web app that covers the entire songwriting process, from the initial idea to the final version."
   },
   "coverImage": "/projects/lyricloom/LyricLoom_Thumbnail.webp",
-  "content": []
+  "content": [
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Les auteurs-compositeurs indépendants écrivent partout et perdent une partie de leurs idées en chemin. Le problème n'est pas qu'ils manquent d'outils, c'est qu'ils en ont trop, et qu'aucun ne parle le langage de la chanson. Pour mon projet de fin d'études du Mastère Direction Artistique Digitale, j'ai conçu LyricLoom autour de ce constat : une application web qui tient tout le cycle d'écriture au même endroit, capturer, organiser, composer, là où les autres n'en couvrent qu'un bout. Je l'ai mené seul sur deux ans, cadré par quatre sprints semestriels, chacun clôturé par des livrables et un oral.",
+        "en": "Independent songwriters write everywhere and lose some of their ideas along the way. The problem isn't a lack of tools but too many of them, none of which speak the language of songwriting. For my final project in the Master's in Digital Art Direction, I designed LyricLoom around this observation: a web app that holds the entire writing cycle in one place (capturing, organizing, composing), where others only cover part of it. I led the project alone over two years, structured by four semester-long sprints, each ending with deliverables and an oral presentation."
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "2:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "J'ai commencé par une enquête auprès de 76 auteurs-compositeurs et quatre entretiens. Deux choses en sont ressorties : une écriture mobile et dispersée, qui place l'enjeu dès la capture, et un refus de l'IA dans l'écriture exprimé par 68,4 % d'entre eux. De là, un parti pris gardé tout du long, pas d'IA générative dans l'acte d'écrire, moins par choix technique que pour répondre à cette inquiétude, à rebours d'un marché qui mise tout sur l'IA.\n\nL'identité part d'une image, le carnet du songwriter. J'ai voulu éloigner le produit de l'esthétique sombre et technique des logiciels de production, pour offrir un espace calme où l'on ose écrire. D'où mes choix de couleur : elle reste minoritaire, parce qu'une personne venue écrire n'a pas besoin d'être distraite. L'interface est surtout crème et charbon, le crème plutôt qu'un blanc pur pour évoquer le papier, et mes trois couleurs de marque, vert, bleu et rose, ne servent qu'à guider l'œil sur le contenu. L'ambre est arrivé plus tard, après les tests : il manquait un repère pour l'action principale de chaque écran, je l'ai donc réservé à ce seul usage.",
+          "en": "I started with a survey of 76 songwriters and four interviews. Two findings stood out: writing that happens on the go and in scattered places, which makes capture the critical stage, and a rejection of AI in the writing process expressed by 68.4% of respondents. This led to a stance I kept throughout: no generative AI in the act of writing. It was less a technical decision than a response to this concern, going against a market that is betting everything on AI.\n\nThe identity starts from one image: the songwriter's notebook. I wanted to move the product away from the dark, technical look of music production software and offer a calm space where people feel free to write. This shaped my color choices. Color stays in the minority, because someone who comes to write doesn't need distractions. The interface is mostly cream and charcoal, with cream rather than pure white to evoke paper, and my three brand colors (green, blue and pink) only serve to guide the eye through the content. Amber came later, after testing: each screen lacked a cue for its main action, so I reserved amber for that single purpose."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/lyric-loom/Insta3.png",
+            "en": "/projects/lyric-loom/Insta3.png"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:2",
+      "left": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/lyric-loom/Logo3.png",
+            "en": "/projects/lyric-loom/Logo3.png"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      },
+      "right": {
+        "kind": "text",
+        "primary": {
+          "fr": "Pour le logo : deux croches liées, en vert et bleu francs, à l'opposé du violet sombre que la plupart des concurrents emploient. J'ai posé en parallèle un système de motifs en cinq registres, pour décliner l'univers sans le répéter, trois familles typographiques avec chacune son rôle, et une accessibilité intégrée dès le départ, parce qu'un outil d'écriture doit rester lisible et utilisable par tous.",
+          "en": "For the logo: two beamed eighth notes in bold green and blue, the opposite of the dark purple most competitors use. Alongside it, I set up a pattern system across five registers, to extend the universe without repeating it, three typeface families each with its own role, and accessibility built in from the start, because a writing tool has to remain readable and usable by everyone."
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "2:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "J'ai fait vivre cet univers au-delà de l'interface, pour qu'il existe aussi là où la cible passe son temps : des visuels pour les réseaux sociaux et une vidéo explainer en motion design, qui donne à voir le produit en mouvement plutôt qu'en captures figées.",
+          "en": "I brought this universe to life beyond the interface, so it would also exist where the target audience spends its time: social media visuals and a motion design explainer video, which shows the product in motion rather than in static screenshots."
+        }
+      },
+      "right": {
+        "kind": "video",
+        "item": {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoomMotionAdvert.mp4",
+            "en": "/projects/lyric-loom/LyricLoomMotionAdvert.mp4"
+          },
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Côté produit, je suis passé des wireframes aux maquettes, puis à un prototype interactif du trajet complet, du site à la composition. L'écran de capture est pensé pour la vitesse, parce qu'une idée de chanson dure quelques secondes et que la plupart des auteurs notent sur leur téléphone. Le canvas d'organisation est libre, sans arborescence imposée, parce qu'une chanson naît par morceaux, dans le désordre. J'ai testé le prototype avec de vrais utilisateurs, et ces tests ont fait émerger un frein, le passage de la capture à la composition, que j'ai corrigé par un tutoriel d'accueil et deux ajustements d'écran.",
+        "en": "On the product side, I moved from wireframes to mockups, then to an interactive prototype of the complete journey, from the website to composition. The capture screen is designed for speed, because a song idea lasts only a few seconds and most songwriters jot things down on their phones. The organization canvas is freeform, with no imposed hierarchy, because a song comes together in pieces, out of order. I tested the prototype with real users, and these tests revealed a sticking point, the move from capture to composition, which I addressed with an onboarding tutorial and two screen adjustments."
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/lyric-loom/DesktopWeb.png",
+            "en": "/projects/lyric-loom/DesktopWeb.png"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/lyric-loom/DesktopCanva.png",
+            "en": "/projects/lyric-loom/DesktopCanva.png"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "J'ai enfin conçu et mis en page le dossier final, un document imprimable de 120 pages, soit 60 recto-verso. J'y ai prolongé l'univers du carnet, fond crème, trame de points et motifs en rappel, pour que le support parle le même langage que le produit. Il regroupe l'ensemble du projet : le contexte et le marché, la problématique et les cibles, la solution, l'identité et le design, le produit, et le modèle économique.\n\nÀ l'issue de ces deux ans, LyricLoom m'a valu mon diplôme, avec le coup de cœur du jury pour la qualité du travail réalisé.",
+          "en": "Finally, I designed and laid out the final report, a 120-page printable document, or 60 double-sided sheets. I carried the notebook universe into it, with a cream background, a dot grid and recurring patterns, so the document would speak the same language as the product. It brings together the whole project: context and market, problem statement and target audiences, the solution, identity and design, the product, and the business model.\n\nAfter these two years, LyricLoom earned me my degree, along with the jury's special commendation for the quality of the work."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/lyric-loom/MockUp_LyricLoom_1.png",
+            "en": "/projects/lyric-loom/MockUp_LyricLoom_1.png"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "masonry",
+      "items": [
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/MockUp_LyricLoom_2.webp",
+            "en": "/projects/lyric-loom/MockUp_LyricLoom_2.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_ColorSlide.webp",
+            "en": "/projects/lyric-loom/LyricLoom_ColorSlide.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_Persona1.webp",
+            "en": "/projects/lyric-loom/LyricLoom_Persona1.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_Fonts.webp",
+            "en": "/projects/lyric-loom/LyricLoom_Fonts.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_Library.webp",
+            "en": "/projects/lyric-loom/LyricLoom_Library.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_WritingPage.webp",
+            "en": "/projects/lyric-loom/LyricLoom_WritingPage.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_LogIn.webp",
+            "en": "/projects/lyric-loom/LyricLoom_LogIn.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/lyric-loom/LyricLoom_YTThumbnail.png",
+            "en": "/projects/lyric-loom/LyricLoom_YTThumbnail.png"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      ]
+    }
+  ]
 }

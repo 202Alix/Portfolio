@@ -155,7 +155,7 @@ L'upload fonctionne uniquement en dev local (le serveur Vite intercepte les requ
 
 ## Bilingue (FR / EN)
 
-Tous les champs de texte affichant du contenu au visiteur ont deux onglets : **FR** et **EN**. Basculer entre les deux pour saisir les deux versions.
+Tous les champs de texte affichant du contenu au visiteur existent en deux versions : **FR** et **EN**. Un seul interrupteur FR/EN, en haut de l'éditeur (à côté de "Aperçu" / "Enregistrer"), pilote toute la page : il bascule en même temps le titre, les tags, tous les blocs de contenu et les images/vidéos, pour éviter de devoir changer de langue bloc par bloc.
 
 Les champs **Titre** et **Tags** suivent aussi ce fonctionnement bilingue.
 
