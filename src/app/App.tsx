@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionTemplate, useMotionValueEvent, useInView, useReducedMotion, animate } from "motion/react";
-import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu, Globe, Maximize2, ChevronsLeftRight } from "lucide-react";
+import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu, Globe, Maximize2, ChevronLeft, ChevronRight } from "lucide-react";
 import Logo from "../imports/Logo";
 import { useIsMobile } from "./components/ui/use-mobile";
 import { projects as loadedProjects } from "../data/index";
@@ -276,6 +276,9 @@ function CompareBlock({ item, lang }: { item: CompareItem; lang: Lang }) {
   const left = useTransform(pos, (v) => `${v}%`);
   const [ariaPos, setAriaPos] = useState(50);
   const [dragging, setDragging] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const highlighted = hovered || focused || dragging;
   const active = useRef(false);
   const interacted = useRef(false);
   const hint = useRef<ReturnType<typeof animate> | null>(null);
@@ -354,6 +357,10 @@ function CompareBlock({ item, lang }: { item: CompareItem; lang: Lang }) {
           onPointerUp={onPointerUp}
           onPointerCancel={onPointerCancel}
           onKeyDown={onKeyDown}
+          onPointerEnter={(e) => { if (e.pointerType === "mouse") setHovered(true); }}
+          onPointerLeave={() => setHovered(false)}
+          onFocus={(e) => setFocused(e.currentTarget.matches(":focus-visible"))}
+          onBlur={() => setFocused(false)}
           className="relative max-w-full overflow-hidden select-none cursor-ew-resize outline-none focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary"
           style={{ touchAction: "pan-y", WebkitUserSelect: "none" }}
         >
@@ -361,12 +368,25 @@ function CompareBlock({ item, lang }: { item: CompareItem; lang: Lang }) {
           <motion.img src={item.before} alt="" aria-hidden draggable={false} className="absolute inset-0 w-full h-full object-cover" style={{ clipPath }} />
           <span className={`${labelClass} left-3`}>{labels.before}</span>
           <span className={`${labelClass} right-3`}>{labels.after}</span>
-          <motion.div className="absolute top-0 bottom-0 w-px bg-white pointer-events-none" style={{ left, x: "-50%", boxShadow: "0 0 0 0.5px rgba(0,0,0,0.25)" }}>
+          <motion.div className="absolute top-0 bottom-0 w-px bg-background pointer-events-none" style={{ left, x: "-50%" }}>
+            <motion.div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, #0246F3, #4A7DF1)" }}
+              animate={{ opacity: highlighted ? 1 : 0 }} transition={{ duration: 0.2 }} />
+            {/* Mêmes états que les pills : repos → survol (bordure dégradée) → actif (fond dégradé).
+                Calques superposés dont seule l'opacité varie, pour que la case ne soit jamais transparente pendant la transition. */}
             <div
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white transition-colors duration-200"
-              style={{ color: dragging ? "#0246F3" : "#000", boxShadow: "0 1px 6px rgba(0,0,0,0.25)" }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-background border border-border transition-colors duration-200"
+              style={{ color: dragging ? "#fff" : highlighted ? "#0246F3" : "var(--foreground)" }}
             >
-              <ChevronsLeftRight size={15} />
+              <motion.span className="absolute -inset-px" style={gradientBorder(true)}
+                animate={{ opacity: highlighted && !dragging ? 1 : 0 }} transition={{ duration: 0.2 }} />
+              <motion.span className="absolute -inset-px" style={{ background: GRADIENT }}
+                animate={{ opacity: dragging ? 1 : 0 }} transition={{ duration: 0.2 }} />
+              <motion.span animate={{ x: dragging ? -3 : highlighted ? -2 : 0 }} transition={{ duration: 0.28, ease: EASE }} className="relative flex">
+                <ChevronLeft size={13} />
+              </motion.span>
+              <motion.span animate={{ x: dragging ? 3 : highlighted ? 2 : 0 }} transition={{ duration: 0.28, ease: EASE }} className="relative flex -ml-1">
+                <ChevronRight size={13} />
+              </motion.span>
             </div>
           </motion.div>
         </div>
@@ -1222,6 +1242,39 @@ function SnakeGame({ onEat, onGameOver, cellSize = 40 }: { onEat: () => void; on
   );
 }
 
+// Deux ondes successives (claire puis foncée), puis une pause avant le cycle suivant
+const PULSE_WAVES = [
+  { color: "#4A7DF1", delay: 0 },
+  { color: "#0246F3", delay: 0.5 },
+];
+const PULSE_DURATION = 1;
+const PULSE_PAUSE = 0.5;
+
+function AvailabilityDot() {
+  const reduceMotion = useReducedMotion();
+  return (
+    <span className="relative flex w-1.5 h-1.5 shrink-0 mt-[6px]">
+      {!reduceMotion && PULSE_WAVES.map(({ color, delay }) => (
+        <motion.span
+          key={color}
+          className="absolute inset-0 rounded-full"
+          style={{ backgroundColor: color }}
+          initial={{ scale: 1, opacity: 0 }}
+          animate={{ scale: [1, 3.2], opacity: [0.7, 0] }}
+          transition={{
+            duration: PULSE_DURATION,
+            delay,
+            ease: "easeOut",
+            repeat: Infinity,
+            repeatDelay: PULSE_PAUSE,
+          }}
+        />
+      ))}
+      <span className="relative w-1.5 h-1.5 rounded-full bg-[#0246F3]" />
+    </span>
+  );
+}
+
 function Hero({ lang }: { lang: Lang }) {
   const ui = UI[lang];
   const sectionRef = useRef<HTMLElement>(null);
@@ -1299,10 +1352,7 @@ function Hero({ lang }: { lang: Lang }) {
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-mono text-[11px] tracking-[0.28em] text-muted-foreground">
           {ui.availability ? (
             <span className="inline-flex items-start gap-2.5">
-              <span className="relative flex w-1.5 h-1.5 shrink-0 mt-[6px]">
-                <span className="absolute inset-0 rounded-full bg-[#0246F3] opacity-60 motion-safe:animate-ping" />
-                <span className="relative w-1.5 h-1.5 rounded-full bg-[#0246F3]" />
-              </span>
+              <AvailabilityDot />
               <span>{ui.availabilityDetail ? `${ui.availability} · ${ui.availabilityDetail}` : ui.availability}</span>
             </span>
           ) : ui.tagline}
