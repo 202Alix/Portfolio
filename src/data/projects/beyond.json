@@ -1,0 +1,155 @@
+{
+  "id": "beyond",
+  "index": "01",
+  "title": {
+    "fr": "BEYOND",
+    "en": "BEYOND"
+  },
+  "year": "2026",
+  "category": {
+    "fr": "Identite visuelle",
+    "en": "Visual Identity"
+  },
+  "tags": [
+    {
+      "fr": "Branding",
+      "en": "Branding"
+    },
+    {
+      "fr": "Design graphique",
+      "en": "Graphic design"
+    },
+    {
+      "fr": "Direction artistique",
+      "en": "Art direction"
+    },
+    {
+      "fr": "Gestion de projet",
+      "en": "Project management"
+    }
+  ],
+  "excerpt": {
+    "fr": "Identité visuelle du plan stratégique d'Air Liquide de 2026 à 2031.",
+    "en": "Visual identity of Air Liquide's strategic plan from 2026 to 2031."
+  },
+  "coverImage": "/projects/beyond/BeyondThumbnail.webp",
+  "content": [
+    {
+      "type": "text",
+      "primary": {
+        "fr": "",
+        "en": ""
+      },
+      "secondary": {
+        "fr": "Projet réalisé pour Air Liquide. Visuels et vidéos utilisés avec autorisation, propriété d'Air Liquide.\nEn collaboration avec l'agence Babel.",
+        "en": "Project for Air Liquide. Images and videos used with permission, property of Air Liquide.\nIn collaboration with agency Babel."
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "compare",
+        "item": {
+          "before": "/projects/beyond/BeyondGeneric_Before.webp",
+          "after": "/projects/beyond/BeyondGeneric_After.webp",
+          "alt": "",
+          "caption": {
+            "fr": "Crédits : Adrien Daste",
+            "en": "Credits: Adrien Daste"
+          }
+        }
+      },
+      "right": {
+        "kind": "compare",
+        "item": {
+          "before": "/projects/beyond/BeyondListenCare_Before.webp",
+          "after": "/projects/beyond/BeyondListenCare_After.webp",
+          "alt": "",
+          "caption": {
+            "fr": "Crédits : Getty Images / Nikola Damjanac",
+            "en": "Credits: Getty Images/Nikola Damjanac"
+          }
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "compare",
+        "item": {
+          "before": "/projects/beyond/BeyondPerform_Before.webp",
+          "after": "/projects/beyond/BeyondPerform_After.webp",
+          "alt": "",
+          "caption": {
+            "fr": "Crédits : iStock / Organic Media",
+            "en": "Credits: iStock/Organic Media"
+          }
+        }
+      },
+      "right": {
+        "kind": "compare",
+        "item": {
+          "before": "/projects/beyond/BeyondGrow_Before.webp",
+          "after": "/projects/beyond/BeyondGrow_After.webp",
+          "alt": "",
+          "caption": {
+            "fr": "Crédits : Getty Images / Kilito Chan. Visuel retouché à l'aide d'IA.",
+            "en": "Credits: Getty Images/Kilito Chan. Visual altered with the help of AI.."
+          }
+        }
+      }
+    },
+    {
+      "type": "youtube",
+      "url": {
+        "fr": "https://www.youtube.com/watch?v=ZdVFhvHvcms&pp=ygUVYWlyIGxpcXVpZGUgbWFuaWZlc3Rv",
+        "en": "https://www.youtube.com/watch?v=ZdVFhvHvcms&pp=ygUVYWlyIGxpcXVpZGUgbWFuaWZlc3Rv"
+      },
+      "position": "full",
+      "caption": {
+        "fr": "Video \"Air Liquide Manifesto: what drives us forward\"",
+        "en": "Video \"Air Liquide Manifesto: what drives us forward\""
+      }
+    },
+    {
+      "type": "masonry",
+      "items": [
+        {
+          "src": {
+            "fr": "/projects/beyond/BeyondTownhall.webp",
+            "en": "/projects/beyond/BeyondTownhall.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/beyond/SchemeTriangle_wLargerTexts_EN_RGB.jpg",
+            "en": "/projects/beyond/SchemeTriangle_wLargerTexts_EN_RGB.jpg"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/beyond/BeyondKakemonos.webp",
+            "en": ""
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      ]
+    }
+  ]
+}
