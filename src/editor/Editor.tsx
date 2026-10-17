@@ -1438,6 +1438,19 @@ function LandingPanel({ draft, onChange }: {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
+          <Label>Disponibilité</Label>
+          <Input value={locale.availability ?? ""} onChange={(v) => updateField("availability", v)} placeholder="Disponible" />
+          <p className="font-mono text-[10px] text-muted-foreground mt-1">Remplace la tagline sous le nom. Laisser vide pour réafficher la tagline.</p>
+        </div>
+        <div>
+          <Label>Disponibilité — détail</Label>
+          <Input value={locale.availabilityDetail ?? ""} onChange={(v) => updateField("availabilityDetail", v)} placeholder="CDI · Nov. 2026" />
+          <p className="font-mono text-[10px] text-muted-foreground mt-1">Affiché après « · » sur la même ligne.</p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
           <Label>Lien CV</Label>
           <Input value={locale.cv ?? ""} onChange={(v) => updateField("cv", v)} placeholder="Télécharger le CV" />
           <p className="font-mono text-[10px] text-muted-foreground mt-1">Le lien n'apparaît dans Contact que si un PDF est défini.</p>

@@ -1297,7 +1297,15 @@ function Hero({ lang }: { lang: Lang }) {
         </div>
         <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.55, ease: EASE, delay: 0.48 }} style={{ originX: "0%" }} className="h-px bg-foreground mt-6 md:mt-8 mb-5 md:mb-7" />
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-mono text-[11px] tracking-[0.28em] text-muted-foreground">
-          {ui.tagline}
+          {ui.availability ? (
+            <span className="inline-flex items-start gap-2.5">
+              <span className="relative flex w-1.5 h-1.5 shrink-0 mt-[6px]">
+                <span className="absolute inset-0 rounded-full bg-[#0246F3] opacity-60 motion-safe:animate-ping" />
+                <span className="relative w-1.5 h-1.5 rounded-full bg-[#0246F3]" />
+              </span>
+              <span>{ui.availabilityDetail ? `${ui.availability} · ${ui.availabilityDetail}` : ui.availability}</span>
+            </span>
+          ) : ui.tagline}
         </motion.p>
       </div>
 

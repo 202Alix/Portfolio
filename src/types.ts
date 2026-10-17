@@ -68,6 +68,8 @@ export interface LandingLocale {
   close: string;
   cv: string;
   cvFile: string;
+  availability: string;
+  availabilityDetail: string;
 }
 
 export interface ContactLink {
