@@ -1,8 +1,8 @@
 /// <reference types="vite/client" />
 
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
-import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu, Globe, Maximize2 } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useMotionTemplate, useMotionValueEvent, useInView, useReducedMotion, animate } from "motion/react";
+import { ArrowUpRight, ArrowDown, ArrowLeft, X, Sun, Moon, Menu, Globe, Maximize2, ChevronsLeftRight } from "lucide-react";
 import Logo from "../imports/Logo";
 import { useIsMobile } from "./components/ui/use-mobile";
 import { projects as loadedProjects } from "../data/index";
@@ -64,13 +64,15 @@ const UI = {
 
 type MediaItem = { src: LS; alt: string; caption?: LS };
 type VideoItem = { src: LS; poster?: string; caption?: LS };
+type CompareItem = { before: string; after: string; alt: string; caption?: LS };
 
 type ColumnContent =
   | { kind: "text"; primary: LS; align?: "left" | "right" }
   | { kind: "image"; item: MediaItem }
   | { kind: "video"; item: VideoItem }
   | { kind: "youtube"; url: LS; caption?: LS }
-  | { kind: "website"; url: string; item: MediaItem };
+  | { kind: "website"; url: string; item: MediaItem }
+  | { kind: "compare"; item: CompareItem };
 
 type ContentBlock =
   | { type: "text"; primary: LS; secondary?: LS; align?: "left" | "right" }
@@ -78,6 +80,7 @@ type ContentBlock =
   | { type: "video"; item: VideoItem; position: "left" | "right" | "full" }
   | { type: "youtube"; url: LS; caption?: LS; position: "left" | "right" | "full" }
   | { type: "website"; url: string; item: MediaItem; position: "left" | "right" | "full" }
+  | { type: "compare"; item: CompareItem; position: "left" | "right" | "full" }
   | { type: "columns"; left: ColumnContent; right: ColumnContent; ratio?: "1:1" | "1:2" | "2:1" }
   | { type: "masonry"; items: MediaItem[] };
 
@@ -194,6 +197,8 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
 
 // ─── MEDIA BLOCKS ──────────────────────────────────────────────────────────
 
+const CAPTION_CLASS = "mt-2 font-mono text-[10px] tracking-wider text-muted-foreground";
+
 function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: MediaItem; onOpen: (s: string, a: string) => void; lang: Lang; aspectRatio?: string }) {
   const src = t(item.src, lang);
   const isFluid = aspectRatio === "unset";
@@ -207,7 +212,7 @@ function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: Media
           </div>
         </div>
       </button>
-      {item.caption && <figcaption className="mt-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground">{t(item.caption, lang)}</figcaption>}
+      {item.caption && <figcaption className={CAPTION_CLASS}>{t(item.caption, lang)}</figcaption>}
     </figure>
   );
 }
@@ -226,7 +231,7 @@ function VideoBlock({ item, lang, aspectRatio = "16 / 9" }: { item: VideoItem; l
       <div className="w-full overflow-hidden bg-background flex items-center justify-center" style={{ aspectRatio: ratio ?? aspectRatio, maxHeight: "80vh" }}>
         <video key={src} src={src} poster={item.poster} controls onLoadedMetadata={handleLoadedMetadata} className="w-full h-full object-contain" />
       </div>
-      {item.caption && <figcaption className="mt-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground">{t(item.caption, lang)}</figcaption>}
+      {item.caption && <figcaption className={CAPTION_CLASS}>{t(item.caption, lang)}</figcaption>}
     </figure>
   );
 }
@@ -256,7 +261,117 @@ function WebsiteBlock({ url, item, lang, aspectRatio = "16 / 10" }: { url: strin
           />
         </div>
       </a>
-      {item.caption && <figcaption className="mt-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground">{t(item.caption, lang)}</figcaption>}
+      {item.caption && <figcaption className={CAPTION_CLASS}>{t(item.caption, lang)}</figcaption>}
+    </figure>
+  );
+}
+
+const COMPARE_LABELS = { fr: { before: "Avant", after: "Après" }, en: { before: "Before", after: "After" } } as const;
+
+function CompareBlock({ item, lang }: { item: CompareItem; lang: Lang }) {
+  const labels = COMPARE_LABELS[lang];
+  const ref = useRef<HTMLDivElement>(null);
+  const pos = useMotionValue(50);
+  const clipPath = useMotionTemplate`inset(0 ${useTransform(pos, (v) => 100 - v)}% 0 0)`;
+  const left = useTransform(pos, (v) => `${v}%`);
+  const [ariaPos, setAriaPos] = useState(50);
+  const [dragging, setDragging] = useState(false);
+  const active = useRef(false);
+  const interacted = useRef(false);
+  const hint = useRef<ReturnType<typeof animate> | null>(null);
+  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const reduceMotion = useReducedMotion();
+
+  useMotionValueEvent(pos, "change", (v) => setAriaPos(Math.round(v)));
+
+  // Invitation : la ligne oscille une fois quand le bloc arrive à l'écran
+  useEffect(() => {
+    if (!inView || reduceMotion || interacted.current) return;
+    hint.current = animate(pos, [50, 38, 62, 50], { duration: 1.8, delay: 0.3, ease: "easeInOut" });
+    return () => hint.current?.stop();
+  }, [inView, reduceMotion, pos]);
+
+  const takeOver = () => {
+    interacted.current = true;
+    hint.current?.stop();
+  };
+
+  const setFromClientX = (clientX: number) => {
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect || rect.width === 0) return;
+    pos.set(Math.min(100, Math.max(0, ((clientX - rect.left) / rect.width) * 100)));
+  };
+
+  // Tactile : on attend un mouvement horizontal (touch-action: pan-y laisse le scroll vertical au navigateur, qui envoie alors pointercancel)
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    takeOver();
+    active.current = true;
+    setDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    if (e.pointerType === "mouse") setFromClientX(e.clientX);
+  };
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (active.current) setFromClientX(e.clientX);
+  };
+  const onPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (active.current) setFromClientX(e.clientX);
+    active.current = false;
+    setDragging(false);
+  };
+  const onPointerCancel = () => {
+    active.current = false;
+    setDragging(false);
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const step = e.shiftKey ? 10 : 2;
+    let next: number | null = null;
+    if (e.key === "ArrowLeft" || e.key === "ArrowDown") next = pos.get() - step;
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") next = pos.get() + step;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = 100;
+    if (next === null) return;
+    e.preventDefault();
+    takeOver();
+    pos.set(Math.min(100, Math.max(0, next)));
+  };
+
+  const labelClass = "absolute top-3 bg-background/85 text-foreground px-2 py-1 font-mono text-[10px] tracking-widest uppercase pointer-events-none";
+
+  return (
+    <figure className="m-0">
+      <div className="flex justify-center">
+        <div
+          ref={ref}
+          role="slider"
+          tabIndex={0}
+          aria-label={item.alt ? `${item.alt} — ${labels.before} / ${labels.after}` : `${labels.before} / ${labels.after}`}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={ariaPos}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerCancel}
+          onKeyDown={onKeyDown}
+          className="relative max-w-full overflow-hidden select-none cursor-ew-resize outline-none focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          style={{ touchAction: "pan-y", WebkitUserSelect: "none" }}
+        >
+          <img src={item.after} alt={item.alt} draggable={false} className="block max-w-full w-auto h-auto" style={{ maxHeight: "80vh" }} />
+          <motion.img src={item.before} alt="" aria-hidden draggable={false} className="absolute inset-0 w-full h-full object-cover" style={{ clipPath }} />
+          <span className={`${labelClass} left-3`}>{labels.before}</span>
+          <span className={`${labelClass} right-3`}>{labels.after}</span>
+          <motion.div className="absolute top-0 bottom-0 w-px bg-white pointer-events-none" style={{ left, x: "-50%", boxShadow: "0 0 0 0.5px rgba(0,0,0,0.25)" }}>
+            <div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center bg-white transition-colors duration-200"
+              style={{ color: dragging ? "#0246F3" : "#000", boxShadow: "0 1px 6px rgba(0,0,0,0.25)" }}
+            >
+              <ChevronsLeftRight size={15} />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+      {item.caption && <figcaption className={CAPTION_CLASS}>{t(item.caption, lang)}</figcaption>}
     </figure>
   );
 }
@@ -277,7 +392,7 @@ function YoutubeEmbed({ url, caption, lang }: { url: LS; caption?: LS; lang: Lan
       <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
         <iframe src={embedUrl} title="YouTube" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="absolute inset-0 w-full h-full border-0" />
       </div>
-      {caption && <p className="font-mono text-[10px] tracking-wider text-muted-foreground mt-2">{t(caption, lang)}</p>}
+      {caption && <p className={CAPTION_CLASS}>{t(caption, lang)}</p>}
     </div>
   );
 }
@@ -288,6 +403,7 @@ function renderColumn(col: ColumnContent, onOpen: (s: string, a: string) => void
   if (col.kind === "video") return <VideoBlock item={col.item} lang={lang} />;
   if (col.kind === "youtube") return <YoutubeEmbed url={col.url} caption={col.caption} lang={lang} />;
   if (col.kind === "website") return <WebsiteBlock url={col.url} item={col.item} lang={lang} />;
+  if (col.kind === "compare") return <CompareBlock item={col.item} lang={lang} />;
   return null;
 }
 
@@ -343,6 +459,15 @@ function ContentRenderer({ blocks, onOpen, lang }: { blocks: ContentBlock[]; onO
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE }} className={gap}>
               {block.position === "full" && <WebsiteBlock url={block.url} item={block.item} lang={lang} aspectRatio="16 / 8" />}
               {isHalf && <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{block.position === "right" && <div />}<WebsiteBlock url={block.url} item={block.item} lang={lang} />{block.position === "left" && <div />}</div>}
+            </motion.div>
+          );
+        }
+        if (block.type === "compare") {
+          const isHalf = block.position === "left" || block.position === "right";
+          return (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE }} className={gap}>
+              {block.position === "full" && <CompareBlock item={block.item} lang={lang} />}
+              {isHalf && <div className="grid grid-cols-1 md:grid-cols-2 gap-6">{block.position === "right" && <div />}<CompareBlock item={block.item} lang={lang} />{block.position === "left" && <div />}</div>}
             </motion.div>
           );
         }
@@ -772,15 +897,16 @@ function AboutSection({ lang }: { lang: Lang }) {
 
 // ─── CONTACT ───────────────────────────────────────────────────────────────
 
-function ContactLink({ href, label, arrow, external }: { href: string; label: string; arrow?: boolean; external?: boolean }) {
+function ContactLink({ href, label, arrow, external, download }: { href: string; label: string; arrow?: boolean; external?: boolean; download?: string }) {
   const [hov, setHov] = useState(false);
   return (
-    <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined}
+    <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} download={download}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
       className="flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase transition-colors duration-200"
       style={{ color: hov ? "#0246F3" : "var(--muted-foreground)" }}>
       <span>{label}</span>
       {arrow && <AnimatedArrow hovered={hov} size={11} color={hov ? "#0246F3" : "var(--muted-foreground)"} />}
+      {download && <ConveyorArrow direction="down" size={11} hovered={hov} />}
     </a>
   );
 }
@@ -805,6 +931,7 @@ function ContactSection({ lang }: { lang: Lang }) {
           {landingData.links.map((link) => (
             <ContactLink key={link.url} href={link.url} label={link.label} arrow external />
           ))}
+          {ui.cvFile && <ContactLink href={ui.cvFile} label={ui.cv} download={`CV-${landingData.name.replace(/\s+/g, "-")}.pdf`} />}
         </motion.div>
       </div>
     </section>

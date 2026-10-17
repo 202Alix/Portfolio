@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useContext, createContext } from "react";
-import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, EyeOff, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil, Globe } from "lucide-react";
-import type { Project, ContentBlock, ColumnContent, MediaItem, LS, LocalizedText, LandingContent } from "../types";
+import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, EyeOff, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil, Globe, ChevronsLeftRight } from "lucide-react";
+import type { Project, ContentBlock, ColumnContent, MediaItem, CompareItem, LS, LocalizedText, LandingContent } from "../types";
 
 // ─── LANGUE GLOBALE DE L'ÉDITEUR ───────────────────────────────────────────
 // Un seul interrupteur FR/EN pilote tous les champs bilingues de la page,
@@ -574,6 +574,65 @@ function VideoUpload({ src, onChange, projectId, label = "Vidéo" }: {
   );
 }
 
+function PdfUpload({ src, onChange, folder, label = "PDF" }: {
+  src: string;
+  onChange: (path: string) => void;
+  folder: string;
+  label?: string;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (file: File) => {
+    if (file.type !== "application/pdf") {
+      setError("Le fichier doit être un PDF");
+      return;
+    }
+    setUploading(true);
+    setError("");
+    try {
+      onChange(await apiUpload(file, folder));
+    } catch (e) {
+      setError("Erreur upload");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <Label>{label}</Label>
+      <div
+        className="border border-dashed border-border bg-secondary flex items-center justify-center gap-2 px-3 cursor-pointer hover:border-primary transition-colors"
+        style={{ minHeight: 56 }}
+        onClick={() => inputRef.current?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          e.preventDefault();
+          const file = e.dataTransfer.files[0];
+          if (file) handleFile(file);
+        }}
+      >
+        <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground truncate">
+          {uploading ? "Upload…" : src ? `${fileNameFromSrc(src)} — changer` : "Glisser ou cliquer"}
+        </span>
+      </div>
+      {error && <p className="font-mono text-[10px] text-red-500 mt-1">{error}</p>}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/pdf"
+        className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+      />
+      <div className="mt-1">
+        <Input value={src} onChange={onChange} placeholder="Ou coller un chemin…" />
+      </div>
+    </div>
+  );
+}
+
 function LocalizedVideoUpload({ value, onChange, projectId, label = "Vidéo" }: {
   value: LS;
   onChange: (v: LS) => void;
@@ -686,12 +745,35 @@ function MediaItemEditor({ value, onChange, projectId, label = "Image", hintKind
   );
 }
 
+function CompareItemEditor({ value, onChange, projectId, hintKind = "generic" }: {
+  value: CompareItem;
+  onChange: (v: CompareItem) => void;
+  projectId: string;
+  hintKind?: ImageHintKind;
+}) {
+  return (
+    <div className="space-y-3">
+      <ImageUpload src={value.before} onChange={(before) => onChange({ ...value, before })} projectId={projectId} label="Avant" hintKind={hintKind} />
+      <ImageUpload src={value.after} onChange={(after) => onChange({ ...value, after })} projectId={projectId} label="Après" hintKind={hintKind} />
+      <p className="font-mono text-[10px] text-muted-foreground">Images communes au FR et à l'EN. Les deux doivent avoir exactement les mêmes dimensions et le même cadrage.</p>
+      <div>
+        <Label>Alt</Label>
+        <Input value={value.alt} onChange={(alt) => onChange({ ...value, alt })} placeholder="Description de l'image" />
+      </div>
+      <BilingualInput label="Légende (optionnel)" value={value.caption ?? emptyLS()} onChange={(caption) => onChange({ ...value, caption })} />
+    </div>
+  );
+}
+
+const emptyCompare = (): CompareItem => ({ before: "", after: "", alt: "", caption: emptyLS() });
+
 const COLUMN_KINDS = [
   { k: "text", label: "Texte", icon: <Type size={12} /> },
   { k: "image", label: "Image", icon: <ImageIcon size={12} /> },
   { k: "video", label: "Vidéo", icon: <Video size={12} /> },
   { k: "youtube", label: "YouTube", icon: <Youtube size={12} /> },
   { k: "website", label: "Site web", icon: <Globe size={12} /> },
+  { k: "compare", label: "Avant / Après", icon: <ChevronsLeftRight size={12} /> },
 ] as const;
 
 function ColumnEditor({ value, onChange, projectId }: {
@@ -706,6 +788,7 @@ function ColumnEditor({ value, onChange, projectId }: {
     if (k === "video") onChange({ kind: "video", item: { src: "", caption: emptyLS() } });
     if (k === "youtube") onChange({ kind: "youtube", url: "", caption: emptyLS() });
     if (k === "website") onChange({ kind: "website", url: "", item: { src: "", alt: "", caption: emptyLS() } });
+    if (k === "compare") onChange({ kind: "compare", item: emptyCompare() });
     setKindOpen(false);
   };
 
@@ -762,6 +845,9 @@ function ColumnEditor({ value, onChange, projectId }: {
           <MediaItemEditor value={value.item} onChange={(item) => onChange({ ...value, item })} projectId={projectId} label="Capture d'écran" hintKind="column" />
         </div>
       )}
+      {value.kind === "compare" && (
+        <CompareItemEditor value={value.item} onChange={(item) => onChange({ ...value, item })} projectId={projectId} hintKind="column" />
+      )}
     </div>
   );
 }
@@ -782,6 +868,7 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
     video: { label: "Vidéo", icon: <Video size={13} /> },
     youtube: { label: "YouTube", icon: <Youtube size={13} /> },
     website: { label: "Site web", icon: <Globe size={13} /> },
+    compare: { label: "Avant / Après", icon: <ChevronsLeftRight size={13} /> },
     columns: { label: "Colonnes", icon: <Columns2 size={13} /> },
     masonry: { label: "Masonry", icon: <LayoutGrid size={13} /> },
   };
@@ -860,6 +947,18 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
                 onChange={(item) => onChange({ ...block, item })}
                 projectId={projectId}
                 label="Capture d'écran"
+                hintKind={block.position === "full" ? "full" : "half"}
+              />
+              <PositionSelect value={block.position} onChange={(position) => onChange({ ...block, position })} />
+            </>
+          )}
+
+          {block.type === "compare" && (
+            <>
+              <CompareItemEditor
+                value={block.item}
+                onChange={(item) => onChange({ ...block, item })}
+                projectId={projectId}
                 hintKind={block.position === "full" ? "full" : "half"}
               />
               <PositionSelect value={block.position} onChange={(position) => onChange({ ...block, position })} />
@@ -973,6 +1072,7 @@ const BLOCK_TYPES = [
   { type: "video", label: "Vidéo", icon: <Video size={14} /> },
   { type: "youtube", label: "YouTube", icon: <Youtube size={14} /> },
   { type: "website", label: "Site web", icon: <Globe size={14} /> },
+  { type: "compare", label: "Avant / Après", icon: <ChevronsLeftRight size={14} /> },
   { type: "columns", label: "Colonnes", icon: <Columns2 size={14} /> },
   { type: "masonry", label: "Masonry", icon: <LayoutGrid size={14} /> },
 ] as const;
@@ -984,6 +1084,7 @@ function newBlock(type: string): DraftBlock {
   if (type === "video") return { ...base, type: "video", item: { src: "", caption: emptyLS() }, position: "full" };
   if (type === "youtube") return { ...base, type: "youtube", url: "", position: "full" };
   if (type === "website") return { ...base, type: "website", url: "", item: { src: "", alt: "", caption: emptyLS() }, position: "full" };
+  if (type === "compare") return { ...base, type: "compare", item: emptyCompare(), position: "full" };
   if (type === "columns") return { ...base, type: "columns", ratio: "1:1", left: { kind: "text", primary: emptyLS() }, right: { kind: "image", item: { src: "", alt: "", caption: emptyLS() } } };
   return { ...base, type: "masonry", items: [] };
 }
@@ -1333,6 +1434,15 @@ function LandingPanel({ draft, onChange }: {
     <div className="max-w-4xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground">Contenu Landing</span>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label>Lien CV</Label>
+          <Input value={locale.cv ?? ""} onChange={(v) => updateField("cv", v)} placeholder="Télécharger le CV" />
+          <p className="font-mono text-[10px] text-muted-foreground mt-1">Le lien n'apparaît dans Contact que si un PDF est défini.</p>
+        </div>
+        <PdfUpload label="Fichier CV (PDF)" src={locale.cvFile ?? ""} onChange={(v) => updateField("cvFile", v)} folder="cv" />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

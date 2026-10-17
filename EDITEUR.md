@@ -128,6 +128,11 @@ Fichier vidéo hébergé. URL directe vers un `.mp4` ou chemin local après uplo
 ### YouTube
 URL d'une vidéo YouTube — l'éditeur génère automatiquement l'URL d'embed. Même système de position.
 
+### Avant / Après
+Deux images superposées séparées par une ligne qu'on fait glisser (souris, doigt ou flèches du clavier) pour comparer une retouche. Même système de position, et disponible aussi dans une colonne.
+
+Les deux images doivent avoir **exactement les mêmes dimensions et le même cadrage** : c'est l'image « Après » qui fixe la taille du bloc. Pas de recadrage, hauteur limitée à 80 % de l'écran. À l'apparition, la ligne fait un petit aller-retour pour montrer qu'elle est interactive.
+
 ### Colonnes
 Deux colonnes côte à côte. Chaque colonne peut contenir indépendamment un **Texte**, une **Image** ou une **Vidéo**.
 
