@@ -100,7 +100,10 @@ interface Project {
   content: ContentBlock[];
 }
 
-const projects = (loadedProjects as Project[]).filter((p) => !p.hidden);
+// Le numéro stocké sert à l'ordre (projets masqués compris) ; le numéro affiché suit uniquement les projets visibles
+const projects = (loadedProjects as Project[])
+  .filter((p) => !p.hidden)
+  .map((p, i) => ({ ...p, index: String(i + 1).padStart(2, "0") }));
 
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
 
@@ -1481,7 +1484,7 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
         <div className="px-6 md:px-12 pt-8 md:pt-14 pb-0">
           <div className="flex items-start justify-between mb-6">
             <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
-              {project.index}&nbsp;/&nbsp;0{projects.length}
+              {project.index}&nbsp;/&nbsp;{String(projects.length).padStart(2, "0")}
             </motion.span>
             <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
               {project.year}
