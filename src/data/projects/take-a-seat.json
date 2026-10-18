@@ -29,6 +29,7 @@
     "en": "A scrollytelling website about sexual harassment experienced by women on public transports in Paris."
   },
   "coverImage": "/projects/projet-1785265529844/TakeASeat_Thumbnail.webp",
+  "hidden": true,
   "content": [
     {
       "type": "website",
