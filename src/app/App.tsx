@@ -96,6 +96,7 @@ interface Project {
   excerpt: LS;
   coverImage: string;
   coverImagePosition?: number;
+  credits?: LS;
   hidden?: boolean;
   content: ContentBlock[];
 }
@@ -1522,7 +1523,11 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
           </motion.div>
         </div>
 
-        <ContentRenderer blocks={project.content} onOpen={openLightbox} lang={lang} />
+        <ContentRenderer
+          blocks={project.credits && t(project.credits, lang).trim()
+            ? [{ type: "text", primary: { fr: "", en: "" }, secondary: project.credits }, ...project.content]
+            : project.content}
+          onOpen={openLightbox} lang={lang} />
 
         <div className="border-t border-border">
           <NextProjectButton project={nextProject} navigate={navigate} lang={lang} />

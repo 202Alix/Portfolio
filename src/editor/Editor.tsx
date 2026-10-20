@@ -903,7 +903,6 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
           {block.type === "text" && (
             <>
               <BilingualTextarea label="Texte principal" value={block.primary} onChange={(primary) => onChange({ ...block, primary })} />
-              <BilingualTextarea label="Texte secondaire (optionnel)" value={block.secondary ?? emptyLS()} onChange={(secondary) => onChange({ ...block, secondary })} rows={2} />
               <AlignSelect value={block.align ?? "left"} onChange={(align) => onChange({ ...block, align })} />
             </>
           )}
@@ -1114,6 +1113,48 @@ function AddBlockMenu({ onAdd }: { onAdd: (b: DraftBlock) => void }) {
 
 // ─── PANNEAU MÉTADONNÉES ───────────────────────────────────────────────────
 
+type PanelSectionId = "infos" | "cover" | "credits" | "publication";
+const SECTION_DEFAULTS: Record<PanelSectionId, boolean> = { infos: true, cover: true, credits: true, publication: false };
+const SECTIONS_STORAGE_KEY = "editor-meta-sections";
+
+function useSectionsOpen() {
+  const [open, setOpen] = useState<Record<PanelSectionId, boolean>>(() => {
+    try {
+      return { ...SECTION_DEFAULTS, ...JSON.parse(localStorage.getItem(SECTIONS_STORAGE_KEY) ?? "{}") };
+    } catch {
+      return SECTION_DEFAULTS;
+    }
+  });
+  const toggle = (id: PanelSectionId) => setOpen((prev) => {
+    const next = { ...prev, [id]: !prev[id] };
+    try { localStorage.setItem(SECTIONS_STORAGE_KEY, JSON.stringify(next)); } catch { /* stockage indisponible */ }
+    return next;
+  });
+  return [open, toggle] as const;
+}
+
+function PanelSection({ title, badge, open, onToggle, children }: {
+  title: string;
+  badge?: string;
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="border-b border-border">
+      <button onClick={onToggle}
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-secondary transition-colors">
+        <span className="flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] uppercase">
+          {title}
+          {badge && <span className="px-1.5 py-0.5 text-[9px] tracking-wider text-white" style={{ background: "#0246F3" }}>{badge}</span>}
+        </span>
+        {open ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+      </button>
+      {open && <div className="px-4 pb-5 pt-1 space-y-5">{children}</div>}
+    </div>
+  );
+}
+
 function MetaPanel({
   draft,
   onChange,
@@ -1139,6 +1180,7 @@ function MetaPanel({
   const categoryLang = titleLang;
   const tagsLang = titleLang;
   const [tagInput, setTagInput] = useState("");
+  const [sections, toggleSection] = useSectionsOpen();
 
   const otherTitleLang = titleLang === "fr" ? "en" : "fr";
   const otherCategoryLang = categoryLang === "fr" ? "en" : "fr";
@@ -1229,138 +1271,149 @@ function MetaPanel({
     });
 
   return (
-    <div className="space-y-5">
-      <div>
-        <Label>Titre</Label>
-        <Input value={draft.title[titleLang]} onChange={updateTitle} placeholder={titleLang === "fr" ? "Titre du projet" : "Project title"} />
-      </div>
-
-      <div className="grid grid-cols-2 gap-3">
+    <div>
+      <PanelSection title="Informations" open={sections.infos} onToggle={() => toggleSection("infos")}>
         <div>
-          <Label>Année</Label>
-          <Input value={draft.year} onChange={(year) => onChange({ ...draft, year })} placeholder="2024" />
+          <Label>Titre</Label>
+          <Input value={draft.title[titleLang]} onChange={updateTitle} placeholder={titleLang === "fr" ? "Titre du projet" : "Project title"} />
+        </div>
+        <div>
+          <Label>Categorie</Label>
+          <Input value={draft.category[categoryLang]} onChange={updateCategory} placeholder={categoryLang === "fr" ? "Categorie francaise" : "English category"} />
+          <div className="flex flex-wrap gap-1 mt-2">
+            {visibleCategorySuggestions.map((c) => (
+              <div key={`${c.fr}-${c.en}`} className="inline-flex items-center border border-border/50 hover:border-primary transition-colors">
+                <button onClick={() => onChange({ ...draft, category: c })}
+                  className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
+                  {c[categoryLang] || c[otherCategoryLang]}
+                </button>
+                <button onClick={() => renameCategoryEverywhere(c)} className="px-1 py-0.5 text-muted-foreground hover:text-primary transition-colors" aria-label="Renommer categorie">
+                  <Pencil size={9} />
+                </button>
+                <button onClick={() => onDeleteCategoryEverywhere(c)} className="px-1 py-0.5 text-muted-foreground hover:text-red-500 transition-colors" aria-label="Supprimer categorie">
+                  <X size={9} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Année</Label>
+            <Input value={draft.year} onChange={(year) => onChange({ ...draft, year })} placeholder="2024" />
+          </div>
+        </div>
+
+        <div>
+          <Label>Tags</Label>
+          <div className="space-y-1.5 mb-2">
+            {draft.tags.map((tag, i) => (
+              <div key={`tag-row-${i}`} className="flex items-center gap-2">
+                <Input value={tag[tagsLang]} onChange={(value) => updateTag(i, value)} placeholder={tagsLang === "fr" ? "Tag français" : "English tag"} className="flex-1" />
+                <button onClick={() => onChange({ ...draft, tags: draft.tags.filter((_, j) => j !== i) })} className="text-muted-foreground hover:text-red-500 ml-0.5 shrink-0">
+                  <X size={11} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <Input value={tagInput} onChange={setTagInput} placeholder="Nouveau tag…"
+              className="flex-1" />
+            <button onClick={addTag}
+              className="border border-border px-3 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
+              <Plus size={13} />
+            </button>
+          </div>
+          {/* Common tags */}
+          <div className="flex flex-wrap gap-1 mt-2">
+            {visibleTagSuggestions.map((t) => (
+              <div key={`${t.fr}-${t.en}`} className="inline-flex items-center border border-border/50 hover:border-primary transition-colors">
+                <button onClick={() => {
+                  if (draft.tags.some((tag) => isSameLS(tag, t))) return;
+                  onChange({ ...draft, tags: [...draft.tags, t] });
+                }}
+                  className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
+                  + {t[tagsLang] || t[otherTagsLang]}
+                </button>
+                <button onClick={() => renameTagEverywhere(t)} className="px-1 py-0.5 text-muted-foreground hover:text-primary transition-colors" aria-label="Renommer tag">
+                  <Pencil size={9} />
+                </button>
+                <button onClick={() => onDeleteTagEverywhere(t)} className="px-1 py-0.5 text-muted-foreground hover:text-red-500 transition-colors" aria-label="Supprimer tag">
+                  <X size={9} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <BilingualTextarea label="Présentation (carte + page projet)" value={draft.excerpt} onChange={(excerpt) => onChange({ ...draft, excerpt })} rows={3} />
+      </PanelSection>
+
+      <PanelSection title="Couverture" open={sections.cover} onToggle={() => toggleSection("cover")}>
+        <ImageUpload src={draft.coverImage} onChange={(coverImage) => onChange({ ...draft, coverImage })} projectId={projectId} label="Image de couverture" hintKind="cover" />
+
+        {draft.coverImage && (
+          <div>
+            <Label>Position verticale de la couverture</Label>
+            <div className="relative w-full bg-muted overflow-hidden border border-border" style={{ aspectRatio: "16 / 7" }}>
+              <img
+                src={draft.coverImage}
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover"
+                style={{ objectPosition: `50% ${draft.coverImagePosition ?? 50}%` }}
+              />
+            </div>
+            <div className="flex items-center gap-3 mt-2">
+              <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Haut</span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={draft.coverImagePosition ?? 50}
+                onChange={(e) => onChange({ ...draft, coverImagePosition: Number(e.target.value) })}
+                className="w-full accent-[#0246F3]"
+              />
+              <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Bas</span>
+            </div>
+          </div>
+        )}
+      </PanelSection>
+
+      <PanelSection title="Mentions" open={sections.credits} onToggle={() => toggleSection("credits")}>
+        <div>
+          <BilingualTextarea label="Droits, crédits (optionnel)" value={draft.credits ?? emptyLS()} onChange={(credits) => onChange({ ...draft, credits })} rows={2} />
+          <p className="font-mono text-[10px] text-muted-foreground mt-1">Affiché en tête du projet, avant le premier bloc.</p>
+        </div>
+      </PanelSection>
+
+      <PanelSection title="Publication" badge={draft.hidden ? "Masqué" : undefined} open={sections.publication} onToggle={() => toggleSection("publication")}>
+        <div>
+          <Label>Visibilité</Label>
+          <div className="flex border border-border overflow-hidden">
+            {[{ v: false, label: "Visible" }, { v: true, label: "Masqué" }].map(({ v, label }) => (
+              <button key={label} onClick={() => onChange({ ...draft, hidden: v })}
+                className="flex-1 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-colors"
+                style={{ background: (draft.hidden ?? false) === v ? "#0246F3" : "transparent", color: (draft.hidden ?? false) === v ? "#fff" : "var(--muted-foreground)" }}>
+                {label}
+              </button>
+            ))}
+          </div>
+          {(draft.hidden ?? false) && (
+            <p className="mt-1.5 font-mono text-[9px] tracking-wide text-muted-foreground">
+              Ce projet reste modifiable ici mais n'apparaît pas sur le site public.
+            </p>
+          )}
         </div>
         <div>
           <Label>Ordre</Label>
           <Input value={draft.index} onChange={() => {}} placeholder="Automatique" readOnly />
+          <p className="mt-1.5 font-mono text-[9px] tracking-wide text-muted-foreground">Se règle en glissant les projets dans la liste.</p>
         </div>
-      </div>
-
-      <div>
-        <Label>Visibilité</Label>
-        <div className="flex border border-border overflow-hidden">
-          {[{ v: false, label: "Visible" }, { v: true, label: "Masqué" }].map(({ v, label }) => (
-            <button key={label} onClick={() => onChange({ ...draft, hidden: v })}
-              className="flex-1 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-colors"
-              style={{ background: (draft.hidden ?? false) === v ? "#0246F3" : "transparent", color: (draft.hidden ?? false) === v ? "#fff" : "var(--muted-foreground)" }}>
-              {label}
-            </button>
-          ))}
-        </div>
-        {(draft.hidden ?? false) && (
-          <p className="mt-1.5 font-mono text-[9px] tracking-wide text-muted-foreground">
-            Ce projet reste modifiable ici mais n'apparaît pas sur le site public.
-          </p>
-        )}
-      </div>
-
-      <div>
-        <Label>Categorie</Label>
-        <Input value={draft.category[categoryLang]} onChange={updateCategory} placeholder={categoryLang === "fr" ? "Categorie francaise" : "English category"} />
-        <div className="flex flex-wrap gap-1 mt-2">
-          {visibleCategorySuggestions.map((c) => (
-            <div key={`${c.fr}-${c.en}`} className="inline-flex items-center border border-border/50 hover:border-primary transition-colors">
-              <button onClick={() => onChange({ ...draft, category: c })}
-                className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
-                {c[categoryLang] || c[otherCategoryLang]}
-              </button>
-              <button onClick={() => renameCategoryEverywhere(c)} className="px-1 py-0.5 text-muted-foreground hover:text-primary transition-colors" aria-label="Renommer categorie">
-                <Pencil size={9} />
-              </button>
-              <button onClick={() => onDeleteCategoryEverywhere(c)} className="px-1 py-0.5 text-muted-foreground hover:text-red-500 transition-colors" aria-label="Supprimer categorie">
-                <X size={9} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <Label>ID (slug URL)</Label>
-        <Input value={draft.id} onChange={(id) => onChange({ ...draft, id: id.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") })} placeholder="nom-du-projet" />
-      </div>
-
-      <div>
-        <Label>Tags</Label>
-        <div className="space-y-1.5 mb-2">
-          {draft.tags.map((tag, i) => (
-            <div key={`tag-row-${i}`} className="flex items-center gap-2">
-              <Input value={tag[tagsLang]} onChange={(value) => updateTag(i, value)} placeholder={tagsLang === "fr" ? "Tag français" : "English tag"} className="flex-1" />
-              <button onClick={() => onChange({ ...draft, tags: draft.tags.filter((_, j) => j !== i) })} className="text-muted-foreground hover:text-red-500 ml-0.5 shrink-0">
-                <X size={11} />
-              </button>
-            </div>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <Input value={tagInput} onChange={setTagInput} placeholder="Nouveau tag…"
-            className="flex-1" />
-          <button onClick={addTag}
-            className="border border-border px-3 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
-            <Plus size={13} />
-          </button>
-        </div>
-        {/* Common tags */}
-        <div className="flex flex-wrap gap-1 mt-2">
-          {visibleTagSuggestions.map((t) => (
-            <div key={`${t.fr}-${t.en}`} className="inline-flex items-center border border-border/50 hover:border-primary transition-colors">
-              <button onClick={() => {
-                if (draft.tags.some((tag) => isSameLS(tag, t))) return;
-                onChange({ ...draft, tags: [...draft.tags, t] });
-              }}
-                className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
-                + {t[tagsLang] || t[otherTagsLang]}
-              </button>
-              <button onClick={() => renameTagEverywhere(t)} className="px-1 py-0.5 text-muted-foreground hover:text-primary transition-colors" aria-label="Renommer tag">
-                <Pencil size={9} />
-              </button>
-              <button onClick={() => onDeleteTagEverywhere(t)} className="px-1 py-0.5 text-muted-foreground hover:text-red-500 transition-colors" aria-label="Supprimer tag">
-                <X size={9} />
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <BilingualTextarea label="Extrait (carte projet)" value={draft.excerpt} onChange={(excerpt) => onChange({ ...draft, excerpt })} rows={3} />
-
-      <ImageUpload src={draft.coverImage} onChange={(coverImage) => onChange({ ...draft, coverImage })} projectId={projectId} label="Image de couverture" hintKind="cover" />
-
-      {draft.coverImage && (
         <div>
-          <Label>Position verticale de la couverture</Label>
-          <div className="relative w-full bg-muted overflow-hidden border border-border" style={{ aspectRatio: "16 / 7" }}>
-            <img
-              src={draft.coverImage}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ objectPosition: `50% ${draft.coverImagePosition ?? 50}%` }}
-            />
-          </div>
-          <div className="flex items-center gap-3 mt-2">
-            <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Haut</span>
-            <input
-              type="range"
-              min={0}
-              max={100}
-              value={draft.coverImagePosition ?? 50}
-              onChange={(e) => onChange({ ...draft, coverImagePosition: Number(e.target.value) })}
-              className="w-full accent-[#0246F3]"
-            />
-            <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Bas</span>
-          </div>
+          <Label>ID (slug URL)</Label>
+          <Input value={draft.id} onChange={(id) => onChange({ ...draft, id: id.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") })} placeholder="nom-du-projet" />
         </div>
-      )}
+      </PanelSection>
     </div>
   );
 }
@@ -1676,7 +1729,6 @@ export default function Editor() {
   const [draft, setDraft] = useState<ProjectDraft | null>(null);
   const [landingDraft, setLandingDraft] = useState<LandingContent | null>(null);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
-  const [metaOpen, setMetaOpen] = useState(true);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [dropIndex, setDropIndex] = useState<number | null>(null);
   const [dragProjectIndex, setDragProjectIndex] = useState<number | null>(null);
@@ -2123,29 +2175,20 @@ export default function Editor() {
 
           {/* Content — two cols */}
           <div className="flex-1 flex overflow-hidden">
-            {/* Métadonnées */}
-            <div className="w-80 border-r border-border flex flex-col shrink-0">
-              <button onClick={() => setMetaOpen((o) => !o)}
-                className="flex items-center justify-between px-4 py-3 border-b border-border hover:bg-secondary transition-colors">
-                <span className="font-mono text-[10px] tracking-[0.28em] uppercase">Métadonnées</span>
-                {metaOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-              </button>
-              {metaOpen && (
-                <div className="flex-1 overflow-y-auto p-4">
-                  <MetaPanel
-                    key={draft.id}
-                    draft={draft}
-                    onChange={updateDraft}
-                    projectId={draft.id}
-                    categorySuggestions={categorySuggestions}
-                    tagSuggestions={tagSuggestions}
-                    onRenameCategoryEverywhere={onRenameCategoryEverywhere}
-                    onDeleteCategoryEverywhere={onDeleteCategoryEverywhere}
-                    onRenameTagEverywhere={onRenameTagEverywhere}
-                    onDeleteTagEverywhere={onDeleteTagEverywhere}
-                  />
-                </div>
-              )}
+            {/* Métadonnées — clé stable (projet sélectionné) pour ne pas remonter le panneau quand on modifie le slug */}
+            <div className="w-80 border-r border-border shrink-0 overflow-y-auto">
+              <MetaPanel
+                key={selectedId ?? draft.id}
+                draft={draft}
+                onChange={updateDraft}
+                projectId={draft.id}
+                categorySuggestions={categorySuggestions}
+                tagSuggestions={tagSuggestions}
+                onRenameCategoryEverywhere={onRenameCategoryEverywhere}
+                onDeleteCategoryEverywhere={onDeleteCategoryEverywhere}
+                onRenameTagEverywhere={onRenameTagEverywhere}
+                onDeleteTagEverywhere={onDeleteTagEverywhere}
+              />
             </div>
 
             {/* Blocs de contenu */}

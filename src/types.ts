@@ -34,6 +34,7 @@ export interface Project {
   excerpt: LS;
   coverImage: string;
   coverImagePosition?: number;
+  credits?: LS;
   hidden?: boolean;
   content: ContentBlock[];
 }
