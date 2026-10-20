@@ -25,7 +25,18 @@
     "en": "V"
   },
   "coverImage": "/projects/projet-1785265621245/TakeThoseBreaks_Thumbnail.webp",
+  "credits": {
+    "fr": "Projet étudiant à but non commercial. Images d’archives, photos et musique appartenant à leurs ayants droit respectifs.",
+    "en": ""
+  },
   "content": [
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Take Those Breaks est un montage de 1 min 58, réalisé sous Premiere Pro dans le cadre d’un cours de montage vidéo, sur le thème imposé « le corps et l’image ». J’ai choisi de le traiter à travers le parcours de la patineuse Alysa Liu, parce qu’il met en tension deux images d’un même corps : l’une imposée, l’autre choisie. Patineuse depuis ses cinq ans, elle s’est longtemps vu dicter sa tenue, son alimentation, ses musiques et sa façon de se présenter, jusqu’à ne plus se reconnaître dans l’image qu’elle renvoyait. Sa retraite, prise après les Jeux de Beijing en 2022, devient dans la vidéo un geste de réappropriation plutôt qu’un simple arrêt de carrière.",
+        "en": "Take Those Breaks est un montage de 1 min 58, réalisé sous Premiere Pro dans le cadre d’un cours de montage vidéo, sur le thème imposé « le corps et l’image ». J’ai choisi de le traiter à travers le parcours de la patineuse Alysa Liu, parce qu’il met en tension deux images d’un même corps : l’une imposée, l’autre choisie. Patineuse depuis ses cinq ans, elle s’est longtemps vu dicter sa tenue, son alimentation, ses musiques et sa façon de se présenter, jusqu’à ne plus se reconnaître dans l’image qu’elle renvoyait. Sa retraite, prise après les Jeux de Beijing en 2022, devient dans la vidéo un geste de réappropriation plutôt qu’un simple arrêt de carrière."
+      }
+    },
     {
       "type": "youtube",
       "url": {
@@ -36,6 +47,79 @@
       "caption": {
         "fr": "\"Take Those Breaks\" - Alysa Liu",
         "en": "\"Take Those Breaks\" - Alysa Liu"
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "Le récit suit trois mouvements. Le premier montre un corps sous contrôle : archives de compétitions, extraits d’interviews où Alysa revient sur cette période, puis la publication Instagram annonçant sa retraite. Le deuxième suit sa pause, à travers les photos qu’elle a elle-même publiées : voyages, sorties entre amis. Elle redevient la seule à décider de ce qu’elle montre. Le troisième raconte son retour, à ses conditions : elle choisit désormais ses programmes, ses costumes, sa coiffure et son rythme d’entraînement. Ce retour la mène au titre mondial en 2025, puis à l’or aux Jeux de Milano-Cortina.\n\nLa musique suit la même évolution. Un piano minimaliste porte le premier mouvement, pour traduire le poids des attentes. Stateside, de PinkPantheress et Zara Larsson, surgit ensuite sans transition au moment de la retraite, pour marquer la rupture et la liberté retrouvée. Ce choix n’est pas arbitraire : c’est sur ce morceau qu’Alysa a dansé lors du gala des Jeux olympiques. Sa version instrumentale accompagne toute la pause et le retour. À la fin de la vidéo, on retrouve les images du gala : la performance se cale sur cette instrumentale, et les cris du public montent progressivement par-dessus la musique.",
+          "en": "Le récit suit trois mouvements. Le premier montre un corps sous contrôle : archives de compétitions, extraits d’interviews où Alysa revient sur cette période, puis la publication Instagram annonçant sa retraite. Le deuxième suit sa pause, à travers les photos qu’elle a elle-même publiées : voyages, sorties entre amis. Elle redevient la seule à décider de ce qu’elle montre. Le troisième raconte son retour, à ses conditions : elle choisit désormais ses programmes, ses costumes, sa coiffure et son rythme d’entraînement. Ce retour la mène au titre mondial en 2025, puis à l’or aux Jeux de Milano-Cortina.\n\nLa musique suit la même évolution. Un piano minimaliste porte le premier mouvement, pour traduire le poids des attentes. Stateside, de PinkPantheress et Zara Larsson, surgit ensuite sans transition au moment de la retraite, pour marquer la rupture et la liberté retrouvée. Ce choix n’est pas arbitraire : c’est sur ce morceau qu’Alysa a dansé lors du gala des Jeux olympiques. Sa version instrumentale accompagne toute la pause et le retour. À la fin de la vidéo, on retrouve les images du gala : la performance se cale sur cette instrumentale, et les cris du public montent progressivement par-dessus la musique."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": "",
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "image",
+        "item": {
+          "src": "",
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      },
+      "right": {
+        "kind": "text",
+        "primary": {
+          "fr": "Dans le premier mouvement, des fondus au noir séparent les extraits, pour qu’ils se lisent comme des bribes de souvenirs. Des raccords sur le mouvement relient deux compétitions entre elles et mêlent les retours en arrière. J’ai désaturé ces images pour alourdir l’atmosphère. J’ai aussi ajouté des bruitages de patins sur la glace : en ouverture, pour amener le piano, puis à chaque contact des lames avec la glace, pour plonger le spectateur dans la patinoire.\n\nLa pause change de matière. Les photos s’empilent en collage, avec des zooms progressifs et des raccords centrés sur son visage. Des photos posées les unes sur les autres paraissent plus concrètes et plus physiques que des vidéos, ce qui ramène le récit à l’intime. Les personnes qui l’accompagnent ont les yeux masqués par un trait de marqueur, pour préserver leur anonymat. Les séquences de ski sont montées à la verticale, comme filmées par Alysa elle-même sur son téléphone, pour renforcer cette proximité.",
+          "en": "Dans le premier mouvement, des fondus au noir séparent les extraits, pour qu’ils se lisent comme des bribes de souvenirs. Des raccords sur le mouvement relient deux compétitions entre elles et mêlent les retours en arrière. J’ai désaturé ces images pour alourdir l’atmosphère. J’ai aussi ajouté des bruitages de patins sur la glace : en ouverture, pour amener le piano, puis à chaque contact des lames avec la glace, pour plonger le spectateur dans la patinoire.\n\nLa pause change de matière. Les photos s’empilent en collage, avec des zooms progressifs et des raccords centrés sur son visage. Des photos posées les unes sur les autres paraissent plus concrètes et plus physiques que des vidéos, ce qui ramène le récit à l’intime. Les personnes qui l’accompagnent ont les yeux masqués par un trait de marqueur, pour préserver leur anonymat. Les séquences de ski sont montées à la verticale, comme filmées par Alysa elle-même sur son téléphone, pour renforcer cette proximité."
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "Son retour est d’abord présenté comme un phénomène médiatique. Quatre ouvertures de reportages télévisés apparaissent à l’écran les unes après les autres, et chaque présentateur prononce son nom. Ces « Alysa Liu » répétés créent un écho, celui d’un nom qui recommence à circuler. L’image se resserre ensuite sur une seule retransmission : le commentateur annonce qu’elle devient championne du monde, et l’on voit sa réaction en direct. Ce passage de l’écran multiple au plan unique ouvre la dernière partie, consacrée à ses victoires et à ses propres choix.\n\nLa séquence finale élargit le propos au-delà du patinage. Des images d’autres sports sont montées sur les temps forts de la musique, chaque coupe tombant sur un impact : une frappe de balle, un plongeon. Ce motif du corps en action donne au message une portée universelle. J’ai harmonisé l’étalonnage de ces plans d’origines diverses et ajouté un léger vignettage pour dramatiser l’ensemble.",
+          "en": "Son retour est d’abord présenté comme un phénomène médiatique. Quatre ouvertures de reportages télévisés apparaissent à l’écran les unes après les autres, et chaque présentateur prononce son nom. Ces « Alysa Liu » répétés créent un écho, celui d’un nom qui recommence à circuler. L’image se resserre ensuite sur une seule retransmission : le commentateur annonce qu’elle devient championne du monde, et l’on voit sa réaction en direct. Ce passage de l’écran multiple au plan unique ouvre la dernière partie, consacrée à ses victoires et à ses propres choix.\n\nLa séquence finale élargit le propos au-delà du patinage. Des images d’autres sports sont montées sur les temps forts de la musique, chaque coupe tombant sur un impact : une frappe de balle, un plongeon. Ce motif du corps en action donne au message une portée universelle. J’ai harmonisé l’étalonnage de ces plans d’origines diverses et ajouté un léger vignettage pour dramatiser l’ensemble."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": "",
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Le montage repose sur environ trois heures d’interviews, une trentaine de minutes de performances, des plans issus de banques d’images et des photos tirées du compte Instagram d’Alysa Liu. Il a fallu retrouver les bonnes interviews, en isoler les passages utiles et récupérer certaines photos supprimées depuis de son compte. Ce volume de matière m’a permis de ne retenir que les citations et les moments qui servaient le récit.\n\nLa vidéo ne se termine pas sur la victoire, mais sur ce qu’elle rend possible : écouter son corps, reprendre la main sur sa propre image, et considérer qu’une pause peut précéder une ascension. Le message s’adresse à toute personne qui se sent à bout sous des règles imposées, athlète ou non.",
+        "en": "Le montage repose sur environ trois heures d’interviews, une trentaine de minutes de performances, des plans issus de banques d’images et des photos tirées du compte Instagram d’Alysa Liu. Il a fallu retrouver les bonnes interviews, en isoler les passages utiles et récupérer certaines photos supprimées depuis de son compte. Ce volume de matière m’a permis de ne retenir que les citations et les moments qui servaient le récit.\n\nLa vidéo ne se termine pas sur la victoire, mais sur ce qu’elle rend possible : écouter son corps, reprendre la main sur sa propre image, et considérer qu’une pause peut précéder une ascension. Le message s’adresse à toute personne qui se sent à bout sous des règles imposées, athlète ou non. Le projet a obtenu la note de 18/20."
       }
     }
   ]
