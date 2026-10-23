@@ -257,6 +257,17 @@
             "fr": "Fond pour visio sur Google Meet.",
             "en": "Fond pour visio sur Google Meet."
           }
+        },
+        {
+          "src": {
+            "fr": "/projects/beyond/AL_BEYOND_Instagram_02_EN_RGB.jpg",
+            "en": "/projects/beyond/AL_BEYOND_Instagram_02_EN_RGB.jpg"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Format de poste pour réseaux sociaux (4:5)",
+            "en": "Social media post format (4:5)"
+          }
         }
       ]
     }
