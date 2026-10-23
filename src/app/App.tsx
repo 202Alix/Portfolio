@@ -170,6 +170,12 @@ function ConveyorArrow({ direction = "down", size = 16, hovered }: { direction?:
   );
 }
 
+// Logo : remonte en haut si on est déjà sur l'accueil, sinon ramène à l'accueil
+function goHome(page: string, navigate: (id: string) => void) {
+  if (page === "home") window.scrollTo({ top: 0, behavior: "smooth" });
+  else navigate("home");
+}
+
 // ─── LIGHTBOX ──────────────────────────────────────────────────────────────
 
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
@@ -203,12 +209,12 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
 
 const CAPTION_CLASS = "mt-2 font-mono text-[10px] tracking-wider text-muted-foreground";
 
-function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3" }: { item: MediaItem; onOpen: (s: string, a: string) => void; lang: Lang; aspectRatio?: string }) {
+function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3", capHeight = true }: { item: MediaItem; onOpen: (s: string, a: string) => void; lang: Lang; aspectRatio?: string; capHeight?: boolean }) {
   const src = t(item.src, lang);
   const isFluid = aspectRatio === "unset";
   return (
     <figure className="m-0">
-      <button onClick={() => onOpen(src, item.alt)} className="block w-full overflow-hidden bg-background group relative" style={{ aspectRatio, maxHeight: isFluid ? "70vh" : undefined }} aria-label={item.alt}>
+      <button onClick={() => onOpen(src, item.alt)} className="block w-full overflow-hidden bg-background group relative" style={{ aspectRatio, maxHeight: isFluid && capHeight ? "70vh" : undefined }} aria-label={item.alt}>
         <img src={src} alt={item.alt} className={`w-full h-full transition-transform duration-500 group-hover:scale-[1.025] ${isFluid ? "object-contain" : "object-cover"}`} />
         <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/10 transition-colors duration-300 flex items-center justify-center">
           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-8 h-8 bg-background flex items-center justify-center">
@@ -517,7 +523,7 @@ function ContentRenderer({ blocks, onOpen, lang }: { blocks: ContentBlock[]; onO
                 {block.items.map((item, j) => (
                   <motion.div key={j} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                     transition={{ duration: 0.4, ease: EASE, delay: j * 0.07 }} style={{ breakInside: "avoid", marginBottom: "12px" }}>
-                    <ImageBlock item={item} onOpen={onOpen} lang={lang} aspectRatio="unset" />
+                    <ImageBlock item={item} onOpen={onOpen} lang={lang} aspectRatio="unset" capHeight={false} />
                   </motion.div>
                 ))}
               </div>
@@ -610,7 +616,7 @@ function SideNav({ page, navigate, lang, setLang, dark, setDark }: {
       style={{ width: RAIL_W }}
     >
       {/* Logo */}
-      <button onClick={() => navigate("home")} className="w-8 h-8 shrink-0 hover:opacity-70 transition-opacity duration-200" aria-label="Accueil">
+      <button onClick={() => goHome(page, navigate)} className="w-8 h-8 shrink-0 hover:opacity-70 transition-opacity duration-200" aria-label="Accueil">
         <Logo />
       </button>
 
@@ -672,7 +678,7 @@ function MobileNav({ page, navigate, lang, setLang, dark, setDark }: {
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 bg-background border-b border-border md:hidden" style={{ height: 52 }}>
-        <button onClick={() => navigate("home")} className="relative w-7 h-7 shrink-0 block" aria-label="Accueil">
+        <button onClick={() => goHome(page, navigate)} className="relative w-7 h-7 shrink-0 block" aria-label="Accueil">
           <Logo />
         </button>
         <div className="flex items-center gap-2">
