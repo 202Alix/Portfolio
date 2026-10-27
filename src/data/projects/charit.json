@@ -2,8 +2,8 @@
   "id": "charit",
   "index": "08",
   "title": {
-    "fr": "Charit",
-    "en": "Charit"
+    "fr": "Charit.",
+    "en": "Charit."
   },
   "year": "2025",
   "category": {
@@ -30,5 +30,6 @@
   },
   "coverImage": "/projects/projet-1785227055547/Charit_Thumbnail.webp",
   "coverImagePosition": 29,
+  "hidden": true,
   "content": []
 }
