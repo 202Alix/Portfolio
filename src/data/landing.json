@@ -21,8 +21,8 @@
     "tools": "Outils",
     "together": "Restez en contact",
     "footer": "Design Graphique",
-    "bio": "Je suis designer graphique, spécialisé en identité de marque, motion et design numérique. J’ai suivi le Mastère Direction Artistique Digitale (Bac+5) en alternance chez Air Liquide, où j’ai conçu des supports de communication visuelle et des contenus numériques au sein d’un système de marque global et structuré, avec un souci de précision d’exécution, de cohérence visuelle et d’adaptation d’identités existantes à différents formats.",
-    "bio2": "Je m’intéresse particulièrement à l’identité de marque et au motion design, et je continue à développer un intérêt pour le design d’interface à travers mes projets. Je suis ouvert aux opportunités en entreprise comme en agence, et disponible pour un poste en CDI dès novembre 2026.",
+    "bio": "Je suis designer graphique, spécialisé en identité de marque, motion et design numérique. J'ai suivi le Mastère Direction Artistique Digitale (Bac+5) en alternance chez Air Liquide, où j'ai conçu des supports de communication visuelle et des contenus numériques au sein d'un système de marque global et structuré, avec un souci de précision d'exécution, de cohérence visuelle et d'adaptation d'identités existantes à différents formats.",
+    "bio2": "Je m'intéresse particulièrement à l'identité de marque et au motion design, et je continue à développer un intérêt pour le design d'interface à travers mes projets. Je suis ouvert aux opportunités en entreprise comme en agence, et disponible pour un poste en CDI dès novembre 2026.",
     "skillsList": [
       "Branding & Identité",
       "Direction artistique",
@@ -69,12 +69,12 @@
     "tools": "Tools",
     "together": "Let's work\ntogether",
     "footer": "Graphic Design",
-    "bio": "I’m a French graphic designer specialised in brand identity, motion and digital design. I completed the Digital Art Direction program (Bac+5) through an apprenticeship at Air Liquide, where I designed visual communication and digital assets within a structured, global brand system with a focus on clean execution, visual coherence and adapting existing identities across formats.",
-    "bio2": "I’m particularly interested in brand identity and motion design, and I keep developing an interest in interface design through my projects. Open to opportunities in both the private sector and agencies, and available for full-time employment from November 2026.",
+    "bio": "I'm a French graphic designer specialised in brand identity, motion and digital design. I completed the Digital Art Direction program (Bac+5) through an apprenticeship at Air Liquide, where I designed visual communication and digital assets within a structured, global brand system with a focus on clean execution, visual coherence and adapting existing identities across formats.",
+    "bio2": "I'm particularly interested in brand identity and motion design, and I keep developing an interest in interface design through my projects. Open to opportunities in both the private sector and agencies, and available for full-time employment from November 2026.",
     "skillsList": [
       "Branding & Identity",
       "Art Direction",
-      "AI Proficiency",
+      "AI Tools",
       "Motion design",
       "UI design",
       "Project management"
@@ -101,7 +101,7 @@
   "links": [
     {
       "label": "LinkedIn",
-      "url": "https://www.linkedin.com/in/alix-labonne-937246194/"
+      "url": "https://www.linkedin.com/in/alix-labonne/"
     }
   ]
 }

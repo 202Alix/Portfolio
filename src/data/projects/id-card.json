@@ -25,8 +25,8 @@
     }
   ],
   "excerpt": {
-    "fr": "Présentation vidéo annuelle de l'entreprise et de ses résultats, destinée à un public international.",
-    "en": "Annual video presentation of the company and its performance figures for international use."
+    "fr": "Vidéo de moins de trois minutes présentant ce que fait Air Liquide et pourquoi, avec ses chiffres clés et son impact social, destinée à un public international.",
+    "en": "Video of under three minutes presenting what Air Liquide does and why, with its key figures and social impact, for an international audience."
   },
   "coverImage": "/projects/id-card/IdentityCard_Thumbnail.webp",
   "coverImagePosition": 54,
@@ -39,7 +39,7 @@
       "type": "text",
       "primary": {
         "fr": "Chaque année, Air Liquide publie une vidéo suivant l'annonce de ses résultats annuels, destinée à présenter l'entreprise, ses performances et son impact. La vidéo est diffusée sur YouTube et affichée à l'accueil du siège social et de nombreux sites dans les 59 pays où l'entreprise est implantée. À la demande de la marque, j'ai réalisé cette vidéo en 2025 avec l'objectif de créer un modèle réutilisable pour les années futures.",
-        "en": "Every year, Air Liquide releases a video following its annual results announcement, designed to present the company, its performance and impact. The video is distributed on YouTube and displayed in the headquarters and multiple sites across 59 countries. At the brand's request, I directed this 2025 video with the goal of creating a reusable template for future years."
+        "en": "Every year, Air Liquide releases a video following its annual results announcement, designed to present the company, its performance and impact. The video is distributed on YouTube and displayed in the headquarters and multiple sites across 59 countries. At the brand's request, I produced this 2025 video with the goal of creating a reusable template for future years."
       }
     },
     {
@@ -58,7 +58,7 @@
           "en": "https://www.youtube.com/watch?v=pcqXho-pW24&t=15s&pp=ygUZQWlyIExpcXVpZGUgSWRlbnRpdHkgQ2FyZA%3D%3D"
         },
         "caption": {
-          "fr": " Carte d’identité du Groupe 2025 (données 2024) - Air Liquide ",
+          "fr": " Carte d'identité du Groupe 2025 (données 2024) - Air Liquide ",
           "en": "FR                                                                                               Group Identity Card 2025 (2024 figures) - Air Liquide "
         }
       }
@@ -80,7 +80,7 @@
         "kind": "text",
         "primary": {
           "fr": "Un effet de surlignage bleu apparaît aussi, principalement derrière les chiffres, guidant le regard vers le bas de l'écran où les résultats sont positionnés, tandis que le reste du texte occupe le centre. Cet effet crée une hiérarchie visuelle claire et oriente l'attention du spectateur.\n\nPour assurer la réutilisabilité, j'ai développé un script d'animation de chiffres sous After Effects qui se génère automatiquement en fonction de paramètres définis. Cela facilite non seulement les traductions français-anglais, mais permet aussi aux équipes étrangères de modifier simplement les chiffres de début et de fin sans complexifier la mise en œuvre. La précision du timing et la variété des effets d'animation ont rendu After Effects indispensable pour ce projet.\n\nAinsi j'ai pu concevoir la vidéo une première fois en 2025 mais aussi la mettre à jour avec les nouveaux résultats de l'entreprise en 2026, mettant moi-même au test mes capacités à créer un projet réutilisable et durable.",
-          "en": "A blue highlight effect also appears primarily behind figures, directing the viewer's gaze to the bottom of the screen where results are positioned, while supporting text remains centered. This effect creates clear visual hierarchy and controls viewer attention.\n\nTo ensure template reusability, I developed a script-driven figure animation system in After Effects that generates automatically based on set parameters. This not only facilitates French-English translations, but allows international teams to modify start and end figures without added complexity. Precise timing and diverse animation effects made After Effects essential for this project.\n\nI was able to create the video for the first time in 2025 and then update it with the company’s new figures in 2026, putting my ability to create a reusable and durable project to the test."
+          "en": "A blue highlight effect also appears primarily behind figures, directing the viewer's gaze to the bottom of the screen where results are positioned, while supporting text remains centered. This effect creates clear visual hierarchy and controls viewer attention.\n\nTo ensure template reusability, I developed a script-driven figure animation system in After Effects that generates automatically based on set parameters. This not only facilitates French-English translations, but allows international teams to modify start and end figures without added complexity. Precise timing and diverse animation effects made After Effects essential for this project.\n\nI was able to create the video for the first time in 2025 and then update it with the company's new figures in 2026, putting my ability to create a reusable and durable project to the test."
         },
         "align": "left"
       }
@@ -91,8 +91,8 @@
       "left": {
         "kind": "text",
         "primary": {
-          "fr": "La vidéo a reçu un accueil très positif. Elle a été présentée lors de l'Assemblée Générale d'Air Liquide, l'événement le plus important de l'année pour l'entreprise, accueillant plus de 3 000 actionnaires au Palais des Congrès. La vidéo s'est jouée juste avant les prises de parole du Directeur Général et du Président du Conseil d'Administration, soulignant son rôle central dans la communication du groupe.",
-          "en": "The video was very well received. It premiered at Air Liquide's General Assembly, the company's most significant annual event, with over 3,000 shareholders at the Palais des Congrès. The video played just before remarks from the CEO and Board President, underscoring its central role in the company's communications strategy."
+          "fr": "Elle a été présentée lors de l'Assemblée Générale d'Air Liquide, l'événement le plus important de l'année pour l'entreprise, accueillant plus de 3 000 actionnaires au Palais des Congrès. La vidéo s'est jouée juste avant les prises de parole du Directeur Général et du Président du Conseil d'Administration.",
+          "en": "It was presented at Air Liquide's General Assembly, the company's most significant annual event, with over 3,000 shareholders at the Palais des Congrès. The video played just before remarks from the CEO and Board President."
         }
       },
       "right": {
