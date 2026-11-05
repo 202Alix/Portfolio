@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, useContext, createContext } from "react";
-import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, EyeOff, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil, Globe, ChevronsLeftRight } from "lucide-react";
+import { Plus, Trash2, Copy, GripVertical, ChevronDown, ChevronUp, Save, Eye, EyeOff, ArrowLeft, ArrowLeftRight, X, ImageIcon, Type, Video, Youtube, LayoutGrid, Columns2, CircleHelp, Pencil, Globe, ChevronsLeftRight, CloudUpload, TriangleAlert, LoaderCircle, CircleCheck, ClipboardCopy, ClipboardCheck } from "lucide-react";
 import type { Project, ContentBlock, ColumnContent, MediaItem, CompareItem, LS, LocalizedText, LandingContent } from "../types";
 
 // ─── LANGUE GLOBALE DE L'ÉDITEUR ───────────────────────────────────────────
@@ -42,7 +42,7 @@ function newProject(): ProjectDraft {
     index: "00",
     title: emptyLS(),
     year: new Date().getFullYear().toString(),
-    category: { fr: "Identite visuelle", en: "Visual Identity" },
+    category: { fr: "Identité visuelle", en: "Visual Identity" },
     tags: [],
     excerpt: emptyLS(),
     coverImage: "",
@@ -97,6 +97,57 @@ function draftToProject(draft: ProjectDraft): Project {
   return stripUids(draft);
 }
 
+const serializeDraft = (draft: ProjectDraft) => JSON.stringify(draftToProject(draft));
+
+// Tout le texte d'un projet dans une langue, dans l'ordre de la page (métadonnées, puis blocs)
+const COPY_LABELS = {
+  fr: { tags: "Tags", caption: "Légende", alt: "Texte alternatif", image: "Image", video: "Vidéo", youtube: "Vidéo YouTube", website: "Site web", compare: "Avant / Après", gallery: "Galerie", left: "Colonne gauche", right: "Colonne droite" },
+  en: { tags: "Tags", caption: "Caption", alt: "Alt text", image: "Image", video: "Video", youtube: "YouTube video", website: "Website", compare: "Before / After", gallery: "Gallery", left: "Left column", right: "Right column" },
+} as const;
+
+function projectToPlainText(draft: ProjectDraft, lang: "fr" | "en"): string {
+  const L = COPY_LABELS[lang];
+  const tr = (v: LocalizedText | undefined) => (v === undefined ? "" : typeof v === "string" ? v : v[lang]).trim();
+  const media = (label: string, caption?: LocalizedText, alt?: string, extra?: string) =>
+    [`[${label}]${extra ? ` ${extra}` : ""}`, tr(caption) && `${L.caption} : ${tr(caption)}`, alt?.trim() && `${L.alt} : ${alt.trim()}`]
+      .filter(Boolean).join("\n");
+
+  const column = (c: ColumnContent): string => {
+    if (c.kind === "text") return tr(c.primary);
+    if (c.kind === "image") return media(L.image, c.item.caption, c.item.alt);
+    if (c.kind === "video") return media(L.video, c.item.caption);
+    if (c.kind === "youtube") return media(L.youtube, c.caption);
+    if (c.kind === "website") return media(L.website, c.item.caption, c.item.alt, c.url);
+    if (c.kind === "compare") return media(L.compare, c.item.caption, c.item.alt);
+    return "";
+  };
+
+  const block = (b: ContentBlock): string => {
+    switch (b.type) {
+      case "text": return [tr(b.primary), tr(b.secondary)].filter(Boolean).join("\n\n");
+      case "image": return media(L.image, b.item.caption, b.item.alt);
+      case "video": return media(L.video, b.item.caption);
+      case "youtube": return media(L.youtube, b.caption);
+      case "website": return media(L.website, b.item.caption, b.item.alt, b.url);
+      case "compare": return media(L.compare, b.item.caption, b.item.alt);
+      case "columns": return [`[${L.left}]\n${column(b.left)}`, `[${L.right}]\n${column(b.right)}`].join("\n\n");
+      case "masonry": return [`[${L.gallery}]`, ...b.items.map((it) => [tr(it.caption) && `${L.caption} : ${tr(it.caption)}`, it.alt.trim() && `${L.alt} : ${it.alt.trim()}`].filter(Boolean).join("\n")).filter(Boolean)].join("\n");
+      default: return "";
+    }
+  };
+
+  const meta = [
+    tr(draft.title),
+    [tr(draft.category), draft.year].filter(Boolean).join(" · "),
+    draft.tags.length ? `${L.tags} : ${draft.tags.map(tr).filter(Boolean).join(", ")}` : "",
+    tr(draft.excerpt),
+    tr(draft.credits),
+  ];
+  return [...meta, ...draft.content.map(block)]
+    .filter((part) => part.trim())
+    .join("\n\n");
+}
+
 function withAutoIndex(projects: ProjectDraft[]): ProjectDraft[] {
   return projects.map((project, i) => ({
     ...project,
@@ -106,25 +157,47 @@ function withAutoIndex(projects: ProjectDraft[]): ProjectDraft[] {
 
 // ─── API ───────────────────────────────────────────────────────────────────
 
-async function apiSave(project: Project): Promise<void> {
+// Version = empreinte du fichier sur le disque au moment où l'éditeur l'a lu.
+// Le serveur refuse d'écrire si le fichier a changé depuis (409) : rien n'est écrasé en silence.
+type FileVersion = string | null;
+
+class ConflictError extends Error {
+  constructor() {
+    super("Le fichier a été modifié en dehors de l'éditeur");
+  }
+}
+
+async function apiSave(project: Project, expectedVersion: FileVersion, force = false): Promise<FileVersion> {
   const res = await fetch("/api/save-project", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(project),
+    body: JSON.stringify({ project, expectedVersion, force }),
   });
+  if (res.status === 409) throw new ConflictError();
   if (!res.ok) throw new Error("Erreur lors de la sauvegarde");
+  return (await res.json()).version;
 }
 
-async function apiDelete(id: string): Promise<void> {
+async function apiDelete(id: string, expectedVersion: FileVersion, force = false): Promise<void> {
   const res = await fetch("/api/delete-project", {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ id }),
+    body: JSON.stringify({ id, expectedVersion, force }),
   });
+  if (res.status === 409) throw new ConflictError();
   if (!res.ok) throw new Error("Erreur lors de la suppression");
 }
 
-async function apiUpload(file: File, projectId: string): Promise<string> {
+type UploadResult = {
+  path: string;
+  converted?: { from: string; originalSize: number; size: number; width: number; height: number };
+};
+
+function formatSize(bytes: number): string {
+  return bytes < 1024 * 1024 ? `${Math.round(bytes / 1024)} Ko` : `${(bytes / 1024 / 1024).toFixed(1)} Mo`;
+}
+
+async function apiUpload(file: File, projectId: string): Promise<UploadResult> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = async () => {
@@ -136,7 +209,7 @@ async function apiUpload(file: File, projectId: string): Promise<string> {
           body: JSON.stringify({ projectId, filename: file.name, data: base64 }),
         });
         const json = await res.json();
-        if (json.path) resolve(json.path);
+        if (json.path) resolve(json);
         else reject(new Error(json.error));
       } catch (e) {
         reject(e);
@@ -147,31 +220,64 @@ async function apiUpload(file: File, projectId: string): Promise<string> {
   });
 }
 
-async function apiList(): Promise<Project[]> {
+async function apiList(): Promise<{ project: Project; version: FileVersion }[]> {
   const res = await fetch("/api/list-projects");
   return res.json();
 }
 
-async function apiGetLanding(): Promise<LandingContent> {
+async function apiGetLanding(): Promise<{ landing: LandingContent; version: FileVersion }> {
   const res = await fetch("/api/get-landing");
   if (!res.ok) throw new Error("Erreur lors du chargement de la landing page");
   return res.json();
 }
 
-async function apiSaveLanding(landing: LandingContent): Promise<void> {
+async function apiSaveLanding(landing: LandingContent, expectedVersion: FileVersion, force = false): Promise<FileVersion> {
   const res = await fetch("/api/save-landing", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(landing),
+    body: JSON.stringify({ landing, expectedVersion, force }),
   });
+  if (res.status === 409) throw new ConflictError();
   if (!res.ok) throw new Error("Erreur lors de la sauvegarde de la landing page");
+  return (await res.json()).version;
+}
+
+type PublishFile = { path: string; status: "added" | "modified" | "deleted"; sizeMB: number | null; title: string | null };
+type PublishState = {
+  files: PublishFile[];
+  unpublishedContent: string[];
+  outside: string[];
+  ahead: number;
+  behind: number;
+  offline: boolean;
+  blockers: string[];
+  warnings: string[];
+  lastPublished: string | null;
+};
+
+async function apiPublishStatus(fetchRemote: boolean): Promise<PublishState> {
+  const res = await fetch(`/api/publish-status?fetch=${fetchRemote ? 1 : 0}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "Impossible de lire l'état de publication");
+  return data;
+}
+
+async function apiPublish(message: string): Promise<{ commit: string; lastPublished: string }> {
+  const res = await fetch("/api/publish", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error ?? "La publication a échoué. Rien n'a été mis en ligne.");
+  return data;
 }
 
 // ─── COMPOSANTS UI ─────────────────────────────────────────────────────────
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <span className="block font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-1">
+    <span className="block font-body text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-1">
       {children}
     </span>
   );
@@ -184,7 +290,7 @@ function LangTabs({ value, onChange, size = "sm" }: {
     <div className="flex border border-border overflow-hidden">
       {(["fr", "en"] as const).map((l) => (
         <button key={l} onClick={() => onChange(l)}
-          className={`font-mono tracking-widest uppercase transition-colors ${size === "lg" ? "px-3 py-1 text-[10px]" : "px-2 py-0.5 text-[9px]"}`}
+          className={`font-body tracking-widest uppercase transition-colors ${size === "lg" ? "px-3 py-1 text-[10px]" : "px-2 py-0.5 text-[9px]"}`}
           style={{ background: value === l ? "#0246F3" : "transparent", color: value === l ? "#fff" : "var(--muted-foreground)" }}>
           {l.toUpperCase()}
         </button>
@@ -203,7 +309,7 @@ function Input({ value, onChange, placeholder, className = "", readOnly = false 
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       readOnly={readOnly}
-      className={`w-full bg-secondary border border-border px-3 py-2 font-mono text-sm outline-none focus:border-primary transition-colors ${readOnly ? "cursor-not-allowed opacity-70" : ""} ${className}`}
+      className={`w-full bg-secondary border border-border px-3 py-2 font-body text-sm outline-none focus:border-primary transition-colors ${readOnly ? "cursor-not-allowed opacity-70" : ""} ${className}`}
     />
   );
 }
@@ -227,7 +333,7 @@ function Textarea({ value, onChange, placeholder, rows = 3 }: {
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       rows={rows}
-      className="w-full bg-secondary border border-border px-3 py-2 font-mono text-sm outline-none focus:border-primary transition-colors resize-none overflow-hidden"
+      className="w-full bg-secondary border border-border px-3 py-2 font-body text-sm outline-none focus:border-primary transition-colors resize-none overflow-hidden"
     />
   );
 }
@@ -353,7 +459,7 @@ function ImageGuidelines({ kind = "generic" }: { kind?: ImageHintKind }) {
         type="button"
         onClick={() => setOpen((o) => !o)}
         onBlur={() => setTimeout(() => setOpen(false), 120)}
-        className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
+        className="inline-flex items-center gap-1.5 font-body text-[10px] tracking-wider uppercase text-muted-foreground hover:text-primary transition-colors"
         aria-expanded={open}
         aria-label="Afficher les recommandations image"
       >
@@ -366,15 +472,15 @@ function ImageGuidelines({ kind = "generic" }: { kind?: ImageHintKind }) {
         onMouseLeave={() => setOpen(false)}
       >
         <div className="px-3 py-2">
-          <span className="block font-mono text-[9px] tracking-[0.18em] uppercase text-muted-foreground mb-1">{title}</span>
+          <span className="block font-body text-[9px] tracking-[0.18em] uppercase text-muted-foreground mb-1">{title}</span>
           <div className="space-y-0.5">
             {lines.map((line) => (
-              <p key={line} className="font-mono text-[10px] leading-relaxed text-muted-foreground">{line}</p>
+              <p key={line} className="font-body text-[10px] leading-relaxed text-muted-foreground">{line}</p>
             ))}
           </div>
           <div className="h-px bg-border/60 my-2" />
-          <p className="font-mono text-[10px] leading-relaxed text-muted-foreground">
-            Regle generale: WebP recommande, qualite 80-85%, cible inferieure a 400 Ko.
+          <p className="font-body text-[10px] leading-relaxed text-muted-foreground">
+            PNG et JPG sont convertis automatiquement en WebP (qualité 85, 2560 px max). Seul le .webp est gardé.
           </p>
         </div>
       </div>
@@ -394,6 +500,7 @@ function ImageUpload({ src, onChange, projectId, label = "Image", hintKind = "ge
   const showLabel = label !== "";
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [note, setNote] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFile = async (file: File) => {
@@ -403,9 +510,13 @@ function ImageUpload({ src, onChange, projectId, label = "Image", hintKind = "ge
     }
     setUploading(true);
     setError("");
+    setNote("");
     try {
-      const path = await apiUpload(file, projectId);
+      const { path, converted } = await apiUpload(file, projectId);
       onChange(path);
+      if (converted) {
+        setNote(`Converti en WebP : ${formatSize(converted.originalSize)} → ${formatSize(converted.size)} (${converted.width}×${converted.height})`);
+      }
     } catch (e) {
       setError("Erreur upload");
     } finally {
@@ -431,19 +542,20 @@ function ImageUpload({ src, onChange, projectId, label = "Image", hintKind = "ge
           <div className="relative w-full">
             <img src={src} alt="" className="w-full object-cover" style={{ maxHeight: 120 }} />
             <div className="absolute inset-0 bg-foreground/0 hover:bg-foreground/30 transition-colors flex items-center justify-center">
-              <span className="opacity-0 hover:opacity-100 font-mono text-[10px] text-white tracking-widest uppercase">Changer</span>
+              <span className="opacity-0 hover:opacity-100 font-body text-[10px] text-white tracking-widest uppercase">Changer</span>
             </div>
           </div>
         ) : (
           <>
             <ImageIcon size={20} className="text-muted-foreground" />
-            <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-body text-[10px] tracking-widest uppercase text-muted-foreground">
               {uploading ? "Upload…" : "Glisser ou cliquer"}
             </span>
           </>
         )}
       </div>
-      {error && <p className="font-mono text-[10px] text-red-500 mt-1">{error}</p>}
+      {error && <p className="font-body text-[10px] text-red-500 mt-1">{error}</p>}
+      {note && <p className="font-body text-[10px] text-green-500 mt-1">{note}</p>}
       <input
         ref={inputRef}
         type="file"
@@ -520,7 +632,7 @@ function VideoUpload({ src, onChange, projectId, label = "Vidéo" }: {
     setUploading(true);
     setError("");
     try {
-      const path = await apiUpload(file, projectId);
+      const { path } = await apiUpload(file, projectId);
       onChange(path);
     } catch (e) {
       setError("Erreur upload");
@@ -547,19 +659,19 @@ function VideoUpload({ src, onChange, projectId, label = "Vidéo" }: {
           <div className="relative w-full">
             <video key={src} src={src} controls className="w-full object-cover" style={{ maxHeight: 160 }} />
             <div className="absolute inset-0 bg-foreground/0 hover:bg-foreground/20 transition-colors flex items-center justify-center pointer-events-none">
-              <span className="opacity-0 hover:opacity-100 font-mono text-[10px] text-white tracking-widest uppercase">Changer</span>
+              <span className="opacity-0 hover:opacity-100 font-body text-[10px] text-white tracking-widest uppercase">Changer</span>
             </div>
           </div>
         ) : (
           <>
             <Video size={20} className="text-muted-foreground" />
-            <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground">
+            <span className="font-body text-[10px] tracking-widest uppercase text-muted-foreground">
               {uploading ? "Upload…" : "Glisser ou cliquer"}
             </span>
           </>
         )}
       </div>
-      {error && <p className="font-mono text-[10px] text-red-500 mt-1">{error}</p>}
+      {error && <p className="font-body text-[10px] text-red-500 mt-1">{error}</p>}
       <input
         ref={inputRef}
         type="file"
@@ -592,7 +704,7 @@ function PdfUpload({ src, onChange, folder, label = "PDF" }: {
     setUploading(true);
     setError("");
     try {
-      onChange(await apiUpload(file, folder));
+      onChange((await apiUpload(file, folder)).path);
     } catch (e) {
       setError("Erreur upload");
     } finally {
@@ -614,11 +726,11 @@ function PdfUpload({ src, onChange, folder, label = "PDF" }: {
           if (file) handleFile(file);
         }}
       >
-        <span className="font-mono text-[10px] tracking-widest uppercase text-muted-foreground truncate">
+        <span className="font-body text-[10px] tracking-widest uppercase text-muted-foreground truncate">
           {uploading ? "Upload…" : src ? `${fileNameFromSrc(src)} — changer` : "Glisser ou cliquer"}
         </span>
       </div>
-      {error && <p className="font-mono text-[10px] text-red-500 mt-1">{error}</p>}
+      {error && <p className="font-body text-[10px] text-red-500 mt-1">{error}</p>}
       <input
         ref={inputRef}
         type="file"
@@ -670,7 +782,7 @@ function PositionSelect({ value, onChange }: {
       <div className="flex border border-border overflow-hidden">
         {(["left", "right", "full"] as const).map((p) => (
           <button key={p} onClick={() => onChange(p)}
-            className="flex-1 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors"
+            className="flex-1 py-1.5 font-body text-[10px] tracking-widest uppercase transition-colors"
             style={{ background: value === p ? "#0246F3" : "transparent", color: value === p ? "#fff" : "var(--muted-foreground)" }}>
             {p === "left" ? "Gauche" : p === "right" ? "Droite" : "Pleine page"}
           </button>
@@ -694,7 +806,7 @@ function RatioSelect({ value, onChange }: {
       <div className="flex border border-border overflow-hidden">
         {options.map(({ v, label }) => (
           <button key={v} onClick={() => onChange(v)}
-            className="flex-1 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors"
+            className="flex-1 py-1.5 font-body text-[10px] tracking-widest uppercase transition-colors"
             style={{ background: value === v ? "#0246F3" : "transparent", color: value === v ? "#fff" : "var(--muted-foreground)" }}>
             {label}
           </button>
@@ -713,7 +825,7 @@ function AlignSelect({ value, onChange }: {
       <div className="flex border border-border overflow-hidden">
         {(["left", "right"] as const).map((a) => (
           <button key={a} onClick={() => onChange(a)}
-            className="flex-1 py-1.5 font-mono text-[10px] tracking-widest uppercase transition-colors"
+            className="flex-1 py-1.5 font-body text-[10px] tracking-widest uppercase transition-colors"
             style={{ background: value === a ? "#0246F3" : "transparent", color: value === a ? "#fff" : "var(--muted-foreground)" }}>
             {a === "left" ? "Gauche" : "Droite"}
           </button>
@@ -755,7 +867,7 @@ function CompareItemEditor({ value, onChange, projectId, hintKind = "generic" }:
     <div className="space-y-3">
       <ImageUpload src={value.before} onChange={(before) => onChange({ ...value, before })} projectId={projectId} label="Avant" hintKind={hintKind} />
       <ImageUpload src={value.after} onChange={(after) => onChange({ ...value, after })} projectId={projectId} label="Après" hintKind={hintKind} />
-      <p className="font-mono text-[10px] text-muted-foreground">Images communes au FR et à l'EN. Les deux doivent avoir exactement les mêmes dimensions et le même cadrage.</p>
+      <p className="font-body text-[10px] text-muted-foreground">Images communes au FR et à l'EN. Les deux doivent avoir exactement les mêmes dimensions et le même cadrage.</p>
       <div>
         <Label>Alt</Label>
         <Input value={value.alt} onChange={(alt) => onChange({ ...value, alt })} placeholder="Description de l'image" />
@@ -797,7 +909,7 @@ function ColumnEditor({ value, onChange, projectId }: {
       <div className="relative">
         <Label>Type</Label>
         <button onClick={() => setKindOpen((o) => !o)}
-          className="w-full flex items-center gap-2 border border-border px-3 py-1.5 font-mono text-[10px] tracking-wider uppercase text-left hover:border-primary transition-colors">
+          className="w-full flex items-center gap-2 border border-border px-3 py-1.5 font-body text-[10px] tracking-wider uppercase text-left hover:border-primary transition-colors">
           <span className="text-muted-foreground">{current.icon}</span>
           {current.label}
           <ChevronDown size={12} className="ml-auto text-muted-foreground" />
@@ -806,7 +918,7 @@ function ColumnEditor({ value, onChange, projectId }: {
           <div className="absolute top-full left-0 right-0 mt-1 border border-border bg-background z-10">
             {COLUMN_KINDS.map(({ k, label, icon }) => (
               <button key={k} onClick={() => setKind(k)}
-                className="w-full flex items-center gap-2 px-3 py-2 font-mono text-[10px] tracking-wider uppercase hover:bg-secondary transition-colors text-left"
+                className="w-full flex items-center gap-2 px-3 py-2 font-body text-[10px] tracking-wider uppercase hover:bg-secondary transition-colors text-left"
                 style={{ color: value.kind === k ? "#0246F3" : undefined }}>
                 {icon}{label}
               </button>
@@ -884,7 +996,7 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
         </div>
         <div className="flex items-center gap-2 flex-1">
           <span className="text-muted-foreground">{meta?.icon}</span>
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase">{meta?.label}</span>
+          <span className="font-body text-[10px] tracking-[0.2em] uppercase">{meta?.label}</span>
         </div>
         <button onClick={() => setOpen((o) => !o)} className="text-muted-foreground hover:text-foreground transition-colors">
           {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
@@ -975,7 +1087,7 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
                     const flipped = block.ratio === "1:2" ? "2:1" : block.ratio === "2:1" ? "1:2" : "1:1";
                     onChange({ ...block, left: block.right, right: block.left, ratio: flipped });
                   }}
-                  className="flex items-center gap-1.5 border border-border px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors shrink-0"
+                  className="flex items-center gap-1.5 border border-border px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors shrink-0"
                 >
                   <ArrowLeftRight size={12} /> Inverser
                 </button>
@@ -1052,7 +1164,7 @@ function BlockEditor({ block, onChange, onDelete, onDuplicate, projectId, dragHa
                 </div>
               ))}
               <button onClick={() => onChange({ ...block, items: [...block.items, { src: "", alt: "", caption: emptyLS() }] })}
-                className="w-full border border-dashed border-border py-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors flex items-center justify-center gap-2">
+                className="w-full border border-dashed border-border py-2 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors flex items-center justify-center gap-2">
                 <Plus size={12} /> Ajouter une image
               </button>
             </div>
@@ -1093,7 +1205,7 @@ function AddBlockMenu({ onAdd }: { onAdd: (b: DraftBlock) => void }) {
   return (
     <div className="relative">
       <button onClick={() => setOpen((o) => !o)}
-        className="w-full border border-dashed border-border py-3 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors flex items-center justify-center gap-2">
+        className="w-full border border-dashed border-border py-3 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors flex items-center justify-center gap-2">
         <Plus size={13} /> Ajouter un bloc
       </button>
       {open && (
@@ -1102,7 +1214,7 @@ function AddBlockMenu({ onAdd }: { onAdd: (b: DraftBlock) => void }) {
             <button key={type} onClick={() => { onAdd(newBlock(type)); setOpen(false); }}
               className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-secondary transition-colors text-left">
               <span className="text-muted-foreground">{icon}</span>
-              <span className="font-mono text-[11px] tracking-widest uppercase">{label}</span>
+              <span className="font-body text-[11px] tracking-widest uppercase">{label}</span>
             </button>
           ))}
         </div>
@@ -1144,7 +1256,7 @@ function PanelSection({ title, badge, open, onToggle, children }: {
     <div className="border-b border-border">
       <button onClick={onToggle}
         className="w-full flex items-center justify-between px-4 py-3 hover:bg-secondary transition-colors">
-        <span className="flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] uppercase">
+        <span className="flex items-center gap-2 font-body text-[10px] tracking-[0.28em] uppercase">
           {title}
           {badge && <span className="px-1.5 py-0.5 text-[9px] tracking-wider text-white" style={{ background: "#0246F3" }}>{badge}</span>}
         </span>
@@ -1284,7 +1396,7 @@ function MetaPanel({
             {visibleCategorySuggestions.map((c) => (
               <div key={`${c.fr}-${c.en}`} className="inline-flex items-center border border-border/50 hover:border-primary transition-colors">
                 <button onClick={() => onChange({ ...draft, category: c })}
-                  className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
+                  className="font-body text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
                   {c[categoryLang] || c[otherCategoryLang]}
                 </button>
                 <button onClick={() => renameCategoryEverywhere(c)} className="px-1 py-0.5 text-muted-foreground hover:text-primary transition-colors" aria-label="Renommer categorie">
@@ -1320,7 +1432,7 @@ function MetaPanel({
             <Input value={tagInput} onChange={setTagInput} placeholder="Nouveau tag…"
               className="flex-1" />
             <button onClick={addTag}
-              className="border border-border px-3 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
+              className="border border-border px-3 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
               <Plus size={13} />
             </button>
           </div>
@@ -1332,7 +1444,7 @@ function MetaPanel({
                   if (draft.tags.some((tag) => isSameLS(tag, t))) return;
                   onChange({ ...draft, tags: [...draft.tags, t] });
                 }}
-                  className="font-mono text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
+                  className="font-body text-[9px] tracking-wider uppercase text-muted-foreground px-1.5 py-0.5 hover:text-primary transition-colors">
                   + {t[tagsLang] || t[otherTagsLang]}
                 </button>
                 <button onClick={() => renameTagEverywhere(t)} className="px-1 py-0.5 text-muted-foreground hover:text-primary transition-colors" aria-label="Renommer tag">
@@ -1364,7 +1476,7 @@ function MetaPanel({
               />
             </div>
             <div className="flex items-center gap-3 mt-2">
-              <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Haut</span>
+              <span className="font-body text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Haut</span>
               <input
                 type="range"
                 min={0}
@@ -1373,7 +1485,7 @@ function MetaPanel({
                 onChange={(e) => onChange({ ...draft, coverImagePosition: Number(e.target.value) })}
                 className="w-full accent-[#0246F3]"
               />
-              <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Bas</span>
+              <span className="font-body text-[9px] tracking-widest uppercase text-muted-foreground shrink-0">Bas</span>
             </div>
           </div>
         )}
@@ -1382,7 +1494,7 @@ function MetaPanel({
       <PanelSection title="Mentions" open={sections.credits} onToggle={() => toggleSection("credits")}>
         <div>
           <BilingualTextarea label="Droits, crédits (optionnel)" value={draft.credits ?? emptyLS()} onChange={(credits) => onChange({ ...draft, credits })} rows={2} />
-          <p className="font-mono text-[10px] text-muted-foreground mt-1">Affiché en tête du projet, avant le premier bloc.</p>
+          <p className="font-body text-[10px] text-muted-foreground mt-1">Affiché en tête du projet, avant le premier bloc.</p>
         </div>
       </PanelSection>
 
@@ -1392,14 +1504,14 @@ function MetaPanel({
           <div className="flex border border-border overflow-hidden">
             {[{ v: false, label: "Visible" }, { v: true, label: "Masqué" }].map(({ v, label }) => (
               <button key={label} onClick={() => onChange({ ...draft, hidden: v })}
-                className="flex-1 py-1.5 font-mono text-[10px] tracking-wider uppercase transition-colors"
+                className="flex-1 py-1.5 font-body text-[10px] tracking-wider uppercase transition-colors"
                 style={{ background: (draft.hidden ?? false) === v ? "#0246F3" : "transparent", color: (draft.hidden ?? false) === v ? "#fff" : "var(--muted-foreground)" }}>
                 {label}
               </button>
             ))}
           </div>
           {(draft.hidden ?? false) && (
-            <p className="mt-1.5 font-mono text-[9px] tracking-wide text-muted-foreground">
+            <p className="mt-1.5 font-body text-[9px] tracking-wide text-muted-foreground">
               Ce projet reste modifiable ici mais n'apparaît pas sur le site public.
             </p>
           )}
@@ -1407,7 +1519,7 @@ function MetaPanel({
         <div>
           <Label>Ordre</Label>
           <Input value={draft.index} onChange={() => {}} placeholder="Automatique" readOnly />
-          <p className="mt-1.5 font-mono text-[9px] tracking-wide text-muted-foreground">Se règle en glissant les projets dans la liste.</p>
+          <p className="mt-1.5 font-body text-[9px] tracking-wide text-muted-foreground">Se règle en glissant les projets dans la liste.</p>
         </div>
         <div>
           <Label>ID (slug URL)</Label>
@@ -1486,27 +1598,20 @@ function LandingPanel({ draft, onChange }: {
   return (
     <div className="max-w-4xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground">Contenu Landing</span>
+        <span className="font-body text-[10px] tracking-[0.28em] uppercase text-muted-foreground">Contenu Landing</span>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Disponibilité</Label>
-          <Input value={locale.availability ?? ""} onChange={(v) => updateField("availability", v)} placeholder="Disponible" />
-          <p className="font-mono text-[10px] text-muted-foreground mt-1">Remplace la tagline sous le nom. Laisser vide pour réafficher la tagline.</p>
-        </div>
-        <div>
-          <Label>Disponibilité — détail</Label>
-          <Input value={locale.availabilityDetail ?? ""} onChange={(v) => updateField("availabilityDetail", v)} placeholder="CDI · Nov. 2026" />
-          <p className="font-mono text-[10px] text-muted-foreground mt-1">Affiché après « · » sur la même ligne.</p>
-        </div>
+      <div>
+        <Label>Disponibilité</Label>
+        <Input value={locale.availability ?? ""} onChange={(v) => updateField("availability", v)} placeholder="Disponible dès maintenant pour un CDI." />
+        <p className="font-body text-[10px] text-muted-foreground mt-1">Remplace la tagline sous le nom. Laisser vide pour réafficher la tagline.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label>Lien CV</Label>
           <Input value={locale.cv ?? ""} onChange={(v) => updateField("cv", v)} placeholder="Télécharger le CV" />
-          <p className="font-mono text-[10px] text-muted-foreground mt-1">Le lien n'apparaît dans Contact que si un PDF est défini.</p>
+          <p className="font-body text-[10px] text-muted-foreground mt-1">Le lien n'apparaît dans Contact que si un PDF est défini.</p>
         </div>
         <PdfUpload label="Fichier CV (PDF)" src={locale.cvFile ?? ""} onChange={(v) => updateField("cvFile", v)} folder="cv" />
       </div>
@@ -1540,15 +1645,11 @@ function LandingPanel({ draft, onChange }: {
         </div>
         <div>
           <Label>Pattern Titre Projets</Label>
-          <Input value={locale.selectedWorksPattern} onChange={(v) => updateField("selectedWorksPattern", v)} placeholder="Ex: Projets — {count}" />
+          <Input value={locale.selectedWorksPattern} onChange={(v) => updateField("selectedWorksPattern", v)} placeholder="Ex : Projets : {count}" />
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <Label>All</Label>
-          <Input value={locale.all} onChange={(v) => updateField("all", v)} />
-        </div>
+      <div className="grid grid-cols-2 gap-4">
         <div>
           <Label>About</Label>
           <Input value={locale.about} onChange={(v) => updateField("about", v)} />
@@ -1589,11 +1690,7 @@ function LandingPanel({ draft, onChange }: {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        <div>
-          <Label>Category</Label>
-          <Input value={locale.category} onChange={(v) => updateField("category", v)} />
-        </div>
+      <div className="grid grid-cols-3 gap-4">
         <div>
           <Label>Overview (fiche projet)</Label>
           <Input value={locale.overview} onChange={(v) => updateField("overview", v)} />
@@ -1611,11 +1708,6 @@ function LandingPanel({ draft, onChange }: {
       <div>
         <Label>CTA Contact</Label>
         <Input value={locale.together} onChange={(v) => updateField("together", v)} />
-      </div>
-
-      <div>
-        <Label>Footer</Label>
-        <Input value={locale.footer} onChange={(v) => updateField("footer", v)} />
       </div>
 
       <div>
@@ -1639,19 +1731,13 @@ function LandingPanel({ draft, onChange }: {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <Label>Message aucun projet</Label>
-          <Input value={locale.noProjects} onChange={(v) => updateField("noProjects", v)} />
-        </div>
-        <div>
-          <Label>Bouton fermer</Label>
-          <Input value={locale.close} onChange={(v) => updateField("close", v)} />
-        </div>
+      <div>
+        <Label>Message aucun projet</Label>
+        <Input value={locale.noProjects} onChange={(v) => updateField("noProjects", v)} />
       </div>
 
       <div className="pt-6 border-t border-border space-y-4">
-        <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground block">Contact (partagé FR/EN)</span>
+        <span className="font-body text-[10px] tracking-[0.28em] uppercase text-muted-foreground block">Contact (partagé FR/EN)</span>
 
         <div>
           <Label>Nom (footer)</Label>
@@ -1706,7 +1792,7 @@ function LandingPanel({ draft, onChange }: {
           </div>
           <button
             onClick={() => onChange({ ...draft, links: [...draft.links, { label: "", url: "" }] })}
-            className="w-full mt-2 border border-dashed border-border py-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors flex items-center justify-center gap-2"
+            className="w-full mt-2 border border-dashed border-border py-2 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors flex items-center justify-center gap-2"
           >
             <Plus size={12} /> Ajouter un lien
           </button>
@@ -1717,6 +1803,200 @@ function LandingPanel({ draft, onChange }: {
 }
 
 // ─── ÉDITEUR PRINCIPAL ─────────────────────────────────────────────────────
+
+// ─── PUBLICATION ───────────────────────────────────────────────────────────
+
+function formatDate(iso: string | null): string {
+  if (!iso) return "jamais";
+  return new Date(iso).toLocaleString("fr-FR", { dateStyle: "medium", timeStyle: "short" });
+}
+
+function describeFile(f: PublishFile): { group: "projects" | "landing" | "cv" | "media" | "other"; label: string } {
+  if (f.path === "src/data/landing.json") return { group: "landing", label: "Page d'accueil" };
+  if (f.path.startsWith("src/data/projects/")) return { group: "projects", label: f.title ?? f.path.split("/").pop()! };
+  if (f.path.startsWith("public/projects/cv/")) return { group: "cv", label: f.path.split("/").pop()! };
+  if (f.path.startsWith("public/projects/")) return { group: "media", label: f.path.replace("public/projects/", "") };
+  return { group: "other", label: f.path };
+}
+
+const STATUS_WORD = { added: "Nouveau", modified: "Modifié", deleted: "Supprimé" } as const;
+const GROUP_TITLES = { projects: "Projets", landing: "Page d'accueil", cv: "CV", media: "Images et vidéos", other: "Autres contenus" } as const;
+
+function suggestMessage(files: PublishFile[]): string {
+  const described = files.map(describeFile);
+  const parts = [
+    ...described.filter((d) => d.group === "projects").map((d) => d.label),
+    ...(described.some((d) => d.group === "landing") ? ["page d'accueil"] : []),
+    ...(described.some((d) => d.group === "cv") ? ["CV"] : []),
+  ];
+  const media = described.filter((d) => d.group === "media").length;
+  if (!parts.length && media) parts.push(`${media} média${media > 1 ? "s" : ""}`);
+  return parts.length ? `Edited : ${[...new Set(parts)].join(", ")}` : "Content edited";
+}
+
+function PublishDialog({ unsavedNames, onClose, onPublished }: {
+  unsavedNames: string[];
+  onClose: () => void;
+  onPublished: (lastPublished: string) => void;
+}) {
+  const [state, setState] = useState<PublishState | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [message, setMessage] = useState("");
+  const [phase, setPhase] = useState<"idle" | "publishing" | "done" | "error">("idle");
+  const [result, setResult] = useState("");
+  const [showMedia, setShowMedia] = useState(false);
+
+  useEffect(() => {
+    apiPublishStatus(true)
+      .then((s) => { setState(s); setMessage(suggestMessage(s.files)); })
+      .catch((e) => setLoadError(String(e.message ?? e)));
+  }, []);
+
+  useEffect(() => {
+    const fn = (e: KeyboardEvent) => { if (e.key === "Escape" && phase !== "publishing") onClose(); };
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [onClose, phase]);
+
+  const publish = async () => {
+    setPhase("publishing");
+    try {
+      const r = await apiPublish(message);
+      setResult(r.commit);
+      setPhase("done");
+      onPublished(r.lastPublished);
+    } catch (e) {
+      setResult(e instanceof Error ? e.message : String(e));
+      setPhase("error");
+    }
+  };
+
+  const groups = state
+    ? (Object.keys(GROUP_TITLES) as (keyof typeof GROUP_TITLES)[])
+        .map((g) => ({ g, items: state.files.map((f) => ({ f, d: describeFile(f) })).filter(({ d }) => d.group === g) }))
+        .filter(({ items }) => items.length)
+    : [];
+  const nothing = state && !state.files.length && !state.ahead;
+  const blocked = !!state && (state.blockers.length > 0 || unsavedNames.length > 0 || state.offline || !!nothing || !message.trim());
+
+  const sectionTitle = "font-body text-[10px] tracking-[0.28em] uppercase text-muted-foreground mb-2";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 backdrop-blur-sm p-6" onClick={() => phase !== "publishing" && onClose()}>
+      <div className="w-full max-w-lg max-h-[85vh] flex flex-col bg-background border border-border" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <span className="font-display font-black uppercase tracking-tight text-lg">Publier sur le site</span>
+          <button onClick={onClose} disabled={phase === "publishing"} className="text-muted-foreground hover:text-foreground disabled:opacity-30" aria-label="Fermer">
+            <X size={15} />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+          {!state && !loadError && (
+            <p className="flex items-center gap-2 font-body text-[11px] text-muted-foreground"><LoaderCircle size={13} className="animate-spin" /> Vérification avec GitHub…</p>
+          )}
+          {loadError && <p className="font-body text-[11px] text-red-500 whitespace-pre-line">{loadError}</p>}
+
+          {phase === "done" && (
+            <div className="flex items-start gap-2 border border-green-500/40 bg-green-500/10 px-3 py-3">
+              <CircleCheck size={15} className="text-green-500 shrink-0 mt-px" />
+              <p className="text-sm">Envoyé ! Le site sera à jour d'ici une à deux minutes. <span className="font-body text-[10px] text-muted-foreground">({result})</span></p>
+            </div>
+          )}
+          {phase === "error" && (
+            <div className="flex items-start gap-2 border border-red-500/40 bg-red-500/10 px-3 py-3">
+              <TriangleAlert size={15} className="text-red-500 shrink-0 mt-px" />
+              <p className="text-sm whitespace-pre-line">{result}</p>
+            </div>
+          )}
+
+          {state && phase !== "done" && (
+            <>
+              {(unsavedNames.length > 0 || state.blockers.length > 0) && (
+                <div className="border border-red-500/40 bg-red-500/10 px-3 py-3 space-y-1.5">
+                  {unsavedNames.length > 0 && (
+                    <p className="text-sm">Modifications non enregistrées dans l'éditeur : <strong>{unsavedNames.join(", ")}</strong>. Clique sur « Enregistrer » avant de publier.</p>
+                  )}
+                  {state.blockers.map((b) => <p key={b} className="text-sm whitespace-pre-line">{b}</p>)}
+                </div>
+              )}
+              {state.warnings.length > 0 && (
+                <div className="border border-amber-500/40 bg-amber-500/10 px-3 py-3 space-y-1.5">
+                  {state.warnings.map((w) => <p key={w} className="flex items-start gap-2 text-sm"><TriangleAlert size={13} className="text-amber-500 shrink-0 mt-0.5" />{w}</p>)}
+                </div>
+              )}
+
+              {nothing ? (
+                <p className="text-sm text-muted-foreground">Rien à publier : le site en ligne est déjà à jour.</p>
+              ) : (
+                <div className="space-y-4">
+                  <span className={sectionTitle}>Ce qui va être mis en ligne</span>
+                  {groups.map(({ g, items }) => (
+                    <div key={g}>
+                      <div className="text-sm font-medium mb-1">{GROUP_TITLES[g]}{g === "media" && ` (${items.length})`}</div>
+                      {(g !== "media" || showMedia || items.length <= 4 ? items : items.slice(0, 4)).map(({ f, d }) => (
+                        <div key={f.path} className="flex items-center justify-between gap-3 py-0.5">
+                          <span className="text-sm truncate">{d.label}</span>
+                          <span className="shrink-0 font-body text-[9px] tracking-wider uppercase text-muted-foreground">
+                            {STATUS_WORD[f.status]}{f.sizeMB !== null && g !== "projects" && g !== "landing" ? ` · ${f.sizeMB < 1 ? `${Math.round(f.sizeMB * 1024)} Ko` : `${f.sizeMB.toFixed(1)} Mo`}` : ""}
+                          </span>
+                        </div>
+                      ))}
+                      {g === "media" && items.length > 4 && (
+                        <button onClick={() => setShowMedia((v) => !v)} className="font-body text-[10px] tracking-wider uppercase text-primary mt-1">
+                          {showMedia ? "Réduire" : `Voir les ${items.length}`}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  {state.unpublishedContent.length > 0 && (
+                    <div>
+                      <div className="text-sm font-medium mb-1">Déjà enregistré sur ton Mac, pas encore en ligne</div>
+                      {state.unpublishedContent.map((m) => <div key={m} className="text-sm text-muted-foreground truncate">{m}</div>)}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {state.outside.length > 0 && (
+                <details className="text-sm text-muted-foreground">
+                  <summary className="cursor-pointer font-body text-[10px] tracking-wider uppercase">Non publié : {state.outside.length} fichier{state.outside.length > 1 ? "s" : ""} du code du site</summary>
+                  <p className="mt-2">Ces fichiers ne partent jamais depuis l'éditeur, pour ne pas risquer de casser le site.</p>
+                  {state.outside.map((o) => <div key={o} className="font-body text-[10px] truncate">{o}</div>)}
+                </details>
+              )}
+
+              {!nothing && (
+                <div>
+                  <Label>Description de la mise à jour</Label>
+                  <Input value={message} onChange={setMessage} placeholder="Ex : Ajout du projet Beyond" />
+                </div>
+              )}
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-3 px-5 py-3 border-t border-border">
+          <span className="font-body text-[10px] tracking-wider text-muted-foreground">Dernière publication : {formatDate(state?.lastPublished ?? null)}</span>
+          <div className="flex items-center gap-2">
+            <button onClick={onClose} disabled={phase === "publishing"}
+              className="border border-border px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground hover:border-foreground transition-colors disabled:opacity-40">
+              {phase === "done" ? "Fermer" : "Annuler"}
+            </button>
+            {phase !== "done" && (
+              <button onClick={publish} disabled={blocked || phase === "publishing"}
+                className="flex items-center gap-2 px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-white transition-opacity disabled:opacity-40"
+                style={{ background: "linear-gradient(to right, #0246F3, #4A7DF1)" }}>
+                {phase === "publishing" ? <LoaderCircle size={12} className="animate-spin" /> : <CloudUpload size={12} />}
+                {phase === "publishing" ? "Publication…" : phase === "error" ? "Réessayer" : "Publier"}
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Editor() {
   const [editLang, setEditLang] = useState<"fr" | "en">("fr");
@@ -1734,10 +2014,21 @@ export default function Editor() {
   const [dragProjectIndex, setDragProjectIndex] = useState<number | null>(null);
   const [dropProjectIndex, setDropProjectIndex] = useState<number | null>(null);
   const isProjectDragging = useRef(false);
+  // Version de chaque fichier telle que lue ou écrite par l'éditeur, et contenu de référence
+  // pour savoir ce qui a changé : seuls les projets modifiés sont enregistrés.
+  const versions = useRef<Record<string, FileVersion>>({});
+  const [baselines, setBaselines] = useState<Record<string, string>>({});
+  const landingVersion = useRef<FileVersion>(null);
+  const [landingBaseline, setLandingBaseline] = useState<string | null>(null);
+  const [publishOpen, setPublishOpen] = useState(false);
+  const [lastPublished, setLastPublished] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Charger les projets existants
   useEffect(() => {
-    apiList().then((data) => {
+    apiList().then((entries) => {
+      entries.forEach(({ project, version }) => { versions.current[project.id] = version; });
+      const data = entries.map((e) => e.project);
       const sorted = [...data].sort((a, b) => a.index.localeCompare(b.index));
       const drafts = withAutoIndex(sorted.map((p) => ({
         ...p,
@@ -1746,6 +2037,7 @@ export default function Editor() {
         tags: (p.tags ?? []).map((tag) => toLS(tag)),
         content: p.content.map((b) => ({ ...b, _uid: uid() } as DraftBlock)),
       })));
+      setBaselines(Object.fromEntries(drafts.map((p) => [p.id, serializeDraft(p)])));
       setProjects(drafts);
 
       // Restaure le projet sélectionné avant un éventuel rechargement de page
@@ -1762,7 +2054,12 @@ export default function Editor() {
         }
       }
     });
-    apiGetLanding().then((data) => setLandingDraft(data));
+    apiGetLanding().then(({ landing, version }) => {
+      landingVersion.current = version;
+      setLandingDraft(landing);
+      setLandingBaseline(JSON.stringify(landing));
+    });
+    apiPublishStatus(false).then((s) => setLastPublished(s.lastPublished)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -1869,6 +2166,66 @@ export default function Editor() {
     setStatus("idle");
   };
 
+  // Enregistre les projets dont le contenu diffère de la version de référence.
+  // Si un fichier a changé sur le disque depuis sa lecture, on demande avant d'écraser.
+  const persistProjects = async (list: ProjectDraft[]): Promise<boolean> => {
+    const changed = list.filter((p) => baselines[p.id] === undefined || serializeDraft(p) !== baselines[p.id]);
+    const saved: ProjectDraft[] = [];
+    const conflicts: ProjectDraft[] = [];
+    let failed = false;
+
+    const saveOne = async (p: ProjectDraft, force = false) => {
+      versions.current[p.id] = await apiSave(draftToProject(p), versions.current[p.id] ?? null, force);
+      saved.push(p);
+    };
+
+    await Promise.all(changed.map((p) => saveOne(p).catch((e) => {
+      if (e instanceof ConflictError) conflicts.push(p);
+      else failed = true;
+    })));
+
+    // Identifiant déjà pris par un autre projet : jamais d'écrasement
+    const slugTaken = conflicts.filter((p) => !(p.id in versions.current));
+    const modifiedOutside = conflicts.filter((p) => p.id in versions.current);
+    if (slugTaken.length) {
+      alert(`Un autre projet utilise déjà l'identifiant « ${slugTaken.map((p) => p.id).join(", ")} ». Choisis un autre slug.`);
+      failed = true;
+    }
+    if (modifiedOutside.length) {
+      const names = modifiedOutside.map((p) => displayLS(p.title)).join(", ");
+      const overwrite = confirm(
+        `${names} : modifié en dehors de l'éditeur depuis son ouverture (traduction, modification manuelle…).\n\n` +
+        `OK : remplacer par la version de l'éditeur (les changements faits ailleurs seront perdus).\n` +
+        `Annuler : ne pas enregistrer ce projet. Recharge ensuite la page pour récupérer la version à jour (copie d'abord tes modifications).`
+      );
+      if (overwrite) {
+        await Promise.all(modifiedOutside.map((p) => saveOne(p, true).catch(() => { failed = true; })));
+      } else {
+        failed = true;
+      }
+    }
+
+    if (saved.length) setBaselines((prev) => ({ ...prev, ...Object.fromEntries(saved.map((p) => [p.id, serializeDraft(p)])) }));
+    return !failed && saved.length === changed.length;
+  };
+
+  const deleteProjectFile = async (id: string): Promise<boolean> => {
+    try {
+      await apiDelete(id, versions.current[id] ?? null);
+    } catch (e) {
+      if (!(e instanceof ConflictError)) return false;
+      if (!confirm(`Le fichier du projet « ${id} » a été modifié en dehors de l'éditeur depuis son ouverture. Le supprimer quand même ?`)) return false;
+      await apiDelete(id, null, true);
+    }
+    delete versions.current[id];
+    setBaselines((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    return true;
+  };
+
   const save = async () => {
     if (mode === "project" && !draft) return;
     if (mode === "landing" && !landingDraft) return;
@@ -1876,7 +2233,19 @@ export default function Editor() {
     try {
       if (mode === "landing") {
         if (!landingDraft) return;
-        await apiSaveLanding(landingDraft);
+        try {
+          landingVersion.current = await apiSaveLanding(landingDraft, landingVersion.current);
+        } catch (e) {
+          if (!(e instanceof ConflictError)) throw e;
+          const overwrite = confirm(
+            "La page d'accueil a été modifiée en dehors de l'éditeur depuis son ouverture.\n\n" +
+            "OK : remplacer par la version de l'éditeur (les changements faits ailleurs seront perdus).\n" +
+            "Annuler : ne pas enregistrer. Recharge ensuite la page pour récupérer la version à jour."
+          );
+          if (!overwrite) { setStatus("error"); return; }
+          landingVersion.current = await apiSaveLanding(landingDraft, null, true);
+        }
+        setLandingBaseline(JSON.stringify(landingDraft));
       } else if (draft) {
         const previousId = selectedId ?? draft.id;
         const slugChanged = previousId !== draft.id;
@@ -1884,10 +2253,9 @@ export default function Editor() {
           projects.map((p) => (p.id === previousId ? draft : p))
         );
 
-        await Promise.all(updatedProjects.map((p) => apiSave(draftToProject(p))));
-        if (slugChanged) {
-          await apiDelete(previousId);
-        }
+        const ok = await persistProjects(updatedProjects);
+        if (!ok) { setStatus("error"); return; }
+        if (slugChanged && !(await deleteProjectFile(previousId))) { setStatus("error"); return; }
 
         setProjects(updatedProjects);
         const refreshedDraft = updatedProjects.find((p) => p.id === draft.id) ?? draft;
@@ -1903,9 +2271,39 @@ export default function Editor() {
 
   const deleteProject = async (id: string) => {
     if (!confirm("Supprimer ce projet ?")) return;
-    await apiDelete(id);
+    if (!(await deleteProjectFile(id))) return;
     setProjects((prev) => withAutoIndex(prev.filter((p) => p.id !== id)));
     if (selectedId === id) { setDraft(null); setSelectedId(null); }
+  };
+
+  // Modifications pas encore enregistrées (bloquent la publication)
+  const unsavedNames = [
+    ...effectiveProjects
+      .filter((p) => {
+        const key = draft && p === draft ? (selectedId ?? p.id) : p.id;
+        return baselines[key] === undefined || serializeDraft(p) !== baselines[key];
+      })
+      .map((p) => displayLS(p.title)),
+    ...(landingDraft && landingBaseline !== null && JSON.stringify(landingDraft) !== landingBaseline ? ["Page d'accueil"] : []),
+  ];
+  const hasUnsaved = unsavedNames.length > 0;
+
+  useEffect(() => {
+    if (!hasUnsaved) return;
+    const warn = (e: BeforeUnloadEvent) => { e.preventDefault(); };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [hasUnsaved]);
+
+  const copyText = async () => {
+    if (!draft) return;
+    try {
+      await navigator.clipboard.writeText(projectToPlainText(draft, editLang));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      alert("Impossible d'accéder au presse-papiers.");
+    }
   };
 
   const preview = () => {
@@ -1988,30 +2386,25 @@ export default function Editor() {
   const handleProjectDrop = () => {
     if (dragProjectIndex === null || dropProjectIndex === null) { handleProjectDragEnd(); return; }
 
-    setProjects((prev) => {
-      const reordered = [...prev];
-      const [moved] = reordered.splice(dragProjectIndex, 1);
-      const insertAt = dropProjectIndex > dragProjectIndex ? dropProjectIndex - 1 : dropProjectIndex;
-      reordered.splice(insertAt, 0, moved);
-      const normalized = withAutoIndex(reordered);
+    const reordered = [...projects];
+    const [moved] = reordered.splice(dragProjectIndex, 1);
+    const insertAt = dropProjectIndex > dragProjectIndex ? dropProjectIndex - 1 : dropProjectIndex;
+    reordered.splice(insertAt, 0, moved);
+    const normalized = withAutoIndex(reordered);
+    setProjects(normalized);
 
-      if (selectedId && draft?.id === selectedId) {
-        const selected = normalized.find((p) => p.id === selectedId);
-        if (selected) {
-          setDraft((current) => (current ? { ...current, index: selected.index } : current));
-        }
-      }
+    if (selectedId && draft?.id === selectedId) {
+      const selected = normalized.find((p) => p.id === selectedId);
+      if (selected) setDraft((current) => (current ? { ...current, index: selected.index } : current));
+    }
 
-      setStatus("saving");
-      Promise.all(normalized.map((p) => apiSave(draftToProject(p))))
-        .then(() => {
-          setStatus("saved");
-          setTimeout(() => setStatus("idle"), 2000);
-        })
-        .catch(() => setStatus("error"));
-
-      return normalized;
-    });
+    setStatus("saving");
+    persistProjects(normalized)
+      .then((ok) => {
+        setStatus(ok ? "saved" : "error");
+        if (ok) setTimeout(() => setStatus("idle"), 2000);
+      })
+      .catch(() => setStatus("error"));
 
     handleProjectDragEnd();
   };
@@ -2022,22 +2415,21 @@ export default function Editor() {
     <EditLangContext.Provider value={{ lang: editLang, setLang: setEditLang }}>
     <div className="flex h-screen bg-background text-foreground overflow-hidden" style={{ fontFamily: "var(--font-body)" }}>
       <style>{`
-        .font-mono { font-family: var(--font-mono); }
         select option { background: var(--background); }
       `}</style>
 
       {/* Sidebar projets */}
       <aside className="w-56 border-r border-border flex flex-col bg-secondary shrink-0">
         <div className="px-4 py-4 border-b border-border">
-          <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-2">Edition</span>
+          <span className="font-body text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-2">Edition</span>
           <div className="flex border border-border overflow-hidden mb-3">
             <button onClick={() => { setMode("landing"); setStatus("idle"); }}
-              className="flex-1 py-1.5 font-mono text-[9px] tracking-widest uppercase transition-colors"
+              className="flex-1 py-1.5 font-body text-[9px] tracking-widest uppercase transition-colors"
               style={{ background: mode === "landing" ? "#0246F3" : "transparent", color: mode === "landing" ? "#fff" : "var(--muted-foreground)" }}>
               Landing
             </button>
             <button onClick={() => { setMode("project"); setStatus("idle"); }}
-              className="flex-1 py-1.5 font-mono text-[9px] tracking-widest uppercase transition-colors"
+              className="flex-1 py-1.5 font-body text-[9px] tracking-widest uppercase transition-colors"
               style={{ background: mode === "project" ? "#0246F3" : "transparent", color: mode === "project" ? "#fff" : "var(--muted-foreground)" }}>
               Projets
             </button>
@@ -2045,9 +2437,9 @@ export default function Editor() {
 
           {mode === "project" && (
             <>
-          <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-3">Projets</span>
+          <span className="font-body text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-3">Projets</span>
           <button onClick={createNew}
-            className="w-full flex items-center justify-center gap-2 border border-dashed border-border py-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
+            className="w-full flex items-center justify-center gap-2 border border-dashed border-border py-2 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
             <Plus size={11} /> Nouveau
           </button>
             </>
@@ -2056,7 +2448,7 @@ export default function Editor() {
         <div className="flex-1 overflow-y-auto">
           {mode === "landing" && (
             <div className="px-4 py-3 border-b border-border bg-background/50">
-              <div className="font-mono text-[10px] text-muted-foreground tracking-wider uppercase">Page d'accueil</div>
+              <div className="font-body text-[10px] text-muted-foreground tracking-wider uppercase">Page d'accueil</div>
               <div className="text-sm font-medium truncate">Contenu global</div>
             </div>
           )}
@@ -2082,7 +2474,7 @@ export default function Editor() {
                   <GripVertical size={12} className="text-muted-foreground/70 shrink-0" />
                   {p.hidden && <EyeOff size={11} className="text-muted-foreground shrink-0" aria-label="Masqué" />}
                   <div className="min-w-0">
-                  <div className="font-mono text-[10px] text-muted-foreground">{p.index}</div>
+                  <div className="font-body text-[10px] text-muted-foreground">{p.index}</div>
                   <div className="text-sm font-medium truncate">{displayLS(p.title)}</div>
                   </div>
                 </div>
@@ -2097,19 +2489,37 @@ export default function Editor() {
             </div>
           ))}
           <div className="px-4 py-2 border-b border-border bg-background/40">
-            <p className="font-mono text-[9px] tracking-wide uppercase text-muted-foreground">
+            <p className="font-body text-[9px] tracking-wide uppercase text-muted-foreground">
               Glisser les projets pour definir l'ordre. L'index est calcule automatiquement.
             </p>
           </div>
             </>
           )}
         </div>
-        <div className="px-4 py-3 border-t border-border">
-          <a href="/" className="flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors">
+        <div className="px-4 py-3 border-t border-border space-y-3">
+          <div>
+            <button onClick={() => setPublishOpen(true)}
+              className="w-full flex items-center justify-center gap-2 py-2 font-body text-[10px] tracking-widest uppercase text-white transition-opacity hover:opacity-90"
+              style={{ background: "linear-gradient(to right, #0246F3, #4A7DF1)" }}>
+              <CloudUpload size={12} /> Publier
+            </button>
+            <p className="mt-1.5 font-body text-[9px] tracking-wide text-muted-foreground">
+              {hasUnsaved ? "Modifications non enregistrées" : `En ligne : ${formatDate(lastPublished)}`}
+            </p>
+          </div>
+          <a href="/" className="flex items-center gap-2 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft size={11} /> Portfolio
           </a>
         </div>
       </aside>
+
+      {publishOpen && (
+        <PublishDialog
+          unsavedNames={unsavedNames}
+          onClose={() => setPublishOpen(false)}
+          onPublished={setLastPublished}
+        />
+      )}
 
       {/* Zone principale */}
       {mode === "landing" ? (
@@ -2121,16 +2531,16 @@ export default function Editor() {
             <div className="flex items-center gap-3">
               <LangTabs value={editLang} onChange={setEditLang} size="lg" />
               {status !== "idle" && (
-                <span className={`font-mono text-[10px] tracking-widest uppercase ${status === "saved" ? "text-green-500" : status === "error" ? "text-red-500" : "text-muted-foreground"}`}>
+                <span className={`font-body text-[10px] tracking-widest uppercase ${status === "saved" ? "text-green-500" : status === "error" ? "text-red-500" : "text-muted-foreground"}`}>
                   {STATUS_LABELS[status]}
                 </span>
               )}
               <button onClick={preview}
-                className="flex items-center gap-2 border border-border px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground hover:border-foreground transition-colors">
+                className="flex items-center gap-2 border border-border px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground hover:border-foreground transition-colors">
                 <Eye size={12} /> Aperçu
               </button>
               <button onClick={save} disabled={status === "saving" || !landingDraft}
-                className="flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase text-white transition-opacity disabled:opacity-50"
+                className="flex items-center gap-2 px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-white transition-opacity disabled:opacity-50"
                 style={{ background: "linear-gradient(to right, #0246F3, #4A7DF1)" }}>
                 <Save size={12} /> Enregistrer
               </button>
@@ -2141,7 +2551,7 @@ export default function Editor() {
               <LandingPanel draft={landingDraft} onChange={(d) => { setLandingDraft(d); setStatus("idle"); }} />
             ) : (
               <div className="text-center py-16">
-                <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">Chargement landing…</p>
+                <p className="font-body text-[11px] tracking-[0.28em] uppercase text-muted-foreground">Chargement landing…</p>
               </div>
             )}
           </div>
@@ -2152,21 +2562,26 @@ export default function Editor() {
           <div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
             <div className="flex items-center gap-3">
               <span className="font-display font-black uppercase tracking-tight text-lg">{displayLS(draft.title)}</span>
-              <span className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">{draft.year}</span>
+              <span className="font-body text-[10px] text-muted-foreground tracking-widest uppercase">{draft.year}</span>
             </div>
             <div className="flex items-center gap-3">
               <LangTabs value={editLang} onChange={setEditLang} size="lg" />
               {status !== "idle" && (
-                <span className={`font-mono text-[10px] tracking-widest uppercase ${status === "saved" ? "text-green-500" : status === "error" ? "text-red-500" : "text-muted-foreground"}`}>
+                <span className={`font-body text-[10px] tracking-widest uppercase ${status === "saved" ? "text-green-500" : status === "error" ? "text-red-500" : "text-muted-foreground"}`}>
                   {STATUS_LABELS[status]}
                 </span>
               )}
               <button onClick={preview}
-                className="flex items-center gap-2 border border-border px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground hover:border-foreground transition-colors">
+                className="flex items-center gap-2 border border-border px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-muted-foreground hover:text-foreground hover:border-foreground transition-colors">
                 <Eye size={12} /> Aperçu
               </button>
+              <button onClick={copyText} title={`Copier tout le texte de la page en ${editLang === "fr" ? "français" : "anglais"}`}
+                className="flex items-center gap-2 border border-border px-3 py-1.5 font-body text-[10px] tracking-widest uppercase transition-colors hover:text-foreground hover:border-foreground"
+                style={{ color: copied ? "#0246F3" : "var(--muted-foreground)" }}>
+                {copied ? <ClipboardCheck size={12} /> : <ClipboardCopy size={12} />} {copied ? "Copié" : `Copier ${editLang.toUpperCase()}`}
+              </button>
               <button onClick={save} disabled={status === "saving"}
-                className="flex items-center gap-2 px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase text-white transition-opacity disabled:opacity-50"
+                className="flex items-center gap-2 px-3 py-1.5 font-body text-[10px] tracking-widest uppercase text-white transition-opacity disabled:opacity-50"
                 style={{ background: "linear-gradient(to right, #0246F3, #4A7DF1)" }}>
                 <Save size={12} /> Enregistrer
               </button>
@@ -2195,7 +2610,7 @@ export default function Editor() {
             <div className="flex-1 overflow-y-auto p-6">
               <div className="max-w-3xl mx-auto space-y-3">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground">
+                  <span className="font-body text-[10px] tracking-[0.28em] uppercase text-muted-foreground">
                     Contenu — {draft.content.length} bloc{draft.content.length !== 1 ? "s" : ""}
                   </span>
                 </div>
@@ -2230,11 +2645,11 @@ export default function Editor() {
       ) : (
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground mb-4">
+            <p className="font-body text-[11px] tracking-[0.28em] uppercase text-muted-foreground mb-4">
               Sélectionner ou créer un projet
             </p>
             <button onClick={createNew}
-              className="flex items-center gap-2 mx-auto border border-border px-5 py-2.5 font-mono text-[11px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
+              className="flex items-center gap-2 mx-auto border border-border px-5 py-2.5 font-body text-[11px] tracking-widest uppercase text-muted-foreground hover:text-primary hover:border-primary transition-colors">
               <Plus size={13} /> Nouveau projet
             </button>
           </div>

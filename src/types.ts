@@ -46,7 +46,6 @@ export interface LandingLocale {
   tagline: string;
   viewProjects: string;
   selectedWorksPattern: string;
-  all: string;
   about: string;
   contact: string;
   projects: string;
@@ -55,22 +54,18 @@ export interface LandingLocale {
   gallery: string;
   year: string;
   tags: string;
-  category: string;
   overview: string;
   skills: string;
   tools: string;
   together: string;
-  footer: string;
   bio: string;
   bio2: string;
   skillsList: string[];
   toolsList: string[];
   noProjects: string;
-  close: string;
   cv: string;
   cvFile: string;
   availability: string;
-  availabilityDetail: string;
 }
 
 export interface ContactLink {

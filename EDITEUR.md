@@ -76,6 +76,23 @@ public/
 
 Cliquer **"Aperçu"** → ouvre un nouvel onglet avec la fiche projet rendue dans le vrai portfolio (données depuis `localStorage`, non sauvegardées).
 
+### Mettre en ligne
+
+1. **Enregistrer** les modifications
+2. Cliquer **"Publier"** en bas de la sidebar gauche
+3. Vérifier la liste de ce qui va être mis en ligne, ajuster la description si besoin
+4. Cliquer **"Publier"** → le site est à jour une à deux minutes plus tard (Vercel)
+
+Garde-fous :
+- Seul le **contenu** part en ligne : `src/data/` (projets, page d'accueil) et `public/projects/` (images, vidéos, CV). Le code du site n'est jamais publié depuis l'éditeur.
+- Publication bloquée tant qu'il reste des **modifications non enregistrées**, ou si des modifications du code sont enregistrées mais pas encore en ligne.
+- Les versions plus récentes présentes sur GitHub sont récupérées automatiquement avant l'envoi. En cas de conflit ou de coupure réseau, **rien n'est mis en ligne** : la mise à jour reste sur le Mac et un nouveau clic sur "Publier" réessaie.
+- Fichiers de plus de 95 Mo refusés (limite GitHub), avertissement au-delà de 15 Mo.
+
+### Modifications faites en dehors de l'éditeur
+
+L'éditeur n'enregistre que les projets réellement modifiés. Si un fichier a été changé ailleurs depuis l'ouverture de l'éditeur (traduction, édition manuelle), l'enregistrement s'arrête et demande confirmation avant d'écraser. En cas de doute : **Annuler**, copier ses modifications, recharger la page.
+
 ---
 
 ## Métadonnées d'un projet
@@ -151,6 +168,8 @@ L'upload fonctionne uniquement en dev local (le serveur Vite intercepte les requ
 1. Dans un bloc image (ou l'image de couverture), glisser-déposer un fichier ou cliquer pour sélectionner
 2. Le fichier est envoyé au serveur → copié dans `public/projects/[id]/[nom-fichier]`
 3. Le champ est rempli automatiquement avec le chemin `/projects/[id]/nom-fichier.jpg`
+
+**Conversion WebP automatique :** les PNG et JPG sont convertis en WebP à l'upload (qualité 85, 2560 px maximum sur le plus grand côté, jamais agrandis). Seul le `.webp` est enregistré : `affiche.png` devient `affiche.webp`. Les autres formats (WebP, GIF, SVG, vidéos, PDF) sont copiés tels quels.
 
 **En production**, ces fichiers sont dans `public/` donc servis statiquement par Vercel / Cloudflare.
 
