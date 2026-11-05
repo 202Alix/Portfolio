@@ -449,7 +449,7 @@ function ContentRenderer({ blocks, onOpen, lang }: { blocks: ContentBlock[]; onO
     return prev.type === "text" && blocks[i].type === "text" ? "mt-8 md:mt-12" : "mt-14 md:mt-20";
   };
   return (
-    <div className="px-6 md:px-12 py-12 md:py-20">
+    <div className="page-x py-12 md:py-20">
       {blocks.map((block, i) => {
         const gap = gapClass(i);
         if (block.type === "text") return (
@@ -762,7 +762,7 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang, centered, regis
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(project.id); } }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="w-full text-left pt-6 md:pt-8 pb-8 md:pb-12 cursor-pointer"
+        className={`w-full text-left ${idx === 0 ? "pt-8" : "pt-6 md:pt-8"} pb-8 md:pb-12 cursor-pointer`}
       >
         <ParallaxImg
           src={project.coverImage} alt={projectTitle} px={30} hovered={isActive}
@@ -861,8 +861,8 @@ function ProjectsSection({ navigate, activeFilter, setActiveFilter, lang }: {
     : projects.filter((p) => p.tags.some((tag) => t(tag, lang) === activeFilter));
 
   return (
-    <section id="projets" className="px-6 md:px-12 pb-10 md:pb-16">
-      <div className="mb-10 flex flex-col gap-6">
+    <section id="projets" className="page-x pb-10 md:pb-16">
+      <div className="flex flex-col gap-6">
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE }}>
           <span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.selectedWorks(projects.length)}</span>
         </motion.div>
@@ -896,7 +896,7 @@ function ProjectsSection({ navigate, activeFilter, setActiveFilter, lang }: {
 function AboutSection({ lang }: { lang: Lang }) {
   const ui = UI[lang];
   return (
-    <section id="apropos" className="border-t border-border px-6 md:px-12 py-20 md:py-32">
+    <section id="apropos" className="border-t border-border page-x py-20 md:py-32">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE }} className="md:col-span-3">
           <span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.about}</span>
@@ -943,7 +943,7 @@ function ContactSection({ lang }: { lang: Lang }) {
   const ui = UI[lang];
   const lines = ui.together.split("\n");
   return (
-    <section id="contact" className="border-t border-border px-6 md:px-12 py-20 md:py-32">
+    <section id="contact" className="border-t border-border page-x py-20 md:py-32">
       <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE }} className="mb-10">
         <span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.contact}</span>
       </motion.div>
@@ -970,7 +970,7 @@ function ContactSection({ lang }: { lang: Lang }) {
 
 function Footer({ lang, navigate }: { lang: Lang; navigate: (id: string) => void }) {
   return (
-    <footer className="border-t border-border px-6 md:px-12 py-5">
+    <footer className="border-t border-border page-x py-5">
       <div className="flex flex-col items-center md:flex-row md:justify-between gap-2">
         <span className="font-body text-sm text-muted-foreground tracking-caps uppercase">© {CURRENT_YEAR} {landingData.name}</span>
         <button onClick={() => navigate("mentions-legales")} className="font-body text-sm text-muted-foreground tracking-caps uppercase hover:text-primary transition-colors duration-200">
@@ -1046,7 +1046,8 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
 
   return (
     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
-      <div className="px-6 md:px-12 pt-10 md:pt-14 pb-16 md:pb-24 max-w-3xl">
+      <div className="page-x pt-10 md:pt-14 pb-16 md:pb-24">
+      <div className="max-w-3xl">
         <button onClick={() => navigate("home")} onMouseEnter={() => setBackHovered(true)} onMouseLeave={() => setBackHovered(false)}
           className="mb-10 flex items-center gap-2 font-body text-sm tracking-caps uppercase text-muted-foreground hover:text-primary transition-colors duration-200">
           <ConveyorArrow direction="left" hovered={backHovered} />
@@ -1068,6 +1069,7 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
             </div>
           ))}
         </div>
+      </div>
       </div>
       <Footer lang={lang} navigate={navigate} />
     </motion.div>
@@ -1294,7 +1296,7 @@ function Hero({ lang }: { lang: Lang }) {
   }, []);
 
   return (
-    <section ref={sectionRef} className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "100svh" }}>
+    <section ref={sectionRef} className="min-h-screen flex flex-col justify-between page-x pb-10 relative overflow-hidden" style={{ minHeight: "100svh" }}>
       {gameActive ? <SnakeGame onEat={handleEat} onGameOver={handleGameOver} /> : <HoverGrid />}
       <div className="flex justify-between items-start pt-10 md:pt-14">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-body text-sm tracking-caps uppercase text-muted-foreground leading-relaxed">
@@ -1414,7 +1416,7 @@ function NextProjectButton({ project, navigate, lang }: { project: Project; navi
   const projectTitle = t(project.title, lang);
   return (
     <button onClick={() => navigate(project.id)} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      className="w-full px-6 md:px-12 py-12 md:py-16 flex items-center justify-between transition-colors duration-300"
+      className="w-full page-x py-12 md:py-16 flex items-center justify-between transition-colors duration-300"
       style={{ backgroundColor: hov ? "var(--secondary)" : "transparent" }}>
       <div className="text-left">
         <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{UI[lang].nextProject}</span>
@@ -1447,7 +1449,7 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
   return (
     <>
       <motion.div key={project.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
-        <div className="px-6 md:px-12 pt-8 md:pt-14 pb-0">
+        <div className="page-x pt-8 md:pt-14 pb-0">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-body text-sm tracking-caps uppercase text-muted-foreground mb-6">
             {projectCounter(project.index)}
           </motion.div>
@@ -1462,9 +1464,11 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
           </motion.div>
         </div>
 
-        <ParallaxCover src={project.coverImage} alt={projectTitle} position={project.coverImagePosition} onOpen={() => openLightbox(project.coverImage, projectTitle)} />
+        <div className="mx-auto" style={{ maxWidth: "var(--page-max-width)" }}>
+          <ParallaxCover src={project.coverImage} alt={projectTitle} position={project.coverImagePosition} onOpen={() => openLightbox(project.coverImage, projectTitle)} />
+        </div>
 
-        <div className="px-6 md:px-12 py-8 md:py-10 flex flex-col md:flex-row gap-6 md:gap-10 border-b border-border">
+        <div className="page-x py-8 md:py-10 flex flex-col md:flex-row gap-6 md:gap-10 border-b border-border">
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.28 }} className="shrink-0">
             <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.year}</span>
             <span className="font-body text-sm font-medium">{project.year}</span>

@@ -99,6 +99,20 @@ body,
   transition: background-color 300ms ease-in;
 }
 
+/* Marges de page : au-delà de la largeur maximale, le contenu reste centré et les marges grandissent.
+   Les fonds et les lignes de séparation gardent toute la largeur. */
+:root {
+  --page-max-width: 1504px;
+}
+.page-x {
+  padding-inline: 1.5rem;
+}
+@media (min-width: 768px) {
+  .page-x {
+    padding-inline: max(3rem, calc((100% - var(--page-max-width)) / 2));
+  }
+}
+
 @theme inline {
   /* Interlettrage des textes en majuscules (normal = automatique). */
   --tracking-caps: 0.05em;
