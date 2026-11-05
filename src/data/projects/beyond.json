@@ -59,8 +59,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/beyond/BEYOND_Logo_wTagline_EN_RGB.jpg",
-            "en": "/projects/beyond/BEYOND_Logo_wTagline_EN_RGB.jpg"
+            "fr": "/projects/beyond/BEYOND_Logo_wTagline_EN_RGB.webp",
+            "en": "/projects/beyond/BEYOND_Logo_wTagline_EN_RGB.webp"
           },
           "alt": "",
           "caption": {
@@ -147,8 +147,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/beyond/SchemeTriangle_wLargerTexts_EN_RGB.jpg",
-            "en": "/projects/beyond/SchemeTriangle_wLargerTexts_EN_RGB.jpg"
+            "fr": "/projects/beyond/SchemeTriangle_wLargerTexts_EN_RGB.webp",
+            "en": "/projects/beyond/SchemeTriangle_wLargerTexts_EN_RGB.webp"
           },
           "alt": "",
           "caption": {
@@ -180,7 +180,7 @@
     {
       "type": "text",
       "primary": {
-        "fr": "Le jour de l'annonce, l'identité était en place sur l'ensemble des supports, de la scène du Capital Markets Day aux affiches du siège.",
+        "fr": "Le jour de l'annonce, l'identité était en place dans les locaux d’Air Liquide ainsi que lors de la vidéoconférence du Capital Markets Day.",
         "en": "On the day of the announcement, the identity was in place across all media, from the Capital Markets Day stage to the posters at the headquarters."
       }
     },
@@ -211,8 +211,8 @@
         },
         {
           "src": {
-            "fr": "/projects/beyond/Banner1_Gradient.jpg",
-            "en": "/projects/beyond/Banner1_Gradient.jpg"
+            "fr": "/projects/beyond/Banner1_Gradient.webp",
+            "en": "/projects/beyond/Banner1_Gradient.webp"
           },
           "alt": "",
           "caption": {
@@ -222,8 +222,8 @@
         },
         {
           "src": {
-            "fr": "/projects/beyond/GoogleMeet_Background_Gradient.jpg",
-            "en": "/projects/beyond/GoogleMeet_Background_Gradient.jpg"
+            "fr": "/projects/beyond/GoogleMeet_Background_Gradient.webp",
+            "en": "/projects/beyond/GoogleMeet_Background_Gradient.webp"
           },
           "alt": "",
           "caption": {
@@ -233,8 +233,8 @@
         },
         {
           "src": {
-            "fr": "/projects/beyond/AL_BEYOND_Instagram_02_EN_RGB.jpg",
-            "en": "/projects/beyond/AL_BEYOND_Instagram_02_EN_RGB.jpg"
+            "fr": "/projects/beyond/AL_BEYOND_Instagram_02_EN_RGB.webp",
+            "en": "/projects/beyond/AL_BEYOND_Instagram_02_EN_RGB.webp"
           },
           "alt": "",
           "caption": {

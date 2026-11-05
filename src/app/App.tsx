@@ -106,6 +106,8 @@ const projects = (loadedProjects as Project[])
   .filter((p) => !p.hidden)
   .map((p, i) => ({ ...p, index: String(i + 1).padStart(2, "0") }));
 
+const projectCounter = (index: string) => `${index}/${String(projects.length).padStart(2, "0")}`;
+
 // ─── CONSTANTS ─────────────────────────────────────────────────────────────
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
@@ -207,7 +209,7 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
 
 // ─── MEDIA BLOCKS ──────────────────────────────────────────────────────────
 
-const CAPTION_CLASS = "mt-2 font-mono text-[10px] tracking-wider text-muted-foreground";
+const CAPTION_CLASS = "mt-2 font-body text-sm text-muted-foreground";
 
 function ImageBlock({ item, onOpen, lang, aspectRatio = "4 / 3", capHeight = true }: { item: MediaItem; onOpen: (s: string, a: string) => void; lang: Lang; aspectRatio?: string; capHeight?: boolean }) {
   const src = t(item.src, lang);
@@ -259,7 +261,7 @@ function WebsiteBlock({ url, item, lang, aspectRatio = "16 / 10" }: { url: strin
       >
         <div className="flex items-center gap-2 px-3 py-2 border-b border-border text-muted-foreground transition-colors duration-200" style={{ color: hovered ? "#0246F3" : undefined }}>
           <Globe size={12} className="shrink-0" />
-          <span className="font-mono text-[10px] tracking-wider truncate flex-1">{url}</span>
+          <span className="font-body text-sm truncate flex-1">{url}</span>
           <AnimatedArrow hovered={hovered} size={12} />
         </div>
         <div className="w-full overflow-hidden bg-background" style={{ aspectRatio }}>
@@ -349,7 +351,7 @@ function CompareBlock({ item, lang }: { item: CompareItem; lang: Lang }) {
     pos.set(Math.min(100, Math.max(0, next)));
   };
 
-  const labelClass = "absolute top-3 bg-background/85 text-foreground px-2 py-1 font-mono text-[10px] tracking-widest uppercase pointer-events-none";
+  const labelClass = "absolute top-3 bg-background/85 text-foreground px-2 py-1 font-body text-sm tracking-caps uppercase pointer-events-none";
 
   return (
     <figure className="m-0">
@@ -358,7 +360,7 @@ function CompareBlock({ item, lang }: { item: CompareItem; lang: Lang }) {
           ref={ref}
           role="slider"
           tabIndex={0}
-          aria-label={item.alt ? `${item.alt} — ${labels.before} / ${labels.after}` : `${labels.before} / ${labels.after}`}
+          aria-label={item.alt ? `${item.alt}, ${labels.before} / ${labels.after}` : `${labels.before} / ${labels.after}`}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={ariaPos}
@@ -518,7 +520,7 @@ function ContentRenderer({ blocks, onOpen, lang }: { blocks: ContentBlock[]; onO
             "columns-1 md:columns-2 lg:columns-3";
           return (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE }} className={gap}>
-              <div className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground mb-5">{ui.gallery}</div>
+              <div className="font-body text-sm tracking-caps uppercase text-muted-foreground mb-5">{ui.gallery}</div>
               <div className={`${colsClass} gap-3`}>
                 {block.items.map((item, j) => (
                   <motion.div key={j} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
@@ -545,7 +547,7 @@ function VerticalLangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) 
         animate={{ top: lang === "fr" ? "0%" : "50%" }} transition={{ duration: 0.28, ease: EASE }} />
       {(["fr", "en"] as const).map((l) => (
         <button key={l} onClick={() => setLang(l)}
-          className="relative z-10 font-mono text-[9px] tracking-widest uppercase outline-none transition-colors duration-150 flex items-center justify-center"
+          className="relative z-10 font-body text-xs tracking-caps uppercase outline-none transition-colors duration-150 flex items-center justify-center"
           style={{ height: 24, color: lang === l ? "#fff" : "var(--muted-foreground)" }}>
           {l.toUpperCase()}
         </button>
@@ -561,7 +563,7 @@ function HorizLangToggle({ lang, setLang }: { lang: Lang; setLang: (l: Lang) => 
         animate={{ left: lang === "fr" ? "0%" : "50%" }} transition={{ duration: 0.28, ease: EASE }} />
       {(["fr", "en"] as const).map((l) => (
         <button key={l} onClick={() => setLang(l)}
-          className="relative z-10 w-8 font-mono text-[10px] tracking-widest uppercase outline-none transition-colors duration-150 flex items-center justify-center"
+          className="relative z-10 w-8 font-body text-xs tracking-caps uppercase outline-none transition-colors duration-150 flex items-center justify-center"
           style={{ height: 26, color: lang === l ? "#fff" : "var(--muted-foreground)" }}>
           {l.toUpperCase()}
         </button>
@@ -643,7 +645,7 @@ function NavRailItem({ label, onClick }: { label: string; onClick: () => void })
       onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
-      className="font-mono text-[10px] tracking-[0.24em] uppercase outline-none transition-colors duration-200"
+      className="font-body text-sm tracking-caps uppercase outline-none transition-colors duration-200"
       style={{
         writingMode: "vertical-rl",
         transform: "rotate(180deg)",
@@ -704,7 +706,7 @@ function MobileNav({ page, navigate, lang, setLang, dark, setDark }: {
             className="fixed top-[52px] left-0 right-0 z-40 bg-background border-b border-border md:hidden">
             {[{ id: "projets", label: ui.projects }, { id: "apropos", label: ui.about }, { id: "contact", label: ui.contact }].map(({ id, label }) => (
               <button key={id} onClick={() => scrollTo(id)}
-                className="w-full text-left px-5 py-4 font-mono text-[11px] tracking-widest uppercase text-muted-foreground hover:text-primary border-b border-border last:border-0 transition-colors duration-200 outline-none">
+                className="w-full text-left px-5 py-4 font-body text-sm tracking-caps uppercase text-muted-foreground hover:text-primary border-b border-border last:border-0 transition-colors duration-200 outline-none">
                 {label}
               </button>
             ))}
@@ -722,7 +724,7 @@ function FilterPill({ label, active, count, onClick }: { label: string; active: 
   const activeStyle = { border: "1px solid transparent", background: GRADIENT, color: "#fff" };
   return (
     <button onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      className="font-mono text-[10px] tracking-widest px-3 py-[5px] outline-none transition-all duration-200"
+      className="font-body text-sm px-3 py-[5px] outline-none transition-all duration-200"
       style={active ? activeStyle : gradientBorder(hov)}>
       {label}{count !== undefined && <span className="ml-2 opacity-60">{count}</span>}
     </button>
@@ -733,7 +735,7 @@ function TagPill({ tag, onNavigate }: { tag: string; onNavigate: (filter: string
   const [hov, setHov] = useState(false);
   return (
     <button onClick={() => onNavigate(tag)} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      className="px-3 py-[4px] font-mono text-[10px] tracking-widest transition-all duration-200 outline-none"
+      className="px-3 py-[4px] font-body text-sm transition-all duration-200 outline-none"
       style={gradientBorder(hov)}>
       {tag}
     </button>
@@ -751,7 +753,7 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang, centered, regis
   const isActive = hovered || centered;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE, delay: idx * 0.06 }} className="border-t border-border">
+    <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: EASE, delay: idx * 0.06 }}>
       <div
         ref={(el) => registerRef(project.id, el)}
         role="button"
@@ -769,16 +771,12 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang, centered, regis
           className="w-full bg-background mb-5"
         />
         <div className="flex items-start justify-between gap-8">
-          <div className="flex flex-col gap-2 min-w-0">
-            <div className="flex items-center gap-3">
-              <span className="font-mono text-[10px] text-muted-foreground shrink-0">{project.index}</span>
-              <motion.div animate={{ width: isActive ? 14 : 0, opacity: isActive ? 1 : 0 }} transition={{ duration: 0.2, ease: EASE }} style={{ background: GRADIENT }} className="h-px shrink-0" />
-              <span className="font-mono text-[10px] tracking-widest text-muted-foreground">{t(project.category, lang)}&ensp;·&ensp;{project.year}</span>
-            </div>
+          <div className="flex flex-col gap-2.5 min-w-0">
+            <span className="font-body text-xs text-muted-foreground">{projectCounter(project.index)}&ensp;·&ensp;{t(project.category, lang)}&ensp;·&ensp;{project.year}</span>
             <div className="font-display font-black leading-[0.9] transition-colors duration-200" style={{ fontSize: "clamp(26px, 3.5vw, 48px)", letterSpacing: "-0.01em", color: isActive ? "#0246F3" : "var(--foreground)" }}>
               {projectTitle}
             </div>
-            <div className="flex flex-wrap gap-2 mt-1" onClick={(e) => e.stopPropagation()}>
+            <div className="flex flex-wrap gap-2 mt-[5px]" onClick={(e) => e.stopPropagation()}>
               {project.tags.map((tag, i) => {
                 const label = t(tag, lang);
                 return <TagPill key={`${project.id}-tag-${i}-${label}`} tag={label} onNavigate={onTagClick} />;
@@ -863,10 +861,10 @@ function ProjectsSection({ navigate, activeFilter, setActiveFilter, lang }: {
     : projects.filter((p) => p.tags.some((tag) => t(tag, lang) === activeFilter));
 
   return (
-    <section id="projets" className="px-6 md:px-12 pb-24 md:pb-36">
+    <section id="projets" className="px-6 md:px-12 pb-10 md:pb-16">
       <div className="mb-10 flex flex-col gap-6">
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE }}>
-          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">{ui.selectedWorks(projects.length)}</span>
+          <span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.selectedWorks(projects.length)}</span>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, ease: EASE, delay: 0.08 }} className="flex flex-wrap gap-2">
           {[ALL, ...availableTags].map((tag) => {
@@ -883,9 +881,9 @@ function ProjectsSection({ navigate, activeFilter, setActiveFilter, lang }: {
       <AnimatePresence mode="wait">
         <motion.div key={activeFilter} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.3, ease: EASE }}>
           {filtered.length > 0 ? (
-            <>{filtered.map((p, i) => <ProjectCard key={p.id} project={p} navigate={navigate} onTagClick={setActiveFilter} idx={i} lang={lang} centered={centeredId === p.id} registerRef={registerCard} />)}<div className="border-t border-border" /></>
+            <>{filtered.map((p, i) => <ProjectCard key={p.id} project={p} navigate={navigate} onTagClick={setActiveFilter} idx={i} lang={lang} centered={centeredId === p.id} registerRef={registerCard} />)}</>
           ) : (
-            <div className="py-20 text-center"><span className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">{ui.noProjects}</span></div>
+            <div className="py-20 text-center"><span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.noProjects}</span></div>
           )}
         </motion.div>
       </AnimatePresence>
@@ -901,7 +899,7 @@ function AboutSection({ lang }: { lang: Lang }) {
     <section id="apropos" className="border-t border-border px-6 md:px-12 py-20 md:py-32">
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16">
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE }} className="md:col-span-3">
-          <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">{ui.about}</span>
+          <span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.about}</span>
           <div className="mt-8 hidden md:block" style={{ width: 80, height: 80 }}><Logo /></div>
         </motion.div>
         <div className="md:col-span-9 space-y-12">
@@ -911,12 +909,12 @@ function AboutSection({ lang }: { lang: Lang }) {
           </motion.div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE, delay: 0.08 }}>
-              <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground block mb-4">{ui.skills}</span>
-              <div className="flex flex-wrap gap-2">{ui.skillsList.map((s) => <span key={s} className="border border-border px-3 py-[5px] font-mono text-[10px] tracking-widest uppercase">{s}</span>)}</div>
+              <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-4">{ui.skills}</span>
+              <div className="flex flex-wrap gap-2">{ui.skillsList.map((s) => <span key={s} className="border border-border px-3 py-[5px] font-body text-sm">{s}</span>)}</div>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE, delay: 0.14 }}>
-              <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground block mb-4">{ui.tools}</span>
-              <div className="flex flex-wrap gap-2">{ui.toolsList.map((t) => <span key={t} className="border border-border px-3 py-[5px] font-mono text-[10px] tracking-widest uppercase">{t}</span>)}</div>
+              <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-4">{ui.tools}</span>
+              <div className="flex flex-wrap gap-2">{ui.toolsList.map((t) => <span key={t} className="border border-border px-3 py-[5px] font-body text-sm">{t}</span>)}</div>
             </motion.div>
           </div>
         </div>
@@ -932,7 +930,7 @@ function ContactLink({ href, label, arrow, external, download }: { href: string;
   return (
     <a href={href} target={external ? "_blank" : undefined} rel={external ? "noopener noreferrer" : undefined} download={download}
       onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      className="flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase transition-colors duration-200"
+      className="flex items-center gap-2 font-body text-sm tracking-caps uppercase transition-colors duration-200"
       style={{ color: hov ? "#0246F3" : "var(--muted-foreground)" }}>
       <span>{label}</span>
       {arrow && <AnimatedArrow hovered={hov} size={11} color={hov ? "#0246F3" : "var(--muted-foreground)"} />}
@@ -947,7 +945,7 @@ function ContactSection({ lang }: { lang: Lang }) {
   return (
     <section id="contact" className="border-t border-border px-6 md:px-12 py-20 md:py-32">
       <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.45, ease: EASE }} className="mb-10">
-        <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">{ui.contact}</span>
+        <span className="font-body text-sm tracking-caps uppercase text-muted-foreground">{ui.contact}</span>
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-12 items-end gap-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE }} className="md:col-span-9">
@@ -974,8 +972,8 @@ function Footer({ lang, navigate }: { lang: Lang; navigate: (id: string) => void
   return (
     <footer className="border-t border-border px-6 md:px-12 py-5">
       <div className="flex flex-col items-center md:flex-row md:justify-between gap-2">
-        <span className="font-mono text-[10px] text-muted-foreground tracking-[0.22em] uppercase">© {CURRENT_YEAR} {landingData.name}</span>
-        <button onClick={() => navigate("mentions-legales")} className="font-mono text-[10px] text-muted-foreground tracking-[0.22em] uppercase hover:text-primary transition-colors duration-200">
+        <span className="font-body text-sm text-muted-foreground tracking-caps uppercase">© {CURRENT_YEAR} {landingData.name}</span>
+        <button onClick={() => navigate("mentions-legales")} className="font-body text-sm text-muted-foreground tracking-caps uppercase hover:text-primary transition-colors duration-200">
           {lang === "fr" ? "Mentions légales" : "Legal notice"}
         </button>
       </div>
@@ -999,7 +997,7 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
           Le présent site est édité par <strong>{landingData.name}</strong>, domicilié au 7 rue Cressent, Noisy-le-Grand 93160.
           <br />
           Contact : <a className="underline hover:text-primary" href={`mailto:${landingData.email}`}>{landingData.email}</a>
-          {landingData.phone && <> — {landingData.phone}</>}
+          {landingData.phone && <> · {landingData.phone}</>}
           <br />
           Directeur de la publication : {landingData.name}.
         </p>
@@ -1009,9 +1007,9 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
       title: "Hébergement",
       body: (
         <p>
-          Ce site est déployé et hébergé par <strong>Vercel Inc.</strong>, 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis — <a className="underline hover:text-primary" href="https://vercel.com" target="_blank" rel="noopener noreferrer">vercel.com</a>.
+          Ce site est déployé et hébergé par <strong>Vercel Inc.</strong>, 440 N Barranca Ave #4133, Covina, CA 91723, États-Unis (<a className="underline hover:text-primary" href="https://vercel.com" target="_blank" rel="noopener noreferrer">vercel.com</a>).
           <br />
-          La distribution du contenu et la protection réseau sont assurées par <strong>Cloudflare, Inc.</strong>, 101 Townsend St., San Francisco, CA 94107, États-Unis — <a className="underline hover:text-primary" href="https://cloudflare.com" target="_blank" rel="noopener noreferrer">cloudflare.com</a>.
+          La distribution du contenu et la protection réseau sont assurées par <strong>Cloudflare, Inc.</strong>, 101 Townsend St., San Francisco, CA 94107, États-Unis (<a className="underline hover:text-primary" href="https://cloudflare.com" target="_blank" rel="noopener noreferrer">cloudflare.com</a>).
         </p>
       ),
     },
@@ -1050,7 +1048,7 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
       <div className="px-6 md:px-12 pt-10 md:pt-14 pb-16 md:pb-24 max-w-3xl">
         <button onClick={() => navigate("home")} onMouseEnter={() => setBackHovered(true)} onMouseLeave={() => setBackHovered(false)}
-          className="mb-10 flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground hover:text-primary transition-colors duration-200">
+          className="mb-10 flex items-center gap-2 font-body text-sm tracking-caps uppercase text-muted-foreground hover:text-primary transition-colors duration-200">
           <ConveyorArrow direction="left" hovered={backHovered} />
           <span>{ui.back}</span>
         </button>
@@ -1058,14 +1056,14 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
           {lang === "fr" ? "Mentions légales" : "Legal notice"}
         </h1>
         {lang !== "fr" && (
-          <p className="font-mono text-[10px] tracking-widest text-muted-foreground mb-10">
+          <p className="font-body text-sm text-muted-foreground mb-10">
             This legal notice is provided in French, as required under French law.
           </p>
         )}
         <div className="space-y-10 mt-10">
           {sections.map((s) => (
-            <div key={s.title} className="border-t border-border pt-6">
-              <h2 className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground mb-3">{s.title}</h2>
+            <div key={s.title} className="pt-6">
+              <h2 className="font-body text-sm tracking-caps uppercase text-muted-foreground mb-3">{s.title}</h2>
               <div className="text-sm font-light leading-relaxed text-foreground">{s.body}</div>
             </div>
           ))}
@@ -1252,39 +1250,6 @@ function SnakeGame({ onEat, onGameOver, cellSize = 40 }: { onEat: () => void; on
   );
 }
 
-// Deux ondes successives (claire puis foncée), puis une pause avant le cycle suivant
-const PULSE_WAVES = [
-  { color: "#4A7DF1", delay: 0 },
-  { color: "#0246F3", delay: 0.5 },
-];
-const PULSE_DURATION = 1;
-const PULSE_PAUSE = 0.5;
-
-function AvailabilityDot() {
-  const reduceMotion = useReducedMotion();
-  return (
-    <span className="relative flex w-1.5 h-1.5 shrink-0 mt-[6px]">
-      {!reduceMotion && PULSE_WAVES.map(({ color, delay }) => (
-        <motion.span
-          key={color}
-          className="absolute inset-0 rounded-full"
-          style={{ backgroundColor: color }}
-          initial={{ scale: 1, opacity: 0 }}
-          animate={{ scale: [1, 3.2], opacity: [0.7, 0] }}
-          transition={{
-            duration: PULSE_DURATION,
-            delay,
-            ease: "easeOut",
-            repeat: Infinity,
-            repeatDelay: PULSE_PAUSE,
-          }}
-        />
-      ))}
-      <span className="relative w-1.5 h-1.5 rounded-full bg-[#0246F3]" />
-    </span>
-  );
-}
-
 function Hero({ lang }: { lang: Lang }) {
   const ui = UI[lang];
   const sectionRef = useRef<HTMLElement>(null);
@@ -1332,11 +1297,11 @@ function Hero({ lang }: { lang: Lang }) {
     <section ref={sectionRef} className="min-h-screen flex flex-col justify-between px-6 md:px-12 pb-10 relative overflow-hidden" style={{ minHeight: "100svh" }}>
       {gameActive ? <SnakeGame onEat={handleEat} onGameOver={handleGameOver} /> : <HoverGrid />}
       <div className="flex justify-between items-start pt-10 md:pt-14">
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground leading-relaxed">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-body text-sm tracking-caps uppercase text-muted-foreground leading-relaxed">
           <div>{ui.title}</div>
           <div>{ui.location}</div>
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground text-right leading-relaxed">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-body text-sm tracking-caps uppercase text-muted-foreground text-right leading-relaxed">
           <div>{gameActive ? "SCORE" : ui.portfolio}</div>
           <div>{gameActive ? score : CURRENT_YEAR}</div>
         </motion.div>
@@ -1358,20 +1323,14 @@ function Hero({ lang }: { lang: Lang }) {
             </motion.div>
           </div>
         </div>
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.55, ease: EASE, delay: 0.48 }} style={{ originX: "0%" }} className="h-px bg-foreground mt-6 md:mt-8 mb-5 md:mb-7" />
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-mono text-[11px] tracking-[0.28em] text-muted-foreground">
-          {ui.availability ? (
-            <span className="inline-flex items-start gap-2.5">
-              <AvailabilityDot />
-              <span>{ui.availabilityDetail ? `${ui.availability} · ${ui.availabilityDetail}` : ui.availability}</span>
-            </span>
-          ) : ui.tagline}
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-body text-sm text-muted-foreground mt-4 md:mt-5">
+          {ui.availability || ui.tagline}
         </motion.p>
       </div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4, delay: 0.85 }} className="flex justify-end relative z-10">
         <button onClick={() => document.getElementById("projets")?.scrollIntoView({ behavior: "smooth" })}
-          className="group flex items-center gap-2 font-mono text-[11px] tracking-[0.22em] uppercase text-muted-foreground hover:text-primary transition-colors duration-200">
+          className="group flex items-center gap-2 font-body text-sm tracking-caps uppercase text-muted-foreground hover:text-primary transition-colors duration-200">
           <span>{ui.viewProjects}</span>
           <ConveyorArrow direction="down" />
         </button>
@@ -1458,7 +1417,7 @@ function NextProjectButton({ project, navigate, lang }: { project: Project; navi
       className="w-full px-6 md:px-12 py-12 md:py-16 flex items-center justify-between transition-colors duration-300"
       style={{ backgroundColor: hov ? "var(--secondary)" : "transparent" }}>
       <div className="text-left">
-        <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground block mb-3">{UI[lang].nextProject}</span>
+        <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{UI[lang].nextProject}</span>
         <span className="font-display font-black leading-none block transition-colors duration-200"
           style={{ fontSize: "clamp(32px, 6vw, 72px)", letterSpacing: "-0.01em", color: hov ? "#0246F3" : "var(--foreground)" }}>
           {projectTitle}
@@ -1489,14 +1448,9 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
     <>
       <motion.div key={project.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
         <div className="px-6 md:px-12 pt-8 md:pt-14 pb-0">
-          <div className="flex items-start justify-between mb-6">
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
-              {project.index}&nbsp;/&nbsp;{String(projects.length).padStart(2, "0")}
-            </motion.span>
-            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-mono text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
-              {project.year}
-            </motion.span>
-          </div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-body text-sm tracking-caps uppercase text-muted-foreground mb-6">
+            {projectCounter(project.index)}
+          </motion.div>
           <div className="overflow-hidden mb-2 pb-[0.12em]">
             <motion.h1 initial={{ y: "105%" }} animate={{ y: "0%" }} transition={{ duration: 0.65, ease: EASE }}
               className="font-display font-black tracking-[-0.02em] leading-[0.88]" style={{ fontSize: "clamp(56px, 11vw, 168px)" }}>
@@ -1504,8 +1458,7 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
             </motion.h1>
           </div>
           <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE, delay: 0.22 }} className="flex items-center gap-4 mb-10 md:mb-14">
-            <div className="w-8 h-px" style={{ background: GRADIENT }} />
-            <span className="font-mono text-[11px] tracking-[0.28em] text-muted-foreground">{t(project.category, lang)}</span>
+            <span className="font-body text-sm text-muted-foreground">{t(project.category, lang)}</span>
           </motion.div>
         </div>
 
@@ -1513,18 +1466,18 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
 
         <div className="px-6 md:px-12 py-8 md:py-10 flex flex-col md:flex-row gap-6 md:gap-10 border-b border-border">
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.28 }} className="shrink-0">
-            <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-3">{ui.year}</span>
-            <span className="font-mono text-sm font-medium">{project.year}</span>
+            <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.year}</span>
+            <span className="font-body text-sm font-medium">{project.year}</span>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.35 }} className="shrink-0">
-            <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-3">{ui.tags}</span>
+            <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.tags}</span>
             <div className="flex flex-wrap gap-2">{project.tags.map((tag, i) => {
               const label = t(tag, lang);
               return <TagPill key={`${project.id}-tag-${i}-${label}`} tag={label} onNavigate={navigateWithFilter} />;
             })}</div>
           </motion.div>
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.42 }} className="flex-1 min-w-0">
-            <span className="font-mono text-[10px] tracking-[0.28em] uppercase text-muted-foreground block mb-3">{ui.overview}</span>
+            <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.overview}</span>
             <p className="text-sm font-light text-muted-foreground leading-relaxed whitespace-pre-line">{t(project.excerpt, lang)}</p>
           </motion.div>
         </div>
@@ -1556,10 +1509,10 @@ function PreviewApp({ project }: { project: Project }) {
   useEffect(() => { document.documentElement.classList.toggle("dark", dark); }, [dark]);
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden" style={{ fontFamily: "var(--font-body)" }}>
-      <style>{`.font-display { font-family: var(--font-display); } .font-mono { font-family: var(--font-mono); }`}</style>
+      <style>{`.font-display { font-family: var(--font-display); }`}</style>
       <div className="fixed top-3 right-3 z-50 flex items-center gap-2">
-        <span className="font-mono text-[9px] tracking-widest uppercase text-muted-foreground border border-border bg-background px-2 py-1">Aperçu éditeur</span>
-        <button onClick={() => setLang((l) => l === "fr" ? "en" : "fr")} className="font-mono text-[9px] tracking-widest uppercase border border-border bg-background px-2 py-1 text-muted-foreground hover:text-foreground transition-colors">{lang.toUpperCase()}</button>
+        <span className="font-body text-sm tracking-caps uppercase text-muted-foreground border border-border bg-background px-2 py-1">Aperçu éditeur</span>
+        <button onClick={() => setLang((l) => l === "fr" ? "en" : "fr")} className="font-body text-sm tracking-caps uppercase border border-border bg-background px-2 py-1 text-muted-foreground hover:text-foreground transition-colors">{lang.toUpperCase()}</button>
         <button onClick={() => setDark((d) => !d)} className="border border-border bg-background px-2 py-1 text-muted-foreground hover:text-foreground transition-colors">{dark ? <Sun size={11} /> : <Moon size={11} />}</button>
       </div>
       <ProjectPage project={project} navigate={() => window.close()} navigateWithFilter={() => {}} lang={lang} />
@@ -1617,7 +1570,6 @@ function PortfolioApp() {
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden" style={{ fontFamily: "var(--font-body)" }}>
       <style>{`
         .font-display { font-family: var(--font-display); }
-        .font-mono { font-family: var(--font-mono); }
         .hero-gradient-segment {
           background: linear-gradient(to bottom, #0246F3 0%, #4A7DF1 50%, #0246F3 100%);
         }
@@ -1681,7 +1633,7 @@ export default function App() {
   if (import.meta.env.DEV && EditorPage) {
     if (params.get("editor") === "true") {
       return (
-        <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center font-mono text-muted-foreground text-xs tracking-widest uppercase">Chargement…</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center font-body text-muted-foreground text-sm tracking-caps uppercase">Chargement…</div>}>
           <EditorPage />
         </Suspense>
       );

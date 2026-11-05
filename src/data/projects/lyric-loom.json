@@ -63,8 +63,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/lyric-loom/Insta3.png",
-            "en": "/projects/lyric-loom/Insta3.png"
+            "fr": "/projects/lyric-loom/Insta3.webp",
+            "en": "/projects/lyric-loom/Insta3.webp"
           },
           "alt": "",
           "caption": {
@@ -81,8 +81,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/lyric-loom/Logo3.png",
-            "en": "/projects/lyric-loom/Logo3.png"
+            "fr": "/projects/lyric-loom/Logo3.webp",
+            "en": "/projects/lyric-loom/Logo3.webp"
           },
           "alt": "",
           "caption": {
@@ -137,8 +137,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/lyric-loom/DesktopWeb.png",
-            "en": "/projects/lyric-loom/DesktopWeb.png"
+            "fr": "/projects/lyric-loom/DesktopWeb.webp",
+            "en": "/projects/lyric-loom/DesktopWeb.webp"
           },
           "alt": "",
           "caption": {
@@ -151,8 +151,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/lyric-loom/DesktopCanva.png",
-            "en": "/projects/lyric-loom/DesktopCanva.png"
+            "fr": "/projects/lyric-loom/DesktopCanva.webp",
+            "en": "/projects/lyric-loom/DesktopCanva.webp"
           },
           "alt": "",
           "caption": {
@@ -176,8 +176,8 @@
         "kind": "image",
         "item": {
           "src": {
-            "fr": "/projects/lyric-loom/MockUp_LyricLoom_1.png",
-            "en": "/projects/lyric-loom/MockUp_LyricLoom_1.png"
+            "fr": "/projects/lyric-loom/MockUp_LyricLoom_1.webp",
+            "en": "/projects/lyric-loom/MockUp_LyricLoom_1.webp"
           },
           "alt": "",
           "caption": {
@@ -269,8 +269,8 @@
         },
         {
           "src": {
-            "fr": "/projects/lyric-loom/LyricLoom_YTThumbnail.png",
-            "en": "/projects/lyric-loom/LyricLoom_YTThumbnail.png"
+            "fr": "/projects/lyric-loom/LyricLoom_YTThumbnail.webp",
+            "en": "/projects/lyric-loom/LyricLoom_YTThumbnail.webp"
           },
           "alt": "",
           "caption": {

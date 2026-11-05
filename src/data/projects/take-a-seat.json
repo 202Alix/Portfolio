@@ -28,7 +28,7 @@
     "fr": "Site en scrollytelling sur le harcèlement sexuel subit par les femmes dans les transports en communs, à Paris.",
     "en": "A scrollytelling website about sexual harassment experienced by women on public transports in Paris."
   },
-  "coverImage": "/projects/projet-1785265529844/TakeASeat_Thumbnail.webp",
+  "coverImage": "/projects/take-a-seat/TakeASeat_Thumbnail.webp",
   "hidden": true,
   "content": [
     {
@@ -36,8 +36,8 @@
       "url": "https://202alix.github.io/take-a-seat/",
       "item": {
         "src": {
-          "fr": "/projects/take-a-seat/Capture d’écran 2026-07-28 à 21.38.11.png",
-          "en": "/projects/take-a-seat/Capture d’écran 2026-07-28 à 21.38.11.png"
+          "fr": "/projects/take-a-seat/Capture d’écran 2026-07-28 à 21.38.11.webp",
+          "en": "/projects/take-a-seat/Capture d’écran 2026-07-28 à 21.38.11.webp"
         },
         "alt": "",
         "caption": {

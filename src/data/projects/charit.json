@@ -28,8 +28,221 @@
     "fr": "Réalisation de la charte graphique, du site web et visuels de promotion pour la marque Charit.",
     "en": "Development of the brand identity, website, and promotional visuals for the Charit brand."
   },
-  "coverImage": "/projects/projet-1785227055547/Charit_Thumbnail.webp",
+  "coverImage": "/projects/charit/Charit_Thumbnail.webp",
   "coverImagePosition": 29,
-  "hidden": true,
-  "content": []
+  "hidden": false,
+  "content": [
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Charit est une plateforme en ligne qui permet aux musées, organismes culturels et associations de réunir billetterie, adhésions et collecte de dons au même endroit. Dans le cadre du Mastère Direction Artistique Digitale, nous avons conçu à cinq son identité visuelle et ses déclinaisons : réseaux sociaux, site et tableau de bord destiné aux organismes. J’ai travaillé avec le groupe sur le logo, les couleurs et les typographies, réalisé seul le corpus d’images et la newsletter, et pris en charge une part de l’interface, de ses composants à ses animations et interactions.",
+        "en": "Charit is an online platform that lets museums, cultural organizations and associations bring ticketing, memberships and fundraising together in one place. As part of the Digital Art Direction master’s program, five students designed its visual identity and its applications: social media, the website and the dashboard for organizations. I worked with the group on the logo, the colors and the typefaces, produced the image corpus and the newsletter on my own, and took charge of part of the interface, from its components to its animations and interactions."
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Charit étant liée aux musées et à la culture, nous avons choisi des formes et une palette qui rappellent la sculpture. Le logo, typographique et de style brut, évoque une forme taillée dans la matière par ses angles droits et ses légères irrégularités. Les autres éléments graphiques sont au contraire arrondis et malléables comme de l’argile. Nous les avons créés à partir d’une police existante, en gardant les formes de lettres que nous préférions.",
+        "en": "Since Charit is tied to museums and culture, we chose shapes and a palette that evoke sculpture. The logo, typographic and raw in style, suggests a form carved from material through its right angles and slight irregularities. The other graphic elements are, by contrast, rounded and malleable like clay. We created them from an existing typeface, keeping the letter shapes we liked best."
+      }
+    },
+    {
+      "type": "image",
+      "item": {
+        "src": {
+          "fr": "/projects/charit/Logos.webp",
+          "en": "/projects/charit/Logos.webp"
+        },
+        "alt": "",
+        "caption": {
+          "fr": "Déclinaisons du logo sur plusieurs couleurs.",
+          "en": "Logo variations in several colors."
+        }
+      },
+      "position": "full"
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/charit/Colors.webp",
+            "en": "/projects/charit/Colors.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Palette de couleurs de Charit.",
+            "en": "Charit color palette."
+          }
+        }
+      },
+      "right": {
+        "kind": "text",
+        "primary": {
+          "fr": "La palette s’appuie elle aussi sur l’argile, le bois et le marbre, avec des tons terracotta. Un orange plus vif, resté dans les couleurs chaudes proches de l’univers des musées, attire l’œil : nous en avons fait la couleur de l’action. Les titres sont composés en Coolvetica, le texte courant en Satoshi.",
+          "en": "The palette also draws on clay, wood and marble, with terracotta tones. A more vivid orange, kept within the warm colors close to the world of museums, catches the eye: we made it the color of action. Headings are set in Coolvetica, body text in Satoshi."
+        }
+      }
+    },
+    {
+      "type": "columns",
+      "ratio": "1:1",
+      "left": {
+        "kind": "text",
+        "primary": {
+          "fr": "J’ai constitué le corpus d’images autour de trois sujets, toujours en couleurs chaudes : des lieux culturels, des œuvres de toutes les époques et des personnes en train de créer. Les photos de lieux jouent sur de forts contrastes et des jeux de lumière qui rappellent le clair-obscur de la Renaissance, celles de création et de créateurs la peinture de genre. L’ensemble met en valeur la création, l’art comme l’artiste.",
+          "en": "I built the image corpus around three subjects, always in warm colors: cultural venues, artworks from every era, and people at work creating. The photos of venues play on strong contrasts and effects of light that recall the chiaroscuro of the Renaissance, while those of creation and creators recall genre painting. Together they showcase creation and culture, the art as well as the artist."
+        }
+      },
+      "right": {
+        "kind": "image",
+        "item": {
+          "src": {
+            "fr": "/projects/charit/Images.webp",
+            "en": "/projects/charit/Images.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Exemple d'images du corpus.",
+            "en": "Exemple d'images du corpus."
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Sur le site, j’ai travaillé sur les composants de l’interface, ainsi que sur ses animations et ses interactions. Cela comprend la page d'accueil, les pages projets, le parcours de don et le tableau de bord, qui reprend la même identité. J’ai également conçu la newsletter qui présente la plateforme aux sociétés d’Amis des Musées.",
+        "en": "On the website, I worked on the interface components, as well as on its animations and interactions. This includes the home page, the project pages, the donation flow and the dashboard, which carries the same identity. I also designed the newsletter that introduces the platform to sociétés d’Amis des Musées."
+      }
+    },
+    {
+      "type": "masonry",
+      "items": [
+        {
+          "src": {
+            "fr": "/projects/charit/FullDesktopPage.webp",
+            "en": "/projects/charit/FullDesktopPage.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page d'accueil complète du site de Charit.",
+            "en": "Full home page of the Charit website."
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Donate.webp",
+            "en": "/projects/charit/Donate.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Parcours de don sur mobile.",
+            "en": "Donation flow on mobile."
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Project.webp",
+            "en": "/projects/charit/Project.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page projet et ses différentes sections.",
+            "en": "Project page and its different sections."
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Dashboard.webp",
+            "en": "/projects/charit/Dashboard.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Tableau de bord du point de vue d'un musée.",
+            "en": "Dashboard from a museum’s point of view."
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Newsletter.webp",
+            "en": "/projects/charit/Newsletter.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Newsletter de présentation de Charit.",
+            "en": "Charit introduction newsletter."
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Instagram.webp",
+            "en": "/projects/charit/Instagram.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Exemples de visuels sur Instagram.",
+            "en": "Examples of Instagram visuals."
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Design_Atoms.webp",
+            "en": "/projects/charit/Design_Atoms.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Design_Molecules.webp",
+            "en": "/projects/charit/Design_Molecules.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Design_Molecules2.webp",
+            "en": "/projects/charit/Design_Molecules2.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Design_Organisms.webp",
+            "en": "/projects/charit/Design_Organisms.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/charit/Design_Organisms2.webp",
+            "en": "/projects/charit/Design_Organisms2.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Extrait des composants de l'interface.",
+            "en": "Excerpt of the interface components."
+          }
+        }
+      ]
+    }
+  ]
 }
