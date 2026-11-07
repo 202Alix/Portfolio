@@ -1518,7 +1518,7 @@ function PreviewApp({ project }: { project: Project }) {
       <div className="fixed top-3 right-3 z-50 flex items-center gap-2">
         <span className="font-body text-sm tracking-caps uppercase text-muted-foreground border border-border bg-background px-2 py-1">Aperçu éditeur</span>
         <button onClick={() => setLang((l) => l === "fr" ? "en" : "fr")} className="font-body text-sm tracking-caps uppercase border border-border bg-background px-2 py-1 text-muted-foreground hover:text-foreground transition-colors">{lang.toUpperCase()}</button>
-        <button onClick={() => setDark((d) => !d)} className="border border-border bg-background px-2 py-1 text-muted-foreground hover:text-foreground transition-colors">{dark ? <Sun size={11} /> : <Moon size={11} />}</button>
+        <button onClick={() => setDark((d) => !d)} aria-label="Toggle dark mode" className="self-stretch flex items-center border border-border bg-background px-2 text-muted-foreground hover:text-foreground transition-colors">{dark ? <Sun size={11} /> : <Moon size={11} />}</button>
       </div>
       <ProjectPage project={project} navigate={() => window.close()} navigateWithFilter={() => {}} lang={lang} />
     </div>

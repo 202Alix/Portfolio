@@ -29,7 +29,164 @@
     "en": "Light mode and dark mode interfaces for a poke bowl ordering app with a customization screen."
   },
   "coverImage": "/projects/yummy/Yummy_Thumbnail.webp",
-  "hidden": true,
+  "hidden": false,
   "coverImagePosition": 63,
-  "content": []
+  "content": [
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Yummy est une application de commande pour un restaurant de poke bowls dans l’univers de la restauration rapide. Ce projet a été réalisé en binôme dans le cadre de ma formation. Nous avons travaillé en tandem sur l'interface tout comme l'identité visuelle.",
+        "en": "Yummy is an ordering app for a poke bowl restaurant in the world of fast food. This project was done in a pair as part of my studies. We worked in tandem on the interface as well as the visual identity."
+      }
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "Nous avons choisi un jaune principal, un secondaire plus pâle, associés à des teintes de gris, du noir et du blanc, qui fonctionnent en mode clair comme en mode foncé grâce aux variables.\nL'identité s'inscrit dans la continuité des visuels de la restauration rapide, simples, ludiques et facilitant la navigation dans l'interface. Elle se distingue principalement par ce jaune vif qui attire le regard associé au fort contraste créé par le noir et blanc. Le logo s'y intègre par les formes arrondies de ses lettres et une barre jaune sous le U qui évoque un bol, tout en restant minimaliste.",
+        "en": "We chose a main yellow and a paler secondary one, combined with shades of gray, black and white, which work in both light and dark mode thanks to variables. The identity follows the visual codes of fast food: simple, playful, and helping users navigate the interface. It stands out mainly through its bright yellow, which draws the eye, paired with the strong contrast of black and white. The logo fits in through the rounded shapes of its letters and a yellow bar under the U that suggests a bowl while staying minimal."
+      }
+    },
+    {
+      "type": "image",
+      "item": {
+        "src": {
+          "fr": "/projects/yummy/YummyLogos.webp",
+          "en": "/projects/yummy/YummyLogos.webp"
+        },
+        "alt": "",
+        "caption": {
+          "fr": "",
+          "en": ""
+        }
+      },
+      "position": "full"
+    },
+    {
+      "type": "text",
+      "primary": {
+        "fr": "L’interface reprend cet arrondi dans une esthétique moderne et minimaliste. Elle comprend le menu et ses options, le panier, le paiement et le suivi de la commande. Un système de personnalisation s’y ajoute : l’image d’un bol, que l’on peut faire tourner, se remplit au fil des choix, ce qui permet de voir la composition se construire plutôt que de la lire dans une liste. Dans le prototype Figma, le bol est un composant dont une propriété contrôle l’angle, avec six angles possibles. Chaque sixième du bol est une image masquée, qui apparaît lorsque l’option correspondante est sélectionnée parmi les choix prédéfinis et que l’on passe à l’écran suivant.",
+        "en": "The interface carries this roundness into a modern, minimal look. It includes the menu and its options, the cart, payment and order tracking. A customization system is added: the image of a bowl, which can be rotated, fills up as choices are made, so the composition builds up visually rather than being read in a list. In the Figma prototype, the bowl is a component with a property controlling its angle, with six possible angles. Each sixth of the bowl is a hidden image that appears when the matching option is selected among the predefined choices and the user moves on to the next screen."
+      }
+    },
+    {
+      "type": "website",
+      "url": "https://www.figma.com/proto/gXmQEQvp3hDsS8YxyMLd93/Yummy?node-id=384-588&viewport=89%2C83%2C0.22&t=TleVsbUyaLkxvx1x-1&scaling=min-zoom&content-scaling=fixed&starting-point-node-id=384%3A588&page-id=6%3A6",
+      "item": {
+        "src": {
+          "fr": "/projects/yummy/Hand-Holding-iPhone-17-Pro-Free-psd-Mockup.webp",
+          "en": "/projects/yummy/Hand-Holding-iPhone-17-Pro-Free-psd-Mockup.webp"
+        },
+        "alt": "",
+        "caption": {
+          "fr": "Essayez le prototype Figma ici :",
+          "en": "Try the prototype on Figma here :"
+        }
+      },
+      "position": "full"
+    },
+    {
+      "type": "masonry",
+      "items": [
+        {
+          "src": {
+            "fr": "/projects/yummy/Homepage1.webp",
+            "en": "/projects/yummy/Homepage1.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page d'accueil (mode clair)",
+            "en": "Homepage (light mode)"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Homepage2.webp",
+            "en": "/projects/yummy/Homepage2.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page d'accueil (mode sombre)",
+            "en": "Homepage (dark mode)"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Product Page1.webp",
+            "en": "/projects/yummy/Product Page1.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page de personnalisation de poke bowl (mode clair)",
+            "en": "Poke bowl customization page (light mode)"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Product Page.webp",
+            "en": "/projects/yummy/Product Page.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page de personnalisation de poke bowl (mode sombre)",
+            "en": "Poke bowl customization page (dark mode)"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Payment Page.webp",
+            "en": "/projects/yummy/Payment Page.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page de paiement (mode clair)",
+            "en": "Payment page (light mode)"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Payment Page1.webp",
+            "en": "/projects/yummy/Payment Page1.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Page de paiement (mode sombre)",
+            "en": "Payment page (dark mode)"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Atoms.webp",
+            "en": "/projects/yummy/Atoms.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Composants atomes",
+            "en": "Atom components"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Molecules.webp",
+            "en": "/projects/yummy/Molecules.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Composants molécules",
+            "en": "Molecule components"
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/yummy/Organisms.webp",
+            "en": "/projects/yummy/Organisms.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "Composants organismes",
+            "en": "Organism components"
+          }
+        }
+      ]
+    }
+  ]
 }
