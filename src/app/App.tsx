@@ -724,7 +724,7 @@ function FilterPill({ label, active, count, onClick }: { label: string; active: 
   const activeStyle = { border: "1px solid transparent", background: GRADIENT, color: "#fff" };
   return (
     <button onClick={onClick} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      className="font-body text-sm px-3 py-[5px] outline-none transition-all duration-200"
+      className="font-body text-xs md:text-sm px-3 py-[5px] outline-none transition-all duration-200"
       style={active ? activeStyle : gradientBorder(hov)}>
       {label}{count !== undefined && <span className="ml-2 opacity-60">{count}</span>}
     </button>
@@ -735,7 +735,7 @@ function TagPill({ tag, onNavigate }: { tag: string; onNavigate: (filter: string
   const [hov, setHov] = useState(false);
   return (
     <button onClick={() => onNavigate(tag)} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      className="px-3 py-[4px] font-body text-sm transition-all duration-200 outline-none"
+      className="px-3 py-[4px] font-body text-xs md:text-sm transition-all duration-200 outline-none"
       style={gradientBorder(hov)}>
       {tag}
     </button>
@@ -1296,7 +1296,7 @@ function Hero({ lang }: { lang: Lang }) {
   }, []);
 
   return (
-    <section ref={sectionRef} className="min-h-screen flex flex-col justify-between page-x pb-10 relative overflow-hidden" style={{ minHeight: "100svh" }}>
+    <section ref={sectionRef} className="min-h-[calc(100svh-52px)] md:min-h-svh flex flex-col justify-between page-x pb-10 relative overflow-hidden">
       {gameActive ? <SnakeGame onEat={handleEat} onGameOver={handleGameOver} /> : <HoverGrid />}
       <div className="flex justify-between items-start pt-10 md:pt-14">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.6 }} className="max-w-[52%] md:max-w-none font-body text-sm tracking-caps uppercase text-muted-foreground leading-relaxed">
@@ -1325,7 +1325,8 @@ function Hero({ lang }: { lang: Lang }) {
             </motion.div>
           </div>
         </div>
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-body text-sm text-muted-foreground mt-4 md:mt-5">
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.55, ease: EASE, delay: 0.48 }} style={{ originX: "0%" }} className="h-px bg-foreground mt-4 md:mt-5 mb-4 md:mb-5" />
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-body text-sm text-muted-foreground">
           {ui.availability || ui.tagline}
         </motion.p>
       </div>
@@ -1512,7 +1513,7 @@ function PreviewApp({ project }: { project: Project }) {
   const [dark, setDark] = useState(false);
   useEffect(() => { document.documentElement.classList.toggle("dark", dark); }, [dark]);
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden" style={{ fontFamily: "var(--font-body)" }}>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden supports-[overflow:clip]:overflow-x-clip" style={{ fontFamily: "var(--font-body)" }}>
       <style>{`.font-display { font-family: var(--font-display); }`}</style>
       <div className="fixed top-3 right-3 z-50 flex items-center gap-2">
         <span className="font-body text-sm tracking-caps uppercase text-muted-foreground border border-border bg-background px-2 py-1">Aperçu éditeur</span>
@@ -1571,7 +1572,7 @@ function PortfolioApp() {
   const currentProject = projects.find((p) => p.id === page);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden" style={{ fontFamily: "var(--font-body)" }}>
+    <div className="min-h-screen bg-background text-foreground overflow-x-hidden supports-[overflow:clip]:overflow-x-clip" style={{ fontFamily: "var(--font-body)" }}>
       <style>{`
         .font-display { font-family: var(--font-display); }
         .hero-gradient-segment {
