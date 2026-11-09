@@ -19,7 +19,7 @@
     "tools": "Outils",
     "together": "Restez en contact",
     "bio": "Designer graphique, je travaille sur l’identité de marque et le design numérique. Diplômé du Mastère Direction Artistique Digitale (Bac+5), que j’ai suivi en alternance chez Air Liquide au sein de la Direction de la Communication, j’y ai décliné une identité existante sur de nombreux formats, avec un souci de cohérence visuelle et de précision d’exécution. Mes projets de cours m’ont également permis d’aborder de nombreux domaines, tels que le design d’interface, le motion design et la conception de stratégie digitale.",
-    "bio2": "Je recherche un premier poste en CDI au sein d’une équipe design structurée, et je suis disponible immédiatement.",
+    "bio2": "Je suis actuellement disponible pour de nouveaux projets.",
     "skillsList": [
       "Branding & Identité",
       "Direction artistique",
@@ -40,7 +40,7 @@
     "noProjects": "Aucun projet dans cette catégorie",
     "cv": "Télécharger le CV",
     "cvFile": "/projects/cv/CV_AlixLabonne_FR.pdf",
-    "availability": "Disponible dès maintenant pour un CDI."
+    "availability": "Disponible dès maintenant pour de nouveaux projets."
   },
   "en": {
     "title": "Graphic Designer",
@@ -62,7 +62,7 @@
     "tools": "Tools",
     "together": "Let's work\ntogether",
     "bio": "I am a graphic designer working on brand identity and digital design. I graduated from the Digital Art Direction master’s program (five-year degree), completed as a work-study apprentice at Air Liquide within the Communications Department, where I adapted an existing identity across many formats, with attention to visual consistency and precise execution. My coursework projects also allowed me to explore many areas, such as interface design, motion design and digital strategy.",
-    "bio2": "I am looking for a first permanent position within a structured design team, and I am available immediately.",
+    "bio2": "I am currently available for new projects.",
     "skillsList": [
       "Branding & Identity",
       "Art Direction",
@@ -83,7 +83,7 @@
     "noProjects": "No projects in this category",
     "cv": "Download CV",
     "cvFile": "/projects/cv/CV_AlixLabonne_EN.pdf",
-    "availability": "Available now for a permanent position."
+    "availability": "Available now for new projects."
   },
   "name": "Alix Labonne",
   "email": "alix.labonne@pm.me",

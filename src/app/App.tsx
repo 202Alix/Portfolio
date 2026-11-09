@@ -773,7 +773,7 @@ function ProjectCard({ project, navigate, onTagClick, idx, lang, centered, regis
         <div className="flex items-start justify-between gap-8">
           <div className="flex flex-col gap-2.5 min-w-0">
             <span className="font-body text-xs text-muted-foreground">{projectCounter(project.index)}&ensp;·&ensp;{t(project.category, lang)}&ensp;·&ensp;{project.year}</span>
-            <div className="font-display font-black leading-[0.9] transition-colors duration-200" style={{ fontSize: "clamp(26px, 3.5vw, 48px)", letterSpacing: "-0.01em", color: isActive ? "#0246F3" : "var(--foreground)" }}>
+            <div className="font-display font-title leading-[0.9] transition-colors duration-200" style={{ fontSize: "clamp(26px, 3.5vw, 48px)", letterSpacing: "-0.01em", color: isActive ? "#0246F3" : "var(--foreground)" }}>
               {projectTitle}
             </div>
             <div className="flex flex-wrap gap-2 mt-[5px]" onClick={(e) => e.stopPropagation()}>
@@ -949,7 +949,7 @@ function ContactSection({ lang }: { lang: Lang }) {
       </motion.div>
       <div className="grid grid-cols-1 md:grid-cols-12 items-end gap-10">
         <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, ease: EASE }} className="md:col-span-9">
-          <h2 className="font-display font-black uppercase tracking-[-0.02em] leading-[0.9]" style={{ fontSize: "clamp(44px, 9vw, 130px)" }}>
+          <h2 className="font-display font-title uppercase tracking-[-0.02em] leading-[0.9]" style={{ fontSize: "clamp(44px, 9vw, 130px)" }}>
             {lines.map((l, i) => <span key={i} className="block">{l}</span>)}
           </h2>
         </motion.div>
@@ -1053,7 +1053,7 @@ function LegalNoticePage({ navigate, lang }: { navigate: (id: string) => void; l
           <ConveyorArrow direction="left" hovered={backHovered} />
           <span>{ui.back}</span>
         </button>
-        <h1 className="font-display font-black tracking-[-0.02em] leading-[0.95] mb-3" style={{ fontSize: "clamp(32px, 5vw, 56px)" }}>
+        <h1 className="font-display font-title tracking-[-0.02em] leading-[0.95] mb-3" style={{ fontSize: "clamp(32px, 5vw, 56px)" }}>
           {lang === "fr" ? "Mentions légales" : "Legal notice"}
         </h1>
         {lang !== "fr" && (
@@ -1314,18 +1314,18 @@ function Hero({ lang }: { lang: Lang }) {
           <GradientBar />
           <div className="overflow-hidden">
             <motion.div initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.7, ease: EASE, delay: 0.05 }}
-              className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
+              className="font-display font-title leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
               {gameActive && gameOver ? "GAME" : "ALIX"}
             </motion.div>
           </div>
           <div className="overflow-hidden">
             <motion.div initial={{ y: "110%" }} animate={{ y: "0%" }} transition={{ duration: 0.7, ease: EASE, delay: 0.13 }}
-              className="font-display font-black leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
+              className="font-display font-title leading-[0.9] tracking-[-0.02em] uppercase" style={{ fontSize: "clamp(56px, 13vw, 196px)" }}>
               {gameActive && gameOver ? "OVER" : "LABONNE"}
             </motion.div>
           </div>
         </div>
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.55, ease: EASE, delay: 0.48 }} style={{ originX: "0%" }} className="h-px bg-foreground mt-4 md:mt-5 mb-4 md:mb-5" />
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.55, ease: EASE, delay: 0.48 }} style={{ originX: "0%" }} className="h-px bg-border mt-4 md:mt-5 mb-4 md:mb-5" />
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.65 }} className="font-body text-sm text-muted-foreground">
           {ui.availability || ui.tagline}
         </motion.p>
@@ -1421,7 +1421,7 @@ function NextProjectButton({ project, navigate, lang }: { project: Project; navi
       style={{ backgroundColor: hov ? "var(--secondary)" : "transparent" }}>
       <div className="text-left">
         <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{UI[lang].nextProject}</span>
-        <span className="font-display font-black leading-none block transition-colors duration-200"
+        <span className="font-display font-title leading-none block transition-colors duration-200"
           style={{ fontSize: "clamp(32px, 6vw, 72px)", letterSpacing: "-0.01em", color: hov ? "#0246F3" : "var(--foreground)" }}>
           {projectTitle}
         </span>
@@ -1456,7 +1456,7 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
           </motion.div>
           <div className="overflow-hidden mb-2 pb-[0.12em]">
             <motion.h1 initial={{ y: "105%" }} animate={{ y: "0%" }} transition={{ duration: 0.65, ease: EASE }}
-              className="font-display font-black tracking-[-0.02em] leading-[0.88]" style={{ fontSize: "clamp(56px, 11vw, 168px)" }}>
+              className="font-display font-title tracking-[-0.02em] leading-[0.88]" style={{ fontSize: "clamp(56px, 11vw, 168px)" }}>
               {projectTitle}
             </motion.h1>
           </div>

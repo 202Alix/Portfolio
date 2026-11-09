@@ -1,15 +1,7 @@
-@font-face {
-  font-family: 'Bricolage Grotesque';
-  font-style: normal;
-  font-weight: 300 800;
-  font-display: swap;
-  src: url('/fonts/bricolage-grotesque-variable.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Plus Jakarta Sans';
-  font-style: normal;
-  font-weight: 300 800;
-  font-display: swap;
-  src: url('/fonts/plus-jakarta-sans-variable.woff2') format('woff2');
-}
+/* Polices auto-hébergées via Fontsource. Un fichier n'est téléchargé
+   que si sa police est réellement utilisée (voir --font-display et
+   --font-body dans theme.css). */
+@import '@fontsource-variable/hanken-grotesk/wght.css';
+@import '@fontsource-variable/instrument-sans/wght.css';
+@import '@fontsource-variable/geist/wght.css';
+@import '@fontsource-variable/plus-jakarta-sans/wght.css';
