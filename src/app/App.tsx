@@ -1450,6 +1450,8 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
   return (
     <>
       <motion.div key={project.id} initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.4, ease: EASE }}>
+        {/* Mobile : bannière en premier (order-first). Desktop : titre et infos, puis bannière. */}
+        <div className="flex flex-col">
         <div className="page-x pt-8 md:pt-14 pb-0">
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-body text-sm tracking-caps uppercase text-muted-foreground mb-6">
             {projectCounter(project.index)}
@@ -1463,7 +1465,7 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
           </div>
         </div>
 
-        <div className="page-x pt-8 md:pt-10 pb-10 md:pb-14 flex flex-col md:flex-row md:flex-wrap lg:flex-nowrap gap-6 md:gap-x-10">
+        <div className="page-x pt-8 md:pt-10 pb-8 md:pb-14 flex flex-col md:flex-row md:flex-wrap lg:flex-nowrap gap-6 md:gap-x-10">
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.28 }} className="shrink-0">
             <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.year}</span>
             <span className="font-body text-sm font-medium">{project.year}</span>
@@ -1481,8 +1483,9 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
           </motion.div>
         </div>
 
-        <div className="mx-auto" style={{ maxWidth: "var(--page-max-width)" }}>
+        <div className="mx-auto w-full order-first md:order-none" style={{ maxWidth: "var(--page-max-width)" }}>
           <ParallaxCover src={project.coverImage} alt={projectTitle} position={project.coverImagePosition} onOpen={() => openLightbox(project.coverImage, projectTitle)} />
+        </div>
         </div>
 
         <ContentRenderer
