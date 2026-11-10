@@ -28,7 +28,7 @@
     "fr": "Campagne interne et externe valorisant 27 collaborateurs d'Air Liquide comme héros du Groupe, déployée auprès de 65 000 employés dans 59 pays.",
     "en": "Internal and external campaign spotlighting 27 Air Liquide employees as Group heroes, deployed across 65,000 employees in 59 countries."
   },
-  "coverImage": "/projects/spotlight-campaign/Spotlight_THumbnail.webp",
+  "coverImage": "/projects/spotlight-campaign/Poster_Gallery_Mockup_3.webp",
   "coverImagePosition": 45,
   "credits": {
     "fr": "Projet réalisé pour Air Liquide. Visuels et vidéos utilisés avec autorisation, propriété d'Air Liquide.\nEn collaboration avec l'agence Angie et le photographe Julien Faure.",
@@ -102,7 +102,7 @@
         },
         {
           "src": {
-            "fr": "/projects/spotlight-campaign/spotlight-bernadetta.webp",
+            "fr": "/projects/spotlight-campaign/AIRLIQUIDE_SPOTLIGHT_INHOUSE_A1_2.webp",
             "en": "/projects/spotlight-campaign/spotlight-bernadetta.webp"
           },
           "alt": "",
@@ -113,7 +113,18 @@
         },
         {
           "src": {
-            "fr": "/projects/spotlight-campaign/spotlight-theo.webp",
+            "fr": "/projects/spotlight-campaign/Screensavers_09_EN.webp",
+            "en": "/projects/spotlight-campaign/Screensavers_09_EN.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/spotlight-campaign/AIRLIQUIDE_SPOTLIGHT_INHOUSE_A1_6.webp",
             "en": "/projects/spotlight-campaign/spotlight-theo.webp"
           },
           "alt": "",
@@ -135,6 +146,17 @@
         },
         {
           "src": {
+            "fr": "/projects/spotlight-campaign/Screensavers_06_EN.webp",
+            "en": "/projects/spotlight-campaign/Screensavers_06_EN.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
             "fr": "/projects/spotlight-campaign/1785145707821.webp",
             "en": "/projects/spotlight-campaign/1785145707821.webp"
           },
@@ -146,8 +168,19 @@
         },
         {
           "src": {
-            "fr": "/projects/spotlight-campaign/spotlight-eugenia.webp",
+            "fr": "/projects/spotlight-campaign/AIRLIQUIDE_SPOTLIGHT_INHOUSE_A1_4.webp",
             "en": "/projects/spotlight-campaign/spotlight-eugenia.webp"
+          },
+          "alt": "",
+          "caption": {
+            "fr": "",
+            "en": ""
+          }
+        },
+        {
+          "src": {
+            "fr": "/projects/spotlight-campaign/Screensavers_24_EN.webp",
+            "en": "/projects/spotlight-campaign/Screensavers_24_EN.webp"
           },
           "alt": "",
           "caption": {

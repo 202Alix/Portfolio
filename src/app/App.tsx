@@ -1461,16 +1461,9 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
               {projectTitle}
             </motion.h1>
           </div>
-          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.45, ease: EASE, delay: 0.22 }} className="flex items-center gap-4 mb-10 md:mb-14">
-            <span className="font-body text-sm text-muted-foreground">{t(project.category, lang)}</span>
-          </motion.div>
         </div>
 
-        <div className="mx-auto" style={{ maxWidth: "var(--page-max-width)" }}>
-          <ParallaxCover src={project.coverImage} alt={projectTitle} position={project.coverImagePosition} onOpen={() => openLightbox(project.coverImage, projectTitle)} />
-        </div>
-
-        <div className="page-x py-8 md:py-10 flex flex-col md:flex-row gap-6 md:gap-10 border-b border-border">
+        <div className="page-x pt-8 md:pt-10 pb-10 md:pb-14 flex flex-col md:flex-row md:flex-wrap lg:flex-nowrap gap-6 md:gap-x-10">
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.28 }} className="shrink-0">
             <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.year}</span>
             <span className="font-body text-sm font-medium">{project.year}</span>
@@ -1482,10 +1475,14 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
               return <TagPill key={`${project.id}-tag-${i}-${label}`} tag={label} onNavigate={navigateWithFilter} />;
             })}</div>
           </motion.div>
-          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.42 }} className="flex-1 min-w-0">
+          <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE, delay: 0.42 }} className="min-w-0 md:basis-full lg:basis-auto lg:flex-none lg:w-1/3">
             <span className="font-body text-sm tracking-caps uppercase text-muted-foreground block mb-3">{ui.overview}</span>
             <p className="text-sm font-light text-muted-foreground leading-relaxed whitespace-pre-line">{t(project.excerpt, lang)}</p>
           </motion.div>
+        </div>
+
+        <div className="mx-auto" style={{ maxWidth: "var(--page-max-width)" }}>
+          <ParallaxCover src={project.coverImage} alt={projectTitle} position={project.coverImagePosition} onOpen={() => openLightbox(project.coverImage, projectTitle)} />
         </div>
 
         <ContentRenderer
