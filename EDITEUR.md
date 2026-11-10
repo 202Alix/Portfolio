@@ -169,6 +169,8 @@ L'upload fonctionne uniquement en dev local (le serveur Vite intercepte les requ
 2. Le fichier est envoyé au serveur → copié dans `public/projects/[id]/[nom-fichier]`
 3. Le champ est rempli automatiquement avec le chemin `/projects/[id]/nom-fichier.jpg`
 
+**Noms de fichiers nettoyés :** accents, espaces et apostrophes sont retirés à l'upload (`Capture d’écran … à 09.27.57.png` devient `Capture-d-ecran-…-a-09.27.57.webp`). Un nom accentué fonctionne sur le Mac mais peut casser le lien une fois en ligne.
+
 **Conversion WebP automatique :** les PNG et JPG sont convertis en WebP à l'upload (qualité 85, 2560 px maximum sur le plus grand côté, jamais agrandis). Seul le `.webp` est enregistré : `affiche.png` devient `affiche.webp`. Les autres formats (WebP, GIF, SVG, vidéos, PDF) sont copiés tels quels.
 
 **En production**, ces fichiers sont dans `public/` donc servis statiquement par Vercel / Cloudflare.

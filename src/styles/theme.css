@@ -116,10 +116,7 @@ body,
 @theme inline {
   /* Interlettrage des textes en majuscules (normal = automatique). */
   --tracking-caps: 0.05em;
-  /* Polices : titres (display) et texte courant (body).
-     Autres polices déjà installées, à coller à la place :
-     'Geist Variable', 'Instrument Sans Variable',
-     'Plus Jakarta Sans Variable' */
+  /* Polices : titres (display) et texte courant (body). */
   --font-display: 'Hanken Grotesk Variable', sans-serif;
   --font-body: 'Hanken Grotesk Variable', sans-serif;
   /* Graisse des titres (100 à 900). */

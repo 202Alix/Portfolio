@@ -1454,9 +1454,10 @@ function ProjectPage({ project, navigate, navigateWithFilter, lang }: {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="font-body text-sm tracking-caps uppercase text-muted-foreground mb-6">
             {projectCounter(project.index)}
           </motion.div>
-          <div className="overflow-hidden mb-2 pb-[0.12em]">
+          <div className="overflow-hidden">
+            {/* pb en em de la taille du titre : laisse la place aux jambages (g, j, p, q, y). */}
             <motion.h1 initial={{ y: "105%" }} animate={{ y: "0%" }} transition={{ duration: 0.65, ease: EASE }}
-              className="font-display font-title tracking-[-0.02em] leading-[0.88]" style={{ fontSize: "clamp(56px, 11vw, 168px)" }}>
+              className="font-display font-title tracking-[-0.02em] leading-[0.88] pb-[0.14em]" style={{ fontSize: "clamp(56px, 11vw, 168px)" }}>
               {projectTitle}
             </motion.h1>
           </div>

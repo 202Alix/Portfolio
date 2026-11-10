@@ -48,6 +48,16 @@ function conflict(res: Connect.ServerResponse, currentVersion: string | null) {
 // Les PNG et JPG envoyés depuis l'éditeur sont convertis en WebP : seul le .webp est écrit.
 
 const TO_WEBP = /\.(png|jpe?g)$/i
+
+// "Capture d’écran 2026-07-29 à 09.27.57.png" → "Capture-d-ecran-2026-07-29-a-09.27.57.png"
+function safeFileName(name: string) {
+  const base = path.basename(name)
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^A-Za-z0-9._-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^[-.]+|-+(?=\.[^.]+$)|-+$/g, '')
+  return base || 'fichier'
+}
 const WEBP_QUALITY = 85
 const WEBP_MAX_SIDE = 2560 // largeur ou hauteur max ; jamais d'agrandissement
 
@@ -189,9 +199,12 @@ export default defineConfig({
           if (req.method !== 'POST') return next()
           try {
             const body = JSON.parse(await readBody(req))
-            const { projectId, filename, data } = body as {
+            const { projectId, filename: rawName, data } = body as {
               projectId: string; filename: string; data: string
             }
+            // Nom de fichier sans accents, espaces ni apostrophes : macOS accepte
+            // deux encodages du même « é », pas le serveur en ligne (lien cassé).
+            const filename = safeFileName(rawName)
             const dir = path.resolve(__dirname, 'public/projects', projectId)
             fs.mkdirSync(dir, { recursive: true })
             const original = Buffer.from(data, 'base64')
